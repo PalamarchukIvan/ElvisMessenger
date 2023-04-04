@@ -17,6 +17,10 @@ class LoginActivity : AppCompatActivity() {
             val login = binding.loginPlainTextLogin.text.toString()
             val password = binding.passwordPlainTextLogin.text.toString()
             //Тут будет переход к тебе
+            val i = Intent(this, ChatsListActivity::class.java)
+            i.putExtra("login", "$login")
+            i.putExtra("password", "$password")
+            startActivity(i)
         }
 
         binding.noAccauntTextLogin.setOnClickListener {
