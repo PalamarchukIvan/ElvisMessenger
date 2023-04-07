@@ -38,6 +38,7 @@ class ChatsListActivity : AppCompatActivity() {
         // Для работы клика на чат из списка чатов
         chatAdapter.onItemClick = {
             val intent = Intent(this, ChatLogActivity::class.java)
+            intent.putExtra("name", it.name)
             startActivity(intent)
 
             Toast.makeText(this, "${it.name} ${it.status} ${it.time}", Toast.LENGTH_SHORT).show() // Тут передаем интент на окно чата пока тост
