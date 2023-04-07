@@ -21,8 +21,11 @@ class RegistrationActivity : AppCompatActivity() {
             }
             val userName = binding.userNamePlainTextRegistration.text.toString()
             val login = binding.loginPlainTextRegistration.text.toString()
-            Toast.makeText(this, "GOOD: $userName   $login   $password1", Toast.LENGTH_SHORT).show()
-            //Переход к тебе
+            val i = Intent(this, ChatsListActivity::class.java)
+            i.putExtra("username", "$userName")
+            i.putExtra("login", "$login")
+            i.putExtra("pwd", "$password1")
+            startActivity(i)
         }
     }
 }
