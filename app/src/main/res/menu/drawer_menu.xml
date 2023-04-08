@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+    <item
+        android:id="@+id/setting_drawer"
+        android:title="Settings"
+        android:icon="@drawable/ic_settings"/>
+    <item
+        android:id="@+id/contacts_drawer"
+        android:title="Contacts"
+        android:icon="@drawable/ic_contacts" />
+
+    <item android:title="Specials">
+
+        <menu>
+
+            <item
+                android:id="@+id/help_drawer"
+                android:title="Technichal support"
+                android:icon="@drawable/ic_contact_support" />
+
+            <item
+                android:id="@+id/new_account_drawer"
+                android:title="Create new account"
+                android:icon="@drawable/ic_account"/>
+
+        </menu>
+    </item>
+</menu>

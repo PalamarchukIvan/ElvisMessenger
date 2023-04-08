@@ -15,9 +15,9 @@ import com.example.elvismessenger.databinding.ChatsListActivityBinding
 import com.github.javafaker.Faker
 import com.google.android.material.navigation.NavigationView
 
-class ChatsListActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
+class ChatsListActivity : AppCompatActivity(){
     lateinit var drawerLayout: DrawerLayout
-    lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
+    lateinit var toggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,26 +33,29 @@ class ChatsListActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         recyclerView.adapter = ChatsListAdapter(FakeChat.fakeItems)
 
         // Часть кода для работы меню шторки
-        drawerLayout = binding.menuDrawerLayoutChatsList
-        actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout,
-            R.string.nav_open, R.string.nav_close)
+        drawerLayout = binding.drawerLayout
+        val navView = binding.navView
 
-        drawerLayout.addDrawerListener(actionBarDrawerToggle)
-        actionBarDrawerToggle.syncState()
+        toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close)
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        actionBarDrawerToggle.onOptionsItemSelected(item)
-        when(item.itemId) {
-            R.id.nav_settings -> startActivity(Intent(this, FindUserActivity::class.java))
+        navView.setNavigationItemSelectedListener {
+
+            when(it.itemId) {
+                R.id.setting_drawer -> Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show()
+                R.id.contacts_drawer -> Toast.makeText(this, "Contacts", Toast.LENGTH_SHORT).show()
+                R.id.help_drawer -> Toast.makeText(this, "Support", Toast.LENGTH_SHORT).show()
+                R.id.new_account_drawer -> Toast.makeText(this, "new account", Toast.LENGTH_SHORT).show()
+            }
+            true
         }
-        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
+        return if (toggle.onOptionsItemSelected(item)) {
             true
         } else {
             //Проверяем на какую кнопку ты нажал

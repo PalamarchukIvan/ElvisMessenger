@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="125dp"
+    android:orientation="vertical"
+    android:background="@color/purple_500">
+
+    <TextView
+        android:id="@+id/logo_text_view_drawer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="LOGO"
+        android:textColor="@color/white"
+        android:textSize="70sp"
+        android:layout_marginTop="15dp"
+        android:textAlignment="center"/>
+
+</androidx.appcompat.widget.LinearLayoutCompat>
