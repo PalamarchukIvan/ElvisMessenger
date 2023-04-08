@@ -8,40 +8,39 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class ChatLogAdapter(private val chatMessages: List<ChatLogActivity.ChatMessage>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
+    // Константы для обозначения типа сообщения (мое или чужое)
     companion object {
         private const val VIEW_TYPE_USER_MESSAGE_ME = 0
         private const val VIEW_TYPE_USER_MESSAGE_OTHER = 1
     }
 
+    // Холдер для моих сообщений
     class MyUserHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val text: TextView = itemView.findViewById(R.id.text_gchat_message_me)
-        private val date: TextView = itemView.findViewById(R.id.text_gchat_date_me)
-        private val time:  TextView = itemView.findViewById(R.id.text_gchat_timestamp_me)
+        private val text: TextView = itemView.findViewById(R.id.msg_text_chat_me)
+        private val time:  TextView = itemView.findViewById(R.id.time_text_chat_me)
 
         fun bind(messageItem: ChatLogActivity.ChatMessage) {
             text.text = messageItem.text
             time.text = messageItem.time
-            date.text = "APR 10"
         }
     }
 
+    // Холдер для чужих сообщений
     class OtherUserHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val pfp: ImageView = itemView.findViewById(R.id.image_gchat_profile_other)
-        private val name: TextView = itemView.findViewById(R.id.text_gchat_user_other)
-        private val text: TextView = itemView.findViewById(R.id.text_gchat_message_other)
-        private val date: TextView = itemView.findViewById(R.id.text_gchat_date_other)
-        private val time:  TextView = itemView.findViewById(R.id.text_gchat_timestamp_other)
+        private val pfp: ImageView = itemView.findViewById(R.id.pfp_image_chat_other)
+        private val name: TextView = itemView.findViewById(R.id.name_text_chat_other)
+        private val text: TextView = itemView.findViewById(R.id.msg_text_chat_other)
+        private val time:  TextView = itemView.findViewById(R.id.time_text_chat_other)
 
         fun bind(messageItem: ChatLogActivity.OtherChatMessage) {
             pfp.setImageResource(R.drawable.dornan) // пока просто временное решение, подгрузка фотки из drawable
             name.text = messageItem.name
             text.text = messageItem.text
             time.text = messageItem.time
-            date.text = "APR 10"
         }
     }
 
+    // Функция для нахождения какого типа должен быть отображаймое сообщение
     override fun getItemViewType(position: Int): Int {
         return if (chatMessages[position] is ChatLogActivity.OtherChatMessage) {
             VIEW_TYPE_USER_MESSAGE_OTHER
@@ -52,7 +51,7 @@ class ChatLogAdapter(private val chatMessages: List<ChatLogActivity.ChatMessage>
         }
     }
 
-
+    // Создаем viewHolder в зависимости от типа сообщения
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
 
@@ -65,6 +64,7 @@ class ChatLogAdapter(private val chatMessages: List<ChatLogActivity.ChatMessage>
 
     override fun getItemCount(): Int = chatMessages.size
 
+    // Делаем биндинг в зависимости от типа холдера
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder.itemViewType) {
             VIEW_TYPE_USER_MESSAGE_ME -> {

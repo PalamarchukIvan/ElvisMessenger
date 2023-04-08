@@ -18,21 +18,22 @@ class ChatLogActivity : AppCompatActivity() {
         val binding = ActivityChatLogBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val test = intent.getStringExtra("name").toString()
+        // Из прошлого активити получаем имя (временное решение шобы протестить)
+        val name = intent.getStringExtra("name").toString()
 
         // Часть кода для работы списка чатов
         val recyclerView: RecyclerView = binding.listRecyclerViewChatLog
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         // Создаем адптер и передаем в него созданый фейкером список
-        val chatLogAdapter = ChatLogAdapter(FakeChat(test).fakeItems)
+        val chatLogAdapter = ChatLogAdapter(FakeChat(name).fakeItems)
 
         // Передаем адаптер
         recyclerView.adapter = chatLogAdapter
     }
 
-    // Класс шобы протесть имя из прошлого активити
-    class FakeChat(var test: String) {
+    // Класс а не object шобы протесть имя из прошлого активити + чтобы переписка в каждом чате была разной
+    class FakeChat(val name: String) {
         var fakeItems = mutableListOf<ChatMessage>()
 
         init {
@@ -46,7 +47,7 @@ class ChatLogActivity : AppCompatActivity() {
                 )
                 fakeItems.add(
                     OtherChatMessage(
-                        name = test,
+                        name = name,
                         text = faker.gameOfThrones().quote(),
                         time = "12:34"
                     )
@@ -54,4 +55,5 @@ class ChatLogActivity : AppCompatActivity() {
             }
         }
     }
+
 }
