@@ -45,10 +45,20 @@ class ChatsListActivity : AppCompatActivity(){
         navView.setNavigationItemSelectedListener {
 
             when(it.itemId) {
-                R.id.setting_drawer -> Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show()
-                R.id.contacts_drawer -> Toast.makeText(this, "Contacts", Toast.LENGTH_SHORT).show()
-                R.id.help_drawer -> Toast.makeText(this, "Support", Toast.LENGTH_SHORT).show()
-                R.id.new_account_drawer -> Toast.makeText(this, "new account", Toast.LENGTH_SHORT).show()
+                R.id.setting_drawer -> {
+                    val i = Intent(this, SettingsActivity::class.java)
+                    startActivity(i)
+                }
+                R.id.contacts_drawer -> {
+                    val i = Intent(this, ContactListActivity::class.java)
+                    startActivity(i)
+                }
+
+                R.id.help_drawer -> Toast.makeText(this, "Тут будет сапорт, но пока нет смысла это делать", Toast.LENGTH_SHORT).show()
+                R.id.new_account_drawer -> {
+                    val i = Intent(this, RegistrationActivity::class.java)
+                    startActivity(i)
+                }
             }
             true
         }
