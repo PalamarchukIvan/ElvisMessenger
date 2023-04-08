@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:showIn="navigation view">
+
+    <item
+        android:id="@+id/nav_add_new_friend"
+        android:title="New friend"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/nav_logout"
+        android:icon="@drawable/ic_test_ico"
+        app:showAsAction="always"/>
+
+</menu>
