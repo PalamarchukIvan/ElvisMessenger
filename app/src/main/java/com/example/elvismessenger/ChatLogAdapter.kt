@@ -1,0 +1,81 @@
+package com.example.elvismessenger
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+
+class ChatLogAdapter(private val chatMessages: List<ChatLogActivity.ChatMessage>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    // Константы для обозначения типа сообщения (мое или чужое)
+    companion object {
+        private const val VIEW_TYPE_USER_MESSAGE_ME = 0
+        private const val VIEW_TYPE_USER_MESSAGE_OTHER = 1
+    }
+
+    // Холдер для моих сообщений
+    class MyUserHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val text: TextView = itemView.findViewById(R.id.msg_text_chat_me)
+        private val time:  TextView = itemView.findViewById(R.id.time_text_chat_me)
+
+        fun bind(messageItem: ChatLogActivity.ChatMessage) {
+            text.text = messageItem.text
+            time.text = messageItem.time
+        }
+    }
+
+    // Холдер для чужих сообщений
+    class OtherUserHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val pfp: ImageView = itemView.findViewById(R.id.pfp_image_chat_other)
+        private val name: TextView = itemView.findViewById(R.id.name_text_chat_other)
+        private val text: TextView = itemView.findViewById(R.id.msg_text_chat_other)
+        private val time:  TextView = itemView.findViewById(R.id.time_text_chat_other)
+
+        fun bind(messageItem: ChatLogActivity.OtherChatMessage) {
+            pfp.setImageResource(R.drawable.dornan) // пока просто временное решение, подгрузка фотки из drawable
+            name.text = messageItem.name
+            text.text = messageItem.text
+            time.text = messageItem.time
+        }
+    }
+
+    // Функция для нахождения какого типа должен быть отображаймое сообщение
+    override fun getItemViewType(position: Int): Int {
+        return if (chatMessages[position] is ChatLogActivity.OtherChatMessage) {
+            VIEW_TYPE_USER_MESSAGE_OTHER
+        } else if (chatMessages[position] is ChatLogActivity.ChatMessage) {
+            VIEW_TYPE_USER_MESSAGE_ME
+        } else {
+            -1
+        }
+    }
+
+    // Создаем viewHolder в зависимости от типа сообщения
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
+
+        return when(viewType) {
+            VIEW_TYPE_USER_MESSAGE_ME -> MyUserHolder(layoutInflater.inflate(R.layout.chat_me_item, parent, false))
+            VIEW_TYPE_USER_MESSAGE_OTHER -> OtherUserHolder(layoutInflater.inflate(R.layout.chat_other_item, parent, false))
+            else -> MyUserHolder(layoutInflater.inflate(R.layout.chat_me_item, parent, false)) //Generic return
+        }
+    }
+
+    override fun getItemCount(): Int = chatMessages.size
+
+    // Делаем биндинг в зависимости от типа холдера
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder.itemViewType) {
+            VIEW_TYPE_USER_MESSAGE_ME -> {
+                holder as MyUserHolder
+                holder.bind(chatMessages[position])
+            }
+            VIEW_TYPE_USER_MESSAGE_OTHER -> {
+                holder as OtherUserHolder
+                holder.bind(chatMessages[position] as ChatLogActivity.OtherChatMessage)
+            }
+        }
+    }
+
+}
