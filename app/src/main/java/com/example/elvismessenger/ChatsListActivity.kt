@@ -3,7 +3,6 @@ package com.example.elvismessenger
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -13,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.databinding.ActivityChatsListBinding
 import com.github.javafaker.Faker
-import com.google.android.material.navigation.NavigationView
 
 class ChatsListActivity : AppCompatActivity(){
     lateinit var drawerLayout: DrawerLayout
@@ -74,6 +72,7 @@ class ChatsListActivity : AppCompatActivity(){
                     val i = Intent(this, RegistrationActivity::class.java)
                     startActivity(i)
                 }
+                R.id.nav_logout_drawer -> startActivity(Intent(this, LoginActivity::class.java))
             }
             true
         }
@@ -85,7 +84,6 @@ class ChatsListActivity : AppCompatActivity(){
         } else {
             //Проверяем на какую кнопку ты нажал
             when(item.itemId) {
-                R.id.nav_logout -> startActivity(Intent(this, LoginActivity::class.java))
                 R.id.nav_add_new_friend -> startActivity(Intent(this, FindUserActivity::class.java))
             }
 
