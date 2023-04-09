@@ -1,77 +1,57 @@
 package com.example.elvismessenger
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.example.elvismessenger.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity(){
-    lateinit var drawerLayout: DrawerLayout
-    lateinit var toggle: ActionBarDrawerToggle
+class MainActivity : AppCompatActivity() {
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navController: NavController
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        // Часть кода для работы меню шторки
+        //Поиск главного фрагмента (чата)
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
+        //доступ к дереву навигации
+        navController = navHostFragment.findNavController()
         drawerLayout = binding.drawerLayout
-        val navView = binding.navView
+        //связывание дерева навигации и шторки
+        binding.navView.setupWithNavController(navController)
+        //Хрен знает, что это и как работает, но по смыслу оно делает шторку кликабельной
+        appBarConfiguration = AppBarConfiguration(navController.graph, drawerLayout)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+    }
 
-        toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close)
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
+    //выдвижение шторки, по сути кликабельность тоггла (кнопки-буттерброт)
+    override fun onSupportNavigateUp(): Boolean {
+        val navController =
+            (supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment).findNavController()
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        navView.setNavigationItemSelectedListener {
-
-            when(it.itemId) {
-                R.id.setting_drawer -> {
-                    val i = Intent(this, SettingsFragment::class.java)
-                    startActivity(i)
-                }
-                R.id.contacts_drawer -> {
-                    val i = Intent(this, ContactsFragment::class.java)
-                    startActivity(i)
-                }
-
-                R.id.help_drawer -> Toast.makeText(this, "Тут будет сапорт, но пока нет смысла это делать", Toast.LENGTH_SHORT).show()
-                R.id.new_account_drawer -> {
-                    val i = Intent(this, RegistrationActivity::class.java)
-                    startActivity(i)
-                }
-                R.id.nav_logout_drawer -> startActivity(Intent(this, LoginActivity::class.java))
-            }
-            true
-
-        }
-        navView.bringToFront();
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (toggle.onOptionsItemSelected(item)) {
-            true
-        } else {
-            //Проверяем на какую кнопку ты нажал
-            when(item.itemId) {
-                R.id.nav_add_new_friend -> startActivity(Intent(this, FindUserActivity::class.java))
+        when (item.itemId) {
+            R.id.nav_add_new_friend -> {
+                Toast.makeText(this, "add", Toast.LENGTH_SHORT).show()
+                return true
             }
-
-            super.onOptionsItemSelected(item)
         }
+        return false
     }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        //Раздуваем макет верхних меню
-        menuInflater.inflate(R.menu.nav_menu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
 }
