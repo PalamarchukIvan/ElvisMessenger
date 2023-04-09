@@ -1,29 +1,38 @@
 package com.example.elvismessenger
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.elvismessenger.databinding.ActivityChatLogBinding
 import com.github.javafaker.Faker
 
-class ChatLogActivity : AppCompatActivity() {
+class ChatLogFragment : Fragment() {
     // Да это не дата классы и на это есть причина
     open class ChatMessage(val text: String, val time: String)
     class OtherChatMessage(val name: String, text: String, time: String) : ChatMessage(text, time)
+    lateinit var recyclerView: RecyclerView
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        val view = inflater.inflate(R.layout.fragment_chat_log, container, false)
+        recyclerView = view.findViewById(R.id.list_recycler_view_chat_log)
+        return view
+    }
 
-        val binding = ActivityChatLogBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         // Из прошлого активити получаем имя (временное решение шобы протестить)
-        val name = intent.getStringExtra("name").toString()
+        val name = arguments?.getString("name").toString()
 
         // Часть кода для работы списка чатов
-        val recyclerView: RecyclerView = binding.listRecyclerViewChatLog
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = LinearLayoutManager(context)
 
         // Создаем адптер и передаем в него созданый фейкером список
         val chatLogAdapter = ChatLogAdapter(FakeChat(name).fakeItems)
@@ -32,7 +41,6 @@ class ChatLogActivity : AppCompatActivity() {
         recyclerView.adapter = chatLogAdapter
     }
 
-    // Класс а не object шобы протесть имя из прошлого активити + чтобы переписка в каждом чате была разной
     class FakeChat(val name: String) {
         var fakeItems = mutableListOf<ChatMessage>()
 

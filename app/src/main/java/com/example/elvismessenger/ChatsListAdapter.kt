@@ -7,9 +7,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class ChatsListAdapter(private val chatItems: List<ChatsListActivity.ChatItem>) : RecyclerView.Adapter<ChatsListAdapter.ChatViewHolder>() {
+class ChatsListAdapter(private val chatItems: List<ChatListFragment.ChatItem>) : RecyclerView.Adapter<ChatsListAdapter.ChatViewHolder>() {
     // В переменную передаем из ChatsListActivity что наш клик на чат будет делать (лямбда)
-    var onItemClick: ((ChatsListActivity.ChatItem) -> Unit)? = null
+    var onItemClick: ((ChatListFragment.ChatItem) -> Unit)? = null
 
     class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val pfp: ImageView = itemView.findViewById(R.id.pfp_image_chat_item)
@@ -17,7 +17,7 @@ class ChatsListAdapter(private val chatItems: List<ChatsListActivity.ChatItem>) 
         private val status: TextView = itemView.findViewById(R.id.status_text_chat_item)
         private val time: TextView = itemView.findViewById(R.id.time_text_chat_item)
 
-        fun bind(chatItem: ChatsListActivity.ChatItem) {
+        fun bind(chatItem: ChatListFragment.ChatItem) {
             pfp.setImageResource(R.drawable.dornan) // пока просто временное решение, подгрузка фотки из drawable
             name.text = chatItem.name
             status.text = chatItem.status

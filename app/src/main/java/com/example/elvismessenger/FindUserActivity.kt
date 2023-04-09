@@ -16,6 +16,6 @@ class FindUserActivity : AppCompatActivity() {
         val recyclerView: RecyclerView = binding.foundUserListFindUser
         recyclerView.layoutManager = LinearLayoutManager(this)
         // Передаем в адптер созданый фейкером список
-        recyclerView.adapter = ChatsListAdapter(ChatsListActivity.FakeChat.fakeItems)
+        recyclerView.adapter = ChatsListAdapter(ChatListFragment.FakeChat.fakeItems)
     }
 }

@@ -21,7 +21,7 @@ class RegistrationActivity : AppCompatActivity() {
             }
             val userName = binding.userNamePlainTextRegistration.text.toString()
             val login = binding.loginPlainTextRegistration.text.toString()
-            val i = Intent(this, ChatsListActivity::class.java)
+            val i = Intent(this, MainActivity::class.java)
             i.putExtra("username", "$userName")
             i.putExtra("login", "$login")
             i.putExtra("pwd", "$password1")

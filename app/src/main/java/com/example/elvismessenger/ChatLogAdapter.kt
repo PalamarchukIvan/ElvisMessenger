@@ -7,7 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class ChatLogAdapter(private val chatMessages: List<ChatLogActivity.ChatMessage>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ChatLogAdapter(private val chatMessages: List<ChatLogFragment.ChatMessage>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     // Константы для обозначения типа сообщения (мое или чужое)
     companion object {
         private const val VIEW_TYPE_USER_MESSAGE_ME = 0
@@ -19,7 +19,7 @@ class ChatLogAdapter(private val chatMessages: List<ChatLogActivity.ChatMessage>
         private val text: TextView = itemView.findViewById(R.id.msg_text_chat_me)
         private val time:  TextView = itemView.findViewById(R.id.time_text_chat_me)
 
-        fun bind(messageItem: ChatLogActivity.ChatMessage) {
+        fun bind(messageItem: ChatLogFragment.ChatMessage) {
             text.text = messageItem.text
             time.text = messageItem.time
         }
@@ -32,7 +32,7 @@ class ChatLogAdapter(private val chatMessages: List<ChatLogActivity.ChatMessage>
         private val text: TextView = itemView.findViewById(R.id.msg_text_chat_other)
         private val time:  TextView = itemView.findViewById(R.id.time_text_chat_other)
 
-        fun bind(messageItem: ChatLogActivity.OtherChatMessage) {
+        fun bind(messageItem: ChatLogFragment.OtherChatMessage) {
             pfp.setImageResource(R.drawable.dornan) // пока просто временное решение, подгрузка фотки из drawable
             name.text = messageItem.name
             text.text = messageItem.text
@@ -42,9 +42,9 @@ class ChatLogAdapter(private val chatMessages: List<ChatLogActivity.ChatMessage>
 
     // Функция для нахождения какого типа должен быть отображаймое сообщение
     override fun getItemViewType(position: Int): Int {
-        return if (chatMessages[position] is ChatLogActivity.OtherChatMessage) {
+        return if (chatMessages[position] is ChatLogFragment.OtherChatMessage) {
             VIEW_TYPE_USER_MESSAGE_OTHER
-        } else if (chatMessages[position] is ChatLogActivity.ChatMessage) {
+        } else if (chatMessages[position] is ChatLogFragment.ChatMessage) {
             VIEW_TYPE_USER_MESSAGE_ME
         } else {
             -1
@@ -73,7 +73,7 @@ class ChatLogAdapter(private val chatMessages: List<ChatLogActivity.ChatMessage>
             }
             VIEW_TYPE_USER_MESSAGE_OTHER -> {
                 holder as OtherUserHolder
-                holder.bind(chatMessages[position] as ChatLogActivity.OtherChatMessage)
+                holder.bind(chatMessages[position] as ChatLogFragment.OtherChatMessage)
             }
         }
     }
