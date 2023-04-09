@@ -34,11 +34,11 @@ class MainActivity : AppCompatActivity(){
 
             when(it.itemId) {
                 R.id.setting_drawer -> {
-                    val i = Intent(this, SettingsActivity::class.java)
+                    val i = Intent(this, SettingsFragment::class.java)
                     startActivity(i)
                 }
                 R.id.contacts_drawer -> {
-                    val i = Intent(this, ContactListActivity::class.java)
+                    val i = Intent(this, ContactsFragment::class.java)
                     startActivity(i)
                 }
 
@@ -50,7 +50,9 @@ class MainActivity : AppCompatActivity(){
                 R.id.nav_logout_drawer -> startActivity(Intent(this, LoginActivity::class.java))
             }
             true
+
         }
+        navView.bringToFront();
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
