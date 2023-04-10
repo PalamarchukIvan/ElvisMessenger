@@ -18,6 +18,9 @@
         <action
             android:id="@+id/action_chatListFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_chatListFragment_to_findUserFragment"
+            app:destination="@id/findUserFragment" />
     </fragment>
     <fragment
         android:id="@+id/chatLogFragment"
@@ -32,4 +35,8 @@
         android:id="@+id/contactsFragment"
         android:name="com.example.elvismessenger.ContactsFragment"
         tools:layout="@layout/fragment_contacts" />
+    <fragment
+        android:id="@+id/findUserFragment"
+        android:name="com.example.elvismessenger.FindUserFragment"
+        tools:layout="@layout/fragment_find_user" />
 </navigation>

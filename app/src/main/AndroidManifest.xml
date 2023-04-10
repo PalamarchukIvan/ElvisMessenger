@@ -13,13 +13,6 @@
         android:theme="@style/Theme.ElvisMessenger"
         tools:targetApi="31">
         <activity
-            android:name=".FindUserActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".RegistrationActivity"
             android:exported="false">
             <meta-data

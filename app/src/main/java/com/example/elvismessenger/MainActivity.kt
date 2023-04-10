@@ -1,6 +1,8 @@
 package com.example.elvismessenger
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -8,10 +10,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
+import androidx.navigation.ui.*
 import com.example.elvismessenger.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -46,12 +45,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.nav_add_new_friend -> {
-                Toast.makeText(this, "add", Toast.LENGTH_SHORT).show()
-                return true
-            }
-        }
-        return false
+        return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        //Раздуваем макет верхних меню
+        menuInflater.inflate(R.menu.nav_menu, menu)
+        return true
     }
 }

@@ -5,7 +5,7 @@
     tools:showIn="navigation view">
 
     <item
-        android:id="@+id/nav_add_new_friend"
+        android:id="@+id/findUserFragment"
         android:title="New friend"
         android:icon="@drawable/ic_search"
         app:showAsAction="always"/>
