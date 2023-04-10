@@ -22,9 +22,12 @@ class FindUserFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_find_user, container, false)
 
         recyclerView = view.findViewById(R.id.found_user_list_findUser)
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = ChatsListAdapter(ChatListFragment.FakeChat.fakeItems)
-
-        return view
+        super.onViewCreated(view, savedInstanceState)
     }
 }

@@ -15,6 +15,7 @@ class ChatLogFragment : Fragment() {
     open class ChatMessage(val text: String, val time: String)
     class OtherChatMessage(val name: String, text: String, time: String) : ChatMessage(text, time)
     lateinit var recyclerView: RecyclerView
+    lateinit var name: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -23,14 +24,13 @@ class ChatLogFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_chat_log, container, false)
         recyclerView = view.findViewById(R.id.list_recycler_view_chat_log)
+        // Из прошлого активити получаем имя (временное решение шобы протестить)
+        name = arguments?.getString("name").toString()
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Из прошлого активити получаем имя (временное решение шобы протестить)
-        val name = arguments?.getString("name").toString()
-
         // Часть кода для работы списка чатов
         recyclerView.layoutManager = LinearLayoutManager(context)
 
