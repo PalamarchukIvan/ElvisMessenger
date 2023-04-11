@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         //доступ к дереву навигации
         navController = navHostFragment.findNavController()
         drawerLayout = binding.drawerLayout
+
         //связывание дерева навигации и шторки
         binding.navView.setupWithNavController(navController)
         //Хрен знает, что это и как работает, но по смыслу оно делает шторку кликабельной
