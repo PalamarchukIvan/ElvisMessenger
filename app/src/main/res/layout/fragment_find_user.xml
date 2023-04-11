@@ -11,19 +11,19 @@
         android:layout_height="match_parent">
 
         <EditText
-            android:id="@+id/user_to_find_findUser"
+            android:id="@+id/search_user_edit_text_find_user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="user name"
             android:inputType="textPersonName"
             android:minHeight="48dp"
-            app:layout_constraintEnd_toStartOf="@+id/find_user_button_findUser"
+            app:layout_constraintEnd_toStartOf="@+id/find_button_find_user"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/find_user_button_findUser"
+            android:id="@+id/find_button_find_user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Button"
@@ -37,6 +37,6 @@
             android:layout_marginTop="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/user_to_find_findUser" />
+            app:layout_constraintTop_toBottomOf="@+id/search_user_edit_text_find_user" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

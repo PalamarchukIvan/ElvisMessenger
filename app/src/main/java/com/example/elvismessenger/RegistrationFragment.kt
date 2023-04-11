@@ -2,10 +2,9 @@ package com.example.elvismessenger
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Button
-import androidx.navigation.Navigation
+import androidx.fragment.app.Fragment
 
 class RegistrationFragment : Fragment(R.layout.fragment_registration) {
 

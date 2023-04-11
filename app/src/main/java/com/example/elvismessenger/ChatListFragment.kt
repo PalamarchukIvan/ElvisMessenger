@@ -1,32 +1,20 @@
 package com.example.elvismessenger
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.*
+import android.view.View
 import androidx.fragment.app.Fragment
-import android.widget.Toast
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.javafaker.Faker
 
-class ChatListFragment : Fragment() {
+class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
 
     data class ChatItem(val name: String, val status: String, val time: String)
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chat_list, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         // Часть кода для работы списка чатов
         val recyclerView: RecyclerView = view.findViewById(R.id.list_recycler_view_chats_list)
         recyclerView.layoutManager = LinearLayoutManager(context)
