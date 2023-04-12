@@ -14,7 +14,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         super.onViewCreated(view, savedInstanceState)
 
         val loginButton: Button = view.findViewById(R.id.login_button_login)
-        val noAccountTextLogin: TextView = view.findViewById(R.id.no_accaunt_text_login)
+        val noAccountTextLogin: TextView = view.findViewById(R.id.no_account_text_login)
 
         loginButton.setOnClickListener {
             // не this а activity потому что делаем интент из фрагмента в активити

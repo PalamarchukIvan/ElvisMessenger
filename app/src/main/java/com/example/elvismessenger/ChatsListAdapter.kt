@@ -11,6 +11,11 @@ class ChatsListAdapter(private val chatItems: List<ChatListFragment.ChatItem>) :
     // В переменную передаем из ChatsListActivity что наш клик на чат будет делать (лямбда)
     var onItemClick: ((ChatListFragment.ChatItem) -> Unit)? = null
 
+    companion object {
+        private const val EVEN_CHAT = 0
+        private const val NOT_EVEN_CHAT = 1
+    }
+
     class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val pfp: ImageView = itemView.findViewById(R.id.pfp_image_chat_item)
         private val name: TextView = itemView.findViewById(R.id.name_text_chat_item)
@@ -25,11 +30,21 @@ class ChatsListAdapter(private val chatItems: List<ChatListFragment.ChatItem>) :
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
-        val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.chats_item, parent, false)
+    override fun getItemViewType(position: Int): Int {
+        return when (position % 2) {
+            0 -> EVEN_CHAT
+            else -> NOT_EVEN_CHAT
+        }
+    }
 
-        return ChatViewHolder(itemView)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
+
+        return when(viewType) {
+            EVEN_CHAT -> ChatViewHolder(layoutInflater.inflate(R.layout.chats_item_even, parent, false))
+            NOT_EVEN_CHAT -> ChatViewHolder(layoutInflater.inflate(R.layout.chats_item, parent, false))
+            else -> ChatViewHolder(layoutInflater.inflate(R.layout.chats_item_even, parent, false))
+        }
     }
 
     override fun getItemCount() = chatItems.size

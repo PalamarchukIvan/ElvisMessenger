@@ -11,7 +11,7 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val registrationButton: Button = view.findViewById(R.id.regestrate_button_regestration)
+        val registrationButton: Button = view.findViewById(R.id.create_acc_button_reg)
 
         registrationButton.setOnClickListener {
             // не this а activity потому что делаем интент из фрагмента в активити

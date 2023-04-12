@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.javafaker.Faker
@@ -18,6 +19,9 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         // Часть кода для работы списка чатов
         val recyclerView: RecyclerView = view.findViewById(R.id.list_recycler_view_chats_list)
         recyclerView.layoutManager = LinearLayoutManager(context)
+
+        // Добавление линии между элементами чата
+        recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
         // Создаем адптер и передаем в него созданый фейкером список
         val chatAdapter = ChatsListAdapter(FakeChat.fakeItems)
