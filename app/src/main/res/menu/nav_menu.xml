@@ -7,7 +7,7 @@
     <item
         android:id="@+id/findUserFragment"
         android:title="New friend"
-        android:icon="@drawable/ic_search"
+        android:icon="@drawable/ic_person_search"
         app:showAsAction="always"/>
 
 </menu>

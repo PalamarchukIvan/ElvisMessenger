@@ -2,14 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
-    <item
-        android:id="@+id/settingsFragment"
-        android:title="Settings"
-        android:icon="@drawable/ic_settings"/>
-    <item
-        android:id="@+id/contactsFragment"
-        android:title="Contacts"
-        android:icon="@drawable/ic_contacts" />
+
+    <item android:title="Essentials">
+        <menu>
+            <item
+                android:id="@+id/settingsFragment"
+                android:title="Settings"
+                android:icon="@drawable/ic_settings"/>
+            <item
+                android:id="@+id/contactsFragment"
+                android:title="Contacts"
+                android:icon="@drawable/ic_contacts" />
+        </menu>
+    </item>
 
     <item android:title="Specials">
 
@@ -30,7 +35,7 @@
 
     <item
         android:id="@+id/nav_logout_drawer"
-        android:title="logout"
+        android:title="Logout"
         android:icon="@drawable/ic_logout"/>
 
 </menu>

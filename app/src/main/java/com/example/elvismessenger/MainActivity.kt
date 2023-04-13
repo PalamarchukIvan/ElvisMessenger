@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
@@ -23,15 +24,18 @@ class MainActivity : AppCompatActivity() {
 
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         //Поиск главного фрагмента (чата)
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
+
         //доступ к дереву навигации
         navController = navHostFragment.findNavController()
         drawerLayout = binding.drawerLayout
 
         //связывание дерева навигации и шторки
         binding.navView.setupWithNavController(navController)
+
         //Хрен знает, что это и как работает, но по смыслу оно делает шторку кликабельной
         appBarConfiguration = AppBarConfiguration(navController.graph, drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
