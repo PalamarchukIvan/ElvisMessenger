@@ -21,6 +21,9 @@
         <action
             android:id="@+id/action_chatListFragment_to_findUserFragment"
             app:destination="@id/findUserFragment" />
+        <action
+            android:id="@+id/action_chatListFragment_to_regLogActivity"
+            app:destination="@id/regLogActivity" />
     </fragment>
     <fragment
         android:id="@+id/chatLogFragment"
@@ -38,4 +41,9 @@
         android:id="@+id/findUserFragment"
         android:name="com.example.elvismessenger.FindUserFragment"
         tools:layout="@layout/fragment_find_user" />
+    <activity
+        android:id="@+id/regLogActivity"
+        android:name="com.example.elvismessenger.RegLogActivity"
+        android:label="activity_reg_log"
+        tools:layout="@layout/activity_reg_log" />
 </navigation>
