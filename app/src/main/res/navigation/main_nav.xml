@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/chatListFragment"
-        android:name="com.example.elvismessenger.ChatListFragment"
+        android:name="com.example.elvismessenger.fragments.ChatListFragment"
         tools:layout="@layout/fragment_chat_list">
         <action
             android:id="@+id/action_chatListFragment_to_chatLogFragment"
@@ -27,23 +27,23 @@
     </fragment>
     <fragment
         android:id="@+id/chatLogFragment"
-        android:name="com.example.elvismessenger.ChatLogFragment"
+        android:name="com.example.elvismessenger.fragments.ChatLogFragment"
         tools:layout="@layout/fragment_chat_log" />
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.elvismessenger.SettingsFragment"
+        android:name="com.example.elvismessenger.fragments.SettingsFragment"
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/contactsFragment"
-        android:name="com.example.elvismessenger.ContactsFragment"
+        android:name="com.example.elvismessenger.fragments.ContactsFragment"
         tools:layout="@layout/fragment_contacts" />
     <fragment
         android:id="@+id/findUserFragment"
-        android:name="com.example.elvismessenger.FindUserFragment"
+        android:name="com.example.elvismessenger.fragments.FindUserFragment"
         tools:layout="@layout/fragment_find_user" />
     <activity
         android:id="@+id/regLogActivity"
-        android:name="com.example.elvismessenger.RegLogActivity"
+        android:name="com.example.elvismessenger.activities.RegLogActivity"
         android:label="activity_reg_log"
         tools:layout="@layout/activity_reg_log" />
 </navigation>

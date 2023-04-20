@@ -1,10 +1,11 @@
-package com.example.elvismessenger
+package com.example.elvismessenger.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import com.example.elvismessenger.R
 import com.example.elvismessenger.databinding.ActivityRegLogBinding
 
 class RegLogActivity : AppCompatActivity() {

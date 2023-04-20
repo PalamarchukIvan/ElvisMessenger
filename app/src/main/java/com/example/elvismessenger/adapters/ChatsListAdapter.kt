@@ -1,4 +1,4 @@
-package com.example.elvismessenger
+package com.example.elvismessenger.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.elvismessenger.fragments.ChatListFragment
+import com.example.elvismessenger.R
 
 class ChatsListAdapter(private val chatItems: List<ChatListFragment.ChatItem>) : RecyclerView.Adapter<ChatsListAdapter.ChatViewHolder>() {
     // В переменную передаем из ChatsListActivity что наш клик на чат будет делать (лямбда)

@@ -1,4 +1,4 @@
-package com.example.elvismessenger
+package com.example.elvismessenger.fragments
 
 import android.os.Bundle
 import android.view.View
@@ -7,6 +7,8 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.elvismessenger.R
+import com.example.elvismessenger.adapters.ChatsListAdapter
 import com.github.javafaker.Faker
 
 class ChatListFragment : Fragment(R.layout.fragment_chat_list) {

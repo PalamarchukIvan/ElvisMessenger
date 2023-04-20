@@ -1,17 +1,15 @@
-package com.example.elvismessenger
+package com.example.elvismessenger.activities
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.*
+import com.example.elvismessenger.R
 import com.example.elvismessenger.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {

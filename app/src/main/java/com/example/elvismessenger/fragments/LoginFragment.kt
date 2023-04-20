@@ -1,4 +1,4 @@
-package com.example.elvismessenger
+package com.example.elvismessenger.fragments
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,6 +7,8 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import com.example.elvismessenger.R
+import com.example.elvismessenger.activities.MainActivity
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
 

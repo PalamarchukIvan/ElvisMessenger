@@ -1,4 +1,4 @@
-package com.example.elvismessenger
+package com.example.elvismessenger.fragments
 
 import android.os.Bundle
 import android.view.View
@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.elvismessenger.R
+import com.example.elvismessenger.adapters.ChatsListAdapter
 
 class FindUserFragment : Fragment(R.layout.fragment_find_user) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

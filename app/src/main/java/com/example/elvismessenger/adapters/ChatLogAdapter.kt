@@ -1,4 +1,4 @@
-package com.example.elvismessenger
+package com.example.elvismessenger.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.elvismessenger.fragments.ChatLogFragment
+import com.example.elvismessenger.R
 
 class ChatLogAdapter(private val chatMessages: List<ChatLogFragment.ChatMessage>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     // Константы для обозначения типа сообщения (мое или чужое)
