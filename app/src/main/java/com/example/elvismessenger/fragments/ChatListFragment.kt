@@ -54,5 +54,4 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
             }
         }
     }
-
 }

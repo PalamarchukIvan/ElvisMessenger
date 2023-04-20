@@ -15,7 +15,7 @@ class ChatsListAdapter(private val chatItems: List<ChatListFragment.ChatItem>) :
 
     companion object {
         private const val EVEN_CHAT = 0
-        private const val NOT_EVEN_CHAT = 1
+        private const val ODD_CHAT = 1
     }
 
     class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -35,7 +35,7 @@ class ChatsListAdapter(private val chatItems: List<ChatListFragment.ChatItem>) :
     override fun getItemViewType(position: Int): Int {
         return when (position % 2) {
             0 -> EVEN_CHAT
-            else -> NOT_EVEN_CHAT
+            else -> ODD_CHAT
         }
     }
 
@@ -44,7 +44,7 @@ class ChatsListAdapter(private val chatItems: List<ChatListFragment.ChatItem>) :
 
         return when(viewType) {
             EVEN_CHAT -> ChatViewHolder(layoutInflater.inflate(R.layout.chats_item_even, parent, false))
-            NOT_EVEN_CHAT -> ChatViewHolder(layoutInflater.inflate(R.layout.chats_item, parent, false))
+            ODD_CHAT -> ChatViewHolder(layoutInflater.inflate(R.layout.chats_item, parent, false))
             else -> ChatViewHolder(layoutInflater.inflate(R.layout.chats_item_even, parent, false))
         }
     }

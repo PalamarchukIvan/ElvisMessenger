@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.fragments.ChatLogFragment
 import com.example.elvismessenger.R
 
-class ChatLogAdapter(private val chatMessages: List<ChatLogFragment.ChatMessage>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ChatLogAdapter(private val chatMessages: MutableList<ChatLogFragment.ChatMessage>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     // Константы для обозначения типа сообщения (мое или чужое)
     companion object {
         private const val VIEW_TYPE_USER_MESSAGE_ME = 0
@@ -42,14 +42,17 @@ class ChatLogAdapter(private val chatMessages: List<ChatLogFragment.ChatMessage>
         }
     }
 
-    // Функция для нахождения какого типа должен быть отображаймое сообщение
+    fun addMessage(message: ChatLogFragment.ChatMessage) {
+        chatMessages.add(0, message)
+        notifyDataSetChanged() // обновляет рендер списка с новыми элементом (как я понял)
+    }
+
+    // Функция для нахождения какого типа должно быть отображаймое сообщение
     override fun getItemViewType(position: Int): Int {
-        return if (chatMessages[position] is ChatLogFragment.OtherChatMessage) {
-            VIEW_TYPE_USER_MESSAGE_OTHER
-        } else if (chatMessages[position] is ChatLogFragment.ChatMessage) {
-            VIEW_TYPE_USER_MESSAGE_ME
-        } else {
-            -1
+        return when(chatMessages[position]) {
+            is ChatLogFragment.OtherChatMessage -> VIEW_TYPE_USER_MESSAGE_OTHER
+            is ChatLogFragment.ChatMessage -> VIEW_TYPE_USER_MESSAGE_ME
+            else -> -1
         }
     }
 
@@ -73,11 +76,11 @@ class ChatLogAdapter(private val chatMessages: List<ChatLogFragment.ChatMessage>
                 holder as MyUserHolder
                 holder.bind(chatMessages[position])
             }
+
             VIEW_TYPE_USER_MESSAGE_OTHER -> {
                 holder as OtherUserHolder
                 holder.bind(chatMessages[position] as ChatLogFragment.OtherChatMessage)
             }
         }
     }
-
 }
