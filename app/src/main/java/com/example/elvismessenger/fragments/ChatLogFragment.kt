@@ -1,10 +1,12 @@
-package com.example.elvismessenger
+package com.example.elvismessenger.fragments
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.elvismessenger.R
+import com.example.elvismessenger.adapters.ChatLogAdapter
 import com.github.javafaker.Faker
 
 class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
