@@ -18,13 +18,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
-            android:autofillHints=""
             android:background="@drawable/reg_log_edit_text"
             android:ems="10"
             android:hint="Enter message"
             android:inputType="textPersonName"
             android:minHeight="48dp"
-            android:paddingLeft="6dp"
+            android:paddingLeft="8dp"
             android:textColor="@android:color/white"
             android:textColorHint="#757575"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -34,12 +33,12 @@
         <Button
             android:id="@+id/send_button_chat_log"
             style="@style/ToggleButtonWithIconOnly"
-            app:icon="@drawable/ic_send"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="48dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
+            app:icon="@drawable/ic_send"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/input_edit_text_chat_log" />
@@ -48,12 +47,12 @@
             android:id="@+id/list_recycler_view_chat_log"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginBottom="7dp"
+            android:layout_marginBottom="8dp"
+            android:background="#424549"
             app:layout_constraintBottom_toTopOf="@+id/input_edit_text_chat_log"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:background="#424549" />
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

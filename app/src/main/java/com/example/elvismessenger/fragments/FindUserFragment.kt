@@ -13,7 +13,7 @@ class FindUserFragment : Fragment(R.layout.fragment_find_user) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recyclerView: RecyclerView = view.findViewById(R.id.found_user_list_findUser)
+        val recyclerView: RecyclerView = view.findViewById(R.id.found_user_list_find_user)
 
         // Добавление линии между элементами чата
         recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))

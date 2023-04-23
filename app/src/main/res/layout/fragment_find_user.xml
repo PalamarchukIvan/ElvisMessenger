@@ -22,7 +22,7 @@
             android:hint="Username"
             android:inputType="textPersonName"
             android:minHeight="48dp"
-            android:paddingLeft="6dp"
+            android:paddingLeft="8dp"
             android:textColor="@android:color/white"
             android:textColorHint="#acb3b9"
             app:layout_constraintEnd_toStartOf="@+id/find_button_find_user"
@@ -33,7 +33,7 @@
             android:id="@+id/find_button_find_user"
             style="@style/ToggleButtonWithIconOnly"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="48dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
@@ -43,10 +43,11 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/found_user_list_findUser"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:id="@+id/found_user_list_find_user"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/search_user_edit_text_find_user" />
