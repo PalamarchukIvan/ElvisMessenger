@@ -1,0 +1,31 @@
+<resources>
+    <!-- Язык -->
+    <string-array name="language_entries">
+        <item>English</item>
+        <item>Russian</item>
+        <item>Ukrainian</item>
+        <item>Polish</item>
+    </string-array>
+
+    <string-array name="language_values">
+        <item>english</item>
+        <item>russian</item>
+        <item>ukrainian</item>
+        <item>polish</item>
+    </string-array>
+
+    <!-- Размер шрифта -->
+    <string-array name="text_size_entries">
+        <item>4</item>
+        <item>8</item>
+        <item>12</item>
+        <item>16</item>
+    </string-array>
+
+    <string-array name="text_size_values">
+        <item>4</item>
+        <item>8</item>
+        <item>12</item>
+        <item>16</item>
+    </string-array>
+</resources>

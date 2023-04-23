@@ -1,0 +1,76 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory app:title="Accaount"
+        android:icon="@drawable/ic_username">
+
+        <EditTextPreference
+            app:key="name"
+            app:title="Username"
+            android:defaultValue="Иван Горчинский"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:key="about"
+            app:title="Your status"
+            android:defaultValue="Самый крутой"
+            app:useSimpleSummaryProvider="true" />
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Security"
+        android:icon="@drawable/ic_baseline_security_24">
+
+        <EditTextPreference
+            app:key="email"
+            app:title="Change your email"
+            android:defaultValue="someUserEmail@gmail.com"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:key="password"
+            app:title="Change your password" />
+
+        <SwitchPreferenceCompat
+            app:key="spying"
+            app:summaryOff="You do not allow us to collect data about you "
+            app:summaryOn="You do allow us to collect data about you"
+            app:title="Allow collecting data" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="General"
+        android:icon="@drawable/ic_settings">
+
+        <ListPreference
+            app:key="language"
+            app:title="Language"
+            app:defaultValue="english"
+            app:entries="@array/language_entries"
+            app:entryValues="@array/language_values"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:key="text_size"
+            app:title="Text size"
+            app:defaultValue="8"
+            app:entries="@array/text_size_entries"
+            app:entryValues="@array/text_size_values"
+            app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreferenceCompat
+            app:key="theme"
+            app:summaryOff="White theme"
+            app:summaryOn="Dark theme"
+            app:title="Theme" />
+
+
+        <SeekBarPreference
+            android:key="volume"
+            android:title="Notifications Volume"
+            android:defaultValue="40"
+            app:showSeekBarValue="true"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -16,23 +16,19 @@
             android:id="@+id/action_chatListFragment_to_contactsFragment"
             app:destination="@id/contactsFragment" />
         <action
-            android:id="@+id/action_chatListFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment" />
-        <action
             android:id="@+id/action_chatListFragment_to_findUserFragment"
             app:destination="@id/findUserFragment" />
         <action
             android:id="@+id/action_chatListFragment_to_regLogActivity"
             app:destination="@id/regLogActivity" />
+        <action
+            android:id="@+id/action_chatListFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/chatLogFragment"
         android:name="com.example.elvismessenger.fragments.ChatLogFragment"
         tools:layout="@layout/fragment_chat_log" />
-    <fragment
-        android:id="@+id/settingsFragment"
-        android:name="com.example.elvismessenger.fragments.SettingsFragment"
-        tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/contactsFragment"
         android:name="com.example.elvismessenger.fragments.ContactsFragment"
@@ -46,4 +42,8 @@
         android:name="com.example.elvismessenger.activities.RegLogActivity"
         android:label="activity_reg_log"
         tools:layout="@layout/activity_reg_log" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.elvismessenger.fragments.SettingsFragment"
+        android:label="SettingsFragment" />
 </navigation>
