@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.adapters.ChatLogAdapter
 import com.github.javafaker.Faker
+import java.time.LocalTime
 
 
 class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
@@ -48,7 +49,7 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         val inputText: EditText = view.findViewById(R.id.input_edit_text_chat_log)
 
         sendButton.setOnClickListener {
-            chatLogAdapter.addMessage(ChatMessage("${inputText.text}", "14:21"))
+            chatLogAdapter.addMessage(ChatMessage("${inputText.text}", "${LocalTime.now().hour}:${LocalTime.now().minute}"))
             inputText.text.clear()
         }
     }
