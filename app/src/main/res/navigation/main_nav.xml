@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/my_nav"
+    android:label="Password"
     app:startDestination="@id/chatListFragment">
 
     <fragment
@@ -51,5 +52,67 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.elvismessenger.fragments.settings.SettingsFragment"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_settings">
+        <action
+            android:id="@+id/action_settingsFragment_to_securitySettingsFragment"
+            app:destination="@id/securitySettingsFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_banListSettingsFragment"
+            app:destination="@id/banListSettingsFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_languageSettingsFragment"
+            app:destination="@id/languageSettingsFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_chatSettingsFragment"
+            app:destination="@id/chatSettingsFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_notificationsSettingsFragment"
+            app:destination="@id/notificationsSettingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/banListSettingsFragment"
+        android:name="com.example.elvismessenger.fragments.settings.BanListSettingsFragment"
+        tools:layout="@layout/fragment_ban_list_settings" />
+    <fragment
+        android:id="@+id/languageSettingsFragment"
+        android:name="com.example.elvismessenger.fragments.settings.LanguageSettingsFragment"
+        tools:layout="@layout/fragment_language_settings" />
+    <fragment
+        android:id="@+id/chatSettingsFragment"
+        android:name="com.example.elvismessenger.fragments.settings.ChatSettingsFragment"
+        tools:layout="@layout/fragment_chat_settings" />
+    <fragment
+        android:id="@+id/notificationsSettingsFragment"
+        android:name="com.example.elvismessenger.fragments.settings.NotificationsSettingsFragment"
+        tools:layout="@layout/fragment_notifications_settings" />
+    <fragment
+        android:id="@+id/securitySettingsFragment"
+        android:name="com.example.elvismessenger.fragments.settings.SecuritySettingsFragment"
+        android:label="ElvisMessenger"
+        tools:layout="@layout/fragment_security_settings">
+        <action
+            android:id="@+id/action_securitySettingsFragment_to_emailSettingsFragment"
+            app:destination="@id/emailSettingsFragment" />
+        <action
+            android:id="@+id/action_securitySettingsFragment_to_passwordSettingsFragment"
+            app:destination="@id/passwordSettingsFragment" />
+        <action
+            android:id="@+id/action_securitySettingsFragment_to_phoneNumberSettingsFragment"
+            app:destination="@id/phoneNumberSettingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/emailSettingsFragment"
+        android:name="com.example.elvismessenger.EmailSettingsFragment"
+        android:label="Email"
+        tools:layout="@layout/fragment_email_settings" />
+    <fragment
+        android:id="@+id/passwordSettingsFragment"
+        android:name="com.example.elvismessenger.PasswordSettingsFragment"
+        android:label="Password"
+        tools:layout="@layout/fragment_password_settings" />
+    <fragment
+        android:id="@+id/phoneNumberSettingsFragment"
+        android:name="com.example.elvismessenger.PhoneNumberSettingsFragment"
+        android:label="Phone Number"
+        tools:layout="@layout/fragment_phone_number_settings" />
 </navigation>
