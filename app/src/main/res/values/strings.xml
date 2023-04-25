@@ -19,4 +19,16 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="chat_log_enter_msg_hint">Enter message</string>
+    <string name="find_user_enter_msg_hint">Username</string>
+    <string name="elvis_msg_logo">\?:</string>
+    <string name="elvis_msg_logo_elvis_text">Elvis</string>
+    <string name="elvis_msg_logo_msg_text">Messenger</string>
+    <string name="login_email_address_text">Email address</string>
+    <string name="login_password_text">Password</string>
+    <string name="login_sign_in_button">Sign in</string>
+    <string name="login_new_to_elvis_text">New to ElvisMessenger?</string>
+    <string name="login_create_account_text">Create an account</string>
+    <string name="registration_username_text">Username</string>
+    <string name="registration_create_account_button">Create account</string>
 </resources>

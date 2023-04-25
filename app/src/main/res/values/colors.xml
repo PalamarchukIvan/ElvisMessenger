@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="elvis_main_color">#36393e</color>
+    <color name="elvis_main_light_variant_color">#424549</color>
+    <color name="elvis_main_dark_variant_color">#1e2124</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="elvis_primary_color">#4682B4</color>
+    <color name="elvis_primary_light_variant_color">#89CFF0</color>
+
+    <color name="elvis_text_color">#acb3b9</color>
+    <color name="elvis_text_variant_color">#b3cee5</color>
+    <color name="elvis_text_light_variant_color">#C0C0C0</color>
+
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="mainColorTheme">#36393e</color>
 </resources>
