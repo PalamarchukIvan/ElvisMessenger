@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#36393e">
+        android:background="@color/elvis_main_color">
 
         <EditText
             android:id="@+id/search_user_edit_text_find_user"
@@ -19,12 +19,12 @@
             android:layout_marginTop="8dp"
             android:background="@drawable/reg_log_edit_text"
             android:ems="10"
-            android:hint="Username"
+            android:hint="@string/find_user_enter_msg_hint"
             android:inputType="textPersonName"
             android:minHeight="48dp"
             android:paddingLeft="8dp"
-            android:textColor="@android:color/white"
-            android:textColorHint="#acb3b9"
+            android:textColor="@color/white"
+            android:textColorHint="@color/elvis_text_color"
             app:layout_constraintEnd_toStartOf="@+id/find_button_find_user"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
