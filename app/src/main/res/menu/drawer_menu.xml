@@ -3,31 +3,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <item android:title="Essentials">
+    <item android:title="@string/drawer_menu_essentials_title">
         <menu>
             <item
                 android:id="@+id/settingsFragment"
-                android:title="Settings"
+                android:title="@string/drawer_menu_settings_title"
                 android:icon="@drawable/ic_settings"/>
             <item
                 android:id="@+id/contactsFragment"
-                android:title="Contacts"
+                android:title="@string/drawer_menu_contacts_title"
                 android:icon="@drawable/ic_contacts" />
         </menu>
     </item>
 
-    <item android:title="Specials">
+    <item android:title="@string/drawer_menu_specials_title">
 
         <menu>
 
             <item
                 android:id="@+id/help_drawer"
-                android:title="Technichal support"
+                android:title="@string/drawer_menu_tech_support_title"
                 android:icon="@drawable/ic_contact_support" />
 
             <item
                 android:id="@+id/new_account_drawer"
-                android:title="Create new account"
+                android:title="@string/drawer_menu_create_new_acc_title"
                 android:icon="@drawable/ic_account"/>
 
         </menu>
@@ -35,7 +35,7 @@
 
     <item
         android:id="@+id/regLogActivity"
-        android:title="Logout"
+        android:title="@string/drawer_menu_logout_title"
         android:icon="@drawable/ic_logout"/>
 
 </menu>

@@ -34,4 +34,12 @@
     <string name="choose_text_theme">Choose text theme</string>
     <string name="set_your_text_size">Set your text size</string>
     <string name="chat_settings">Chat Settings</string>
+    <string name="drawer_menu_essentials_title">Essentials</string>
+    <string name="drawer_menu_settings_title">Settings</string>
+    <string name="drawer_menu_contacts_title">Contacts</string>
+    <string name="drawer_menu_specials_title">Specials</string>
+    <string name="drawer_menu_tech_support_title">Technichal support</string>
+    <string name="drawer_menu_create_new_acc_title">Create new account</string>
+    <string name="drawer_menu_logout_title">Logout</string>
+    <string name="nav_menu_new_friend_title">New friend</string>
 </resources>
