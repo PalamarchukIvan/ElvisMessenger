@@ -102,17 +102,17 @@
     </fragment>
     <fragment
         android:id="@+id/emailSettingsFragment"
-        android:name="com.example.elvismessenger.EmailSettingsFragment"
+        android:name="com.example.elvismessenger.fragments.settings.editingData.EmailSettingsFragment"
         android:label="Email"
         tools:layout="@layout/fragment_email_settings" />
     <fragment
         android:id="@+id/passwordSettingsFragment"
-        android:name="com.example.elvismessenger.PasswordSettingsFragment"
+        android:name="com.example.elvismessenger.fragments.settings.editingData.PasswordSettingsFragment"
         android:label="Password"
         tools:layout="@layout/fragment_password_settings" />
     <fragment
         android:id="@+id/phoneNumberSettingsFragment"
-        android:name="com.example.elvismessenger.PhoneNumberSettingsFragment"
+        android:name="com.example.elvismessenger.fragments.settings.editingData.PhoneNumberSettingsFragment"
         android:label="Phone Number"
         tools:layout="@layout/fragment_phone_number_settings" />
 </navigation>

@@ -17,6 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/reg_log_edit_text"
             android:ems="10"
             android:hint="@string/find_user_enter_msg_hint"
@@ -25,21 +26,8 @@
             android:paddingLeft="8dp"
             android:textColor="@color/white"
             android:textColorHint="@color/elvis_text_color"
-            app:layout_constraintEnd_toStartOf="@+id/find_button_find_user"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/find_button_find_user"
-            style="@style/ToggleButtonWithIconOnly"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            app:icon="@drawable/ic_search"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/search_user_edit_text_find_user"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
