@@ -31,4 +31,11 @@
     <string name="login_create_account_text">Create an account</string>
     <string name="registration_username_text">Username</string>
     <string name="registration_create_account_button">Create account</string>
+    <string name="drawer_menu_essentials_title">Essentials</string>
+    <string name="drawer_menu_settings_title">Settings</string>
+    <string name="drawer_menu_contacts_title">Contacts</string>
+    <string name="drawer_menu_specials_title">Specials</string>
+    <string name="drawer_menu_tech_support_title">Technichal support</string>
+    <string name="drawer_menu_create_new_acc_title">Create new account</string>
+    <string name="drawer_menu_logout_title">Logout</string>
 </resources>
