@@ -6,8 +6,8 @@
 
     <item
         android:id="@+id/findUserFragment"
-        android:title="New friend"
         android:icon="@drawable/ic_person_search"
-        app:showAsAction="always"/>
-
+        android:title="@string/nav_menu_new_friend_title"
+        android:visible="false"
+        app:showAsAction="always" />
 </menu>

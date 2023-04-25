@@ -37,4 +37,5 @@
         android:id="@+id/regLogActivity"
         android:title="@string/drawer_menu_logout_title"
         android:icon="@drawable/ic_logout"/>
+
 </menu>
