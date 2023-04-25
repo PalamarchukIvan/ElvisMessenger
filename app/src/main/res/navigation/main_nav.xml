@@ -23,6 +23,9 @@
             app:destination="@id/regLogActivity" />
         <action
             android:id="@+id/action_chatListFragment_to_settingsFragment"
+            app:destination="@id/settingsFragmentSP" />
+        <action
+            android:id="@+id/action_chatListFragment_to_settingsFragment2"
             app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
@@ -43,7 +46,11 @@
         android:label="activity_reg_log"
         tools:layout="@layout/activity_reg_log" />
     <fragment
+        android:id="@+id/settingsFragmentSP"
+        android:name="com.example.elvismessenger.fragments.SettingsFragment2" />
+    <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.elvismessenger.fragments.SettingsFragment"
-        android:label="SettingsFragment" />
+        android:name="com.example.elvismessenger.fragments.settings.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
 </navigation>
