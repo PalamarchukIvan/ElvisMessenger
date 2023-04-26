@@ -19,8 +19,10 @@ class PasswordSettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         newPassword = view.findViewById(R.id.new_password)
         newPassword.setText(MainActivity.sp.getString(SettingsFragment.PASSWORD, "test email"))
-        newPassword.addTextChangedListener {
-            saveData()
+        newPassword.setOnFocusChangeListener { v, hasFocus ->
+            if(!hasFocus) {
+                saveData()
+            }
         }
     }
 

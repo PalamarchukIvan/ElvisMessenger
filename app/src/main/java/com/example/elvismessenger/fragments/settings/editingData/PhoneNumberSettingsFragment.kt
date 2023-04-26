@@ -19,8 +19,10 @@ class PhoneNumberSettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         newPhoneNumber = view.findViewById(R.id.new_phone_number)
         newPhoneNumber.setText(MainActivity.sp.getString(SettingsFragment.PHONE_NUMBER, "test phone_number"))
-        newPhoneNumber.addTextChangedListener {
-            saveData()
+        newPhoneNumber.setOnFocusChangeListener { v, hasFocus ->
+            if(!hasFocus) {
+                saveData()
+            }
         }
     }
 

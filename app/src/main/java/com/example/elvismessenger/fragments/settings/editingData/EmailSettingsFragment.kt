@@ -1,6 +1,7 @@
 package com.example.elvismessenger.fragments.settings.editingData
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,8 +20,11 @@ class EmailSettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         newEmail = view.findViewById(R.id.new_email)
         newEmail.setText(MainActivity.sp.getString(SettingsFragment.EMAIL, "test password"))
-        newEmail.addTextChangedListener {
-            saveData()
+        newEmail.setOnFocusChangeListener { v, hasFocus ->
+            if(!hasFocus) {
+                Log.d("test performance", "entered")
+                saveData()
+            }
         }
     }
 
