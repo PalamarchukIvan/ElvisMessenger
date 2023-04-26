@@ -50,33 +50,8 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
             Navigation.findNavController(view).navigate(R.id.action_chatListFragment_to_chatLogFragment, name)
         }
 
-        loadSettingsData()
     }
 
-    private fun loadSettingsData() {
-//        val sharedPreference = PreferenceManager.getDefaultSharedPreferences(requireContext())
-//
-//        val name = sharedPreference.getString("name", "")
-//        Log.d("settings test", "1")
-//        val about = sharedPreference.getString("about", "")
-//        Log.d("settings test", "2")
-//
-//        val email = sharedPreference.getString("email", "")
-//        Log.d("settings test", "3")
-//        val password = sharedPreference.getString("password", "")
-//        Log.d("settings test", "4")
-//        val ifCanSpy = sharedPreference.getBoolean("spying", false);
-//        Log.d("settings test", "5")
-//
-//        val language = sharedPreference.getString("language", "english")
-//        Log.d("settings test", "6")
-//        val volume = sharedPreference.getInt("volume", 40)
-//        Log.d("settings test", "7")
-//        val textSize = sharedPreference.getString("text_size", "")
-//        Log.d("settings test", "8")
-//        val ifDarkTheme = sharedPreference.getBoolean("theme", false)
-//        Log.d("settings test", "9")
-    }
 
     object FakeChat {
         var fakeItems = mutableListOf<ChatItem>()
