@@ -25,7 +25,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
 
         noAccountTextLogin.setOnClickListener {
-            Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_registrationFragment)
+            Navigation.findNavController(view)
+                .navigate(R.id.action_loginFragment_to_registrationFragment)
         }
     }
 

@@ -49,7 +49,12 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         val inputText: EditText = view.findViewById(R.id.input_edit_text_chat_log)
 
         sendButton.setOnClickListener {
-            chatLogAdapter.addMessage(ChatMessage("${inputText.text}", "${LocalTime.now().hour}:${LocalTime.now().minute}"))
+            chatLogAdapter.addMessage(
+                ChatMessage(
+                    "${inputText.text}",
+                    "${LocalTime.now().hour}:${LocalTime.now().minute}"
+                )
+            )
             inputText.text.clear()
         }
     }

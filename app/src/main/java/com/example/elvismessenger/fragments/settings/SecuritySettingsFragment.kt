@@ -36,15 +36,18 @@ class SecuritySettingsFragment : Fragment() {
 
 
         changeEmail.setOnClickListener {
-            Navigation.findNavController(view).navigate(R.id.action_securitySettingsFragment_to_emailSettingsFragment)
+            Navigation.findNavController(view)
+                .navigate(R.id.action_securitySettingsFragment_to_emailSettingsFragment)
         }
 
         changePassword.setOnClickListener {
-            Navigation.findNavController(view).navigate(R.id.action_securitySettingsFragment_to_passwordSettingsFragment)
+            Navigation.findNavController(view)
+                .navigate(R.id.action_securitySettingsFragment_to_passwordSettingsFragment)
         }
 
         changePhoneNumber.setOnClickListener {
-            Navigation.findNavController(view).navigate(R.id.action_securitySettingsFragment_to_phoneNumberSettingsFragment)
+            Navigation.findNavController(view)
+                .navigate(R.id.action_securitySettingsFragment_to_phoneNumberSettingsFragment)
         }
 
         phoneNumberVisibility.setOnClickListener {

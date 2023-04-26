@@ -76,15 +76,6 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
 //        Log.d("settings test", "8")
 //        val ifDarkTheme = sharedPreference.getBoolean("theme", false)
 //        Log.d("settings test", "9")
-//
-//        Toast.makeText(context, "name: $name", Toast.LENGTH_SHORT).show()
-//        Toast.makeText(context, "about: $about", Toast.LENGTH_SHORT).show()
-//        Toast.makeText(context, "email: $email", Toast.LENGTH_SHORT).show()
-//        Toast.makeText(context, "password: $password", Toast.LENGTH_SHORT).show()
-//        Toast.makeText(context, "language: $language", Toast.LENGTH_SHORT).show()
-//        Toast.makeText(context, "volume: $volume", Toast.LENGTH_SHORT).show()
-//        Toast.makeText(context, "text size: $textSize", Toast.LENGTH_SHORT).show()
-//        Toast.makeText(context, "theme is dak?: $ifDarkTheme", Toast.LENGTH_SHORT).show()
     }
 
     object FakeChat {

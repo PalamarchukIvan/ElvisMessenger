@@ -49,6 +49,7 @@
             android:textStyle="bold" />
 
         <SeekBar
+            android:id="@+id/new_text_size"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
@@ -62,10 +63,11 @@
             android:progressDrawable="@drawable/seek_bar_custom" />
 
         <TextView
+            android:id="@+id/current_text_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="31dp"
+            android:layout_marginTop="37dp"
             android:layout_marginEnd="22dp"
             android:text="18"
             android:textColor="@color/white"

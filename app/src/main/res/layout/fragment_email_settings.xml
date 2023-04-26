@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/elvis_main_color"
-    tools:context=".EmailSettingsFragment">
+    tools:context="com.example.elvismessenger.fragments.settings.editingData.EmailSettingsFragment">
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -21,6 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp">
 
@@ -34,7 +35,7 @@
 
             <EditText
                 android:id="@+id/new_email"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:background="@drawable/custom_edit_text"

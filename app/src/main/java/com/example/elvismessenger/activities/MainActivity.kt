@@ -1,5 +1,6 @@
 package com.example.elvismessenger.activities
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -11,14 +12,23 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.*
 import com.example.elvismessenger.R
 import com.example.elvismessenger.databinding.ActivityMainBinding
+import com.example.elvismessenger.fragments.settings.SettingsFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
 
+
+    companion object {
+        lateinit var sp: SharedPreferences
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        sp = getSharedPreferences(SettingsFragment.SHARED_PREFERENCES, MODE_PRIVATE)
 
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

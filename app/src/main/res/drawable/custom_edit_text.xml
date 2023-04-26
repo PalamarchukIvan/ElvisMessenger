@@ -3,13 +3,13 @@
 
     <item android:state_enabled="true" android:state_focused="true">
         <shape android:shape="rectangle">
-            <solid android:color="@color/elvis_background_for_blocks"/>
+            <solid android:color="@color/elvis_main_dark_variant_color"/>
         </shape>
     </item>
 
     <item android:state_enabled="true">
         <shape android:shape="rectangle">
-            <solid android:color="@color/elvis_background_for_blocks"/>
+            <solid android:color="@color/elvis_main_dark_variant_color"/>
         </shape>
     </item>
 
