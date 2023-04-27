@@ -174,7 +174,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:padding="0dp"
-                    android:src="@drawable/ic_chat"/>
+                    android:src="@drawable/ic_lang"/>
 
                 <TextView
                     android:layout_marginStart="40dp"

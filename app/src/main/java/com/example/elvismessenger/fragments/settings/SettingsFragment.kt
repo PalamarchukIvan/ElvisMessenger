@@ -38,6 +38,7 @@ class SettingsFragment : Fragment() {
         const val PASSWORD: String = "password"
         const val PHONE_NUMBER: String = "phone number"
 
+        const val LANGUAGE_SELECTED:String = "language"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
