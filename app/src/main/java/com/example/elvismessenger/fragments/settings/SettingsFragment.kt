@@ -38,6 +38,10 @@ class SettingsFragment : Fragment() {
         const val PASSWORD: String = "password"
         const val PHONE_NUMBER: String = "phone number"
 
+        const val PHONE_NUMBER_VIS: Int = 0
+        const val LAST_SEEN_VIS: Int = 1
+        const val GROUP_ADD_VIS: Int = 2
+
         const val LANGUAGE_SELECTED:String = "language"
     }
 

@@ -1,26 +1,34 @@
 package com.example.elvismessenger.fragments.settings
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
+import com.example.elvismessenger.adapters.ChatsListAdapter
+import com.example.elvismessenger.fragments.ChatListFragment
 
-class BanListSettingsFragment : Fragment() {
+class BanListSettingsFragment : Fragment(R.layout.fragment_ban_list_settings) {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        }
-    }
+        val recyclerView: RecyclerView = view.findViewById(R.id.banned_users_recycler_list)
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_ban_list_settings, container, false)
+        // Добавление линии между элементами чата
+        recyclerView.addItemDecoration(
+            DividerItemDecoration(
+                context,
+                DividerItemDecoration.VERTICAL
+            )
+        )
+
+        recyclerView.layoutManager = LinearLayoutManager(context)
+
+        val users = ChatListFragment.FakeChat.fakeItems
+
+        recyclerView.adapter = ChatsListAdapter(users)
     }
 }
