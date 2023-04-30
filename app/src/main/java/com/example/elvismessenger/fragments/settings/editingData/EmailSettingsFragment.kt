@@ -43,5 +43,4 @@ class EmailSettingsFragment : Fragment() {
         editor?.putString(SettingsFragment.EMAIL, newEmail.text.toString())
         editor?.apply()
     }
-
 }

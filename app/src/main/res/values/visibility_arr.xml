@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="visibility">
+        <item>Everyone</item>
+        <item>Friends</item>
+        <item>No one</item>
+    </string-array>
+</resources>
