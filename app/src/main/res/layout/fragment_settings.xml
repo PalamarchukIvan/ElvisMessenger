@@ -113,7 +113,7 @@
                     android:textStyle="bold"
                     android:layout_marginTop="3dp"
                     android:textSize="16sp"
-                    android:text="Security settings"/>
+                    android:text="@string/security_settings"/>
 
                     <ImageView
                         android:id="@+id/security_settings_button"
@@ -143,7 +143,7 @@
                         android:textStyle="bold"
                         android:layout_marginTop="3dp"
                         android:textSize="16sp"
-                        android:text="Notifications"/>
+                        android:text="@string/notifications"/>
 
                     <ImageView
                         android:id="@+id/notifications_settings_button"
@@ -184,7 +184,7 @@
                     android:textStyle="bold"
                     android:layout_marginTop="3dp"
                     android:textSize="16sp"
-                    android:text="Language"/>
+                    android:text="@string/language"/>
 
                 <TextView
                     android:id="@+id/current_language"
@@ -195,7 +195,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginEnd="32dp"
                     android:layout_centerVertical="true"
-                    android:text="selected_language" />
+                    android:text="@string/selected_language" />
 
                 <ImageView
                     android:id="@+id/language_settings"
@@ -226,7 +226,7 @@
                     android:textStyle="bold"
                     android:layout_marginTop="3dp"
                     android:textSize="16sp"
-                    android:text="Dark theme"/>
+                    android:text="@string/dark_theme"/>
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/if_dark_theme_button"
@@ -254,7 +254,7 @@
                     android:textStyle="bold"
                     android:layout_marginTop="3dp"
                     android:textSize="16sp"
-                    android:text="Ban list"/>
+                    android:text="@string/ban_list"/>
 
                 <ImageView
                     android:id="@+id/ban_list_button"

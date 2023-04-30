@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
-            android:text="Security settings"
+            android:text="@string/security_settings"
             android:textColor="@color/white"
             android:textSize="32sp"
             android:textStyle="bold" />
@@ -45,7 +45,7 @@
             android:layout_marginTop="12dp"
             android:layout_marginEnd="12dp"
             android:layout_marginBottom="12dp"
-            android:text="Account"
+            android:text="@string/account"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -76,7 +76,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="44dp"
                     android:layout_marginTop="1dp"
-                    android:text="Email"
+                    android:text="@string/email"
                     android:textColor="@color/white"
                     android:textSize="16sp" />
 
@@ -108,7 +108,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="44dp"
                     android:layout_marginTop="1dp"
-                    android:text="Passsword"
+                    android:text="@string/passsword"
                     android:textColor="@color/white"
                     android:textSize="16sp" />
 
@@ -140,7 +140,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="44dp"
                     android:layout_marginTop="1dp"
-                    android:text="Phone number"
+                    android:text="@string/phone_number"
                     android:textColor="@color/white"
                     android:textSize="16sp" />
 
@@ -173,7 +173,7 @@
             android:layout_marginTop="12dp"
             android:layout_marginEnd="12dp"
             android:layout_marginBottom="12dp"
-            android:text="Privacy"
+            android:text="@string/privacy"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -198,7 +198,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="1dp"
-                    android:text="Phone number visibility"
+                    android:text="@string/phone_number_visibility"
                     android:textColor="@color/white"
                     android:textSize="16sp" />
 
@@ -223,7 +223,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="1dp"
-                    android:text="Last seen visibility "
+                    android:text="@string/last_seen_visibility"
                     android:textColor="@color/white"
                     android:textSize="16sp" />
 
@@ -247,7 +247,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="1dp"
-                    android:text="Who can add to group"
+                    android:text="@string/who_can_add_to_group"
                     android:textColor="@color/white"
                     android:textSize="16sp" />
 

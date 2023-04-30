@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
-            android:text="Notification Settings"
+            android:text="@string/notification_settings"
             android:textColor="@color/white"
             android:textSize="32sp"
             android:textStyle="bold" />
@@ -44,7 +44,7 @@
             android:textSize="16sp"
             android:layout_marginTop="12dp"
             android:layout_marginStart="20dp"
-            android:text="Notification volume"/>
+            android:text="@string/notification_volume"/>
 
         <SeekBar
             android:id="@+id/new_notifications_volume"
