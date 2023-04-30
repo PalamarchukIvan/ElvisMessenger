@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import com.example.elvismessenger.R
 import com.example.elvismessenger.activities.MainActivity
 import com.example.elvismessenger.fragments.settings.SettingsFragment
+import com.example.elvismessenger.utils.UserPersonalSettings
 
 class EmailSettingsFragment : Fragment() {
 

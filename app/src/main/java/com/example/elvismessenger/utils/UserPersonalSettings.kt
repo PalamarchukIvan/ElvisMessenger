@@ -1,5 +1,7 @@
 package com.example.elvismessenger.utils
 
+import androidx.lifecycle.MutableLiveData
+
 
 class UserPersonalSettings private constructor() {
     var email: String = ""
@@ -13,13 +15,7 @@ class UserPersonalSettings private constructor() {
     var status: String = ""
 
     companion object {
-        private var instance: UserPersonalSettings? = null
-
-        fun getInstance(): UserPersonalSettings {
-            if (instance == null) {
-                instance = UserPersonalSettings()
-            }
-            return instance!!
-        }
+        private var instance: UserPersonalSettings = UserPersonalSettings()
+        val livaDataInstance = MutableLiveData(instance)
     }
 }

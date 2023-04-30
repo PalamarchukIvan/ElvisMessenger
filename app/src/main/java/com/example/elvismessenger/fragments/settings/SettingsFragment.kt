@@ -28,7 +28,7 @@ class SettingsFragment : Fragment() {
     //Инициализация SharedPreferances
     val sp = MainActivity.sp
 
-    private val userSettings: UserPersonalSettings = UserPersonalSettings.getInstance()
+    private val userSettings = UserPersonalSettings.livaDataInstance
 
     companion object {
         const val SHARED_PREFERENCES: String = "settings"
@@ -61,8 +61,6 @@ class SettingsFragment : Fragment() {
         toEditProfile = view.findViewById(R.id.to_edit_profile_btn)
         currentLanguage = view.findViewById(R.id.current_language)
         theme.isChecked = sp.getBoolean(THEME, false)
-        currentLanguage.text = sp.getString("language", "English")
-
 
         toChatSettings.setOnClickListener {
             Navigation.findNavController(view)
@@ -102,21 +100,25 @@ class SettingsFragment : Fragment() {
 
         loadData()
 
-        view.findViewById<TextView>(R.id.settings_username).text = userSettings.username
-        view.findViewById<TextView>(R.id.settings_status).text = userSettings.status
+        view.findViewById<TextView>(R.id.settings_username).text = userSettings.value?.username
+        view.findViewById<TextView>(R.id.settings_status).text = userSettings.value?.status
 
     }
 
     private fun loadData() {
-        userSettings.phoneNumber = sp.getString(PHONE_NUMBER, "").toString()
-        userSettings.password = sp.getString(PASSWORD, "").toString()
-        userSettings.email = sp.getString(EMAIL, "").toString()
-        userSettings.ifDarkTheme = sp.getBoolean(THEME, false)
-        userSettings.textSize = sp.getInt(TEXT_SIZE, 18)
-        userSettings.language = sp.getString(LANGUAGE_SELECTED, "English").toString()
-        userSettings.username = sp.getString(USERNAME, "").toString()
-        userSettings.about = sp.getString(ABOUT, "").toString()
-        userSettings.status = sp.getString(STATUS, "").toString()
+        val newSettings = userSettings.value
+
+        newSettings?.phoneNumber = sp.getString(PHONE_NUMBER, "").toString()
+        newSettings?.password = sp.getString(PASSWORD, "").toString()
+        newSettings?.email = sp.getString(EMAIL, "").toString()
+        newSettings?.ifDarkTheme = sp.getBoolean(THEME, false)
+        newSettings?.textSize = sp.getInt(TEXT_SIZE, 18)
+        newSettings?.language = sp.getString(LANGUAGE_SELECTED, "English").toString()
+        newSettings?.username = sp.getString(USERNAME, "").toString()
+        newSettings?.about = sp.getString(ABOUT, "").toString()
+        newSettings?.status = sp.getString(STATUS, "").toString()
+
+        userSettings.postValue(newSettings)
     }
 
     override fun onCreateView(
