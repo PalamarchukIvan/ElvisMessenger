@@ -100,13 +100,28 @@ class SettingsFragment : Fragment() {
                 .navigate(R.id.action_settingsFragment_to_editProfileFragment)
         }
 
+        loadData()
 
         view.findViewById<TextView>(R.id.settings_username).text = userSettings.value?.username
         view.findViewById<TextView>(R.id.settings_status).text = userSettings.value?.status
 
     }
 
+    private fun loadData() {
+        val newSettings = userSettings.value
 
+        newSettings?.phoneNumber = sp.getString(PHONE_NUMBER, "").toString()
+        newSettings?.password = sp.getString(PASSWORD, "").toString()
+        newSettings?.email = sp.getString(EMAIL, "").toString()
+        newSettings?.ifDarkTheme = sp.getBoolean(THEME, false)
+        newSettings?.textSize = sp.getInt(TEXT_SIZE, 18)
+        newSettings?.language = sp.getString(LANGUAGE_SELECTED, "English").toString()
+        newSettings?.username = sp.getString(USERNAME, "").toString()
+        newSettings?.about = sp.getString(ABOUT, "").toString()
+        newSettings?.status = sp.getString(STATUS, "").toString()
+
+        userSettings.postValue(newSettings)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
