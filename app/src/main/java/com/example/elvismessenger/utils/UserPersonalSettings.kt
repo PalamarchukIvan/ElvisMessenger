@@ -10,9 +10,9 @@ class UserPersonalSettings private constructor() {
     var ifDarkTheme: Boolean = false
     var textSize: Int = 0
     var language: String = ""
-    var username: String = ""
+    var username: String = "username"
     var about: String = ""
-    var status: String = ""
+    var status: String = "no status"
     var notificationVolume: Int = 100
 
     companion object {
