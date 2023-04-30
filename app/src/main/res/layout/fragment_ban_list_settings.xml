@@ -36,7 +36,6 @@
         android:background="@drawable/round_settings_background">
 
         <TextView
-            android:id="@+id/selected_lang"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"

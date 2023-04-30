@@ -1,15 +1,14 @@
 package com.example.elvismessenger.fragments.settings
 
-import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
+import android.widget.TextView
+import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.SwitchCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.example.elvismessenger.R
 import com.example.elvismessenger.activities.MainActivity
@@ -22,6 +21,8 @@ class SettingsFragment : Fragment() {
     private lateinit var toLanguageSettings: ImageView
     private lateinit var toBanListSettings: ImageView
     private lateinit var theme: SwitchCompat
+    private lateinit var toEditProfile: AppCompatButton
+    private lateinit var currentLanguage: TextView
 
 
     //Инициализация SharedPreferances
@@ -43,6 +44,9 @@ class SettingsFragment : Fragment() {
         const val GROUP_ADD_VIS: Int = 2
 
         const val LANGUAGE_SELECTED:String = "language"
+        const val USERNAME: String = "username"
+        const val STATUS: String = "status"
+        const val ABOUT: String = "about"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -54,7 +58,11 @@ class SettingsFragment : Fragment() {
         toLanguageSettings = view.findViewById(R.id.language_settings)
         toBanListSettings = view.findViewById(R.id.ban_list_button)
         theme = view.findViewById(R.id.if_dark_theme_button)
+        toEditProfile = view.findViewById(R.id.to_edit_profile_btn)
+        currentLanguage = view.findViewById(R.id.current_language)
         theme.isChecked = sp.getBoolean(THEME, false)
+        currentLanguage.text = sp.getString("language", "English")
+
 
         toChatSettings.setOnClickListener {
             Navigation.findNavController(view)
@@ -87,7 +95,16 @@ class SettingsFragment : Fragment() {
             editor.apply()
         }
 
+        toEditProfile.setOnClickListener {
+            Navigation.findNavController(view)
+                .navigate(R.id.action_settingsFragment_to_editProfileFragment)
+        }
+
         loadData()
+
+        view.findViewById<TextView>(R.id.settings_username).text = userSettings.username
+        view.findViewById<TextView>(R.id.settings_status).text = userSettings.status
+
     }
 
     private fun loadData() {
@@ -95,14 +112,17 @@ class SettingsFragment : Fragment() {
         userSettings.password = sp.getString(PASSWORD, "").toString()
         userSettings.email = sp.getString(EMAIL, "").toString()
         userSettings.ifDarkTheme = sp.getBoolean(THEME, false)
-        userSettings.textSize
+        userSettings.textSize = sp.getInt(TEXT_SIZE, 18)
+        userSettings.language = sp.getString(LANGUAGE_SELECTED, "English").toString()
+        userSettings.username = sp.getString(USERNAME, "").toString()
+        userSettings.about = sp.getString(ABOUT, "").toString()
+        userSettings.status = sp.getString(STATUS, "").toString()
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_settings, container, false)
     }
 }

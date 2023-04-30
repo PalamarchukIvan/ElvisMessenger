@@ -7,6 +7,10 @@ class UserPersonalSettings private constructor() {
     var phoneNumber: String = ""
     var ifDarkTheme: Boolean = false
     var textSize: Int = 0
+    var language: String = ""
+    var username: String = ""
+    var about: String = ""
+    var status: String = ""
 
     companion object {
         private var instance: UserPersonalSettings? = null

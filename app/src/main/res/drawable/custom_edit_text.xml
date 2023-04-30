@@ -3,13 +3,15 @@
 
     <item android:state_enabled="true" android:state_focused="true">
         <shape android:shape="rectangle">
-            <solid android:color="@color/elvis_main_dark_variant_color"/>
+            <solid android:color="@color/elvis_main_light_variant_color"/>
+            <corners android:radius="20dp"/>
         </shape>
     </item>
 
     <item android:state_enabled="true">
         <shape android:shape="rectangle">
-            <solid android:color="@color/elvis_main_dark_variant_color"/>
+            <solid android:color="@color/elvis_main_light_variant_color"/>
+            <corners android:radius="20dp"/>
         </shape>
     </item>
 

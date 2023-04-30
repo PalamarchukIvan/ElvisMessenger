@@ -40,7 +40,7 @@ class LanguageOptionsAdapter(private val languages: Array<String>) :  RecyclerVi
         val layoutInflater = LayoutInflater.from(parent.context)
 
         return when(viewType) {
-            EVEN_LANG -> LangOptionViewHolder(layoutInflater.inflate(R.layout.lang_item_even, parent, false))
+            EVEN_LANG -> LangOptionViewHolder(layoutInflater.inflate(R.layout.lang_item_selected, parent, false))
             ODD_LANG -> LangOptionViewHolder(layoutInflater.inflate(R.layout.lang_item, parent, false))
             else -> LangOptionViewHolder(layoutInflater.inflate(R.layout.chats_item_even, parent, false))
         }
