@@ -34,6 +34,7 @@ class SettingsFragment : Fragment() {
         const val SHARED_PREFERENCES: String = "settings"
         const val THEME: String = "theme"
         const val TEXT_SIZE: String = "text size"
+        const val NOTIFICATION_VOLUME: String = "notify_volume"
 
         const val EMAIL: String = "email"
         const val PASSWORD: String = "password"
@@ -119,6 +120,7 @@ class SettingsFragment : Fragment() {
         newSettings?.username = sp.getString(USERNAME, "").toString()
         newSettings?.about = sp.getString(ABOUT, "").toString()
         newSettings?.status = sp.getString(STATUS, "").toString()
+        newSettings?.notificationVolume = sp.getInt(NOTIFICATION_VOLUME, 100)
 
         userSettings.postValue(newSettings)
     }

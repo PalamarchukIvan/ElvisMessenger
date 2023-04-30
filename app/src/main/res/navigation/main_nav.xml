@@ -115,6 +115,5 @@
     <fragment
         android:id="@+id/editProfileFragment"
         android:name="com.example.elvismessenger.fragments.settings.EditProfileFragment"
-        android:label="fragment_edit_profile"
         tools:layout="@layout/fragment_edit_profile" />
 </navigation>

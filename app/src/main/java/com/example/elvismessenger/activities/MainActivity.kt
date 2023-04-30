@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
 
         navigationView = binding.navView
 
-        loadData()
+        loadFormerData()
 
         //Первичная настрйока
         navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = userSettings.value?.username
@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadData() {
+    private fun loadFormerData() {
         val newSettings = userSettings.value
 
         newSettings?.phoneNumber = sp.getString(SettingsFragment.PHONE_NUMBER, "").toString()

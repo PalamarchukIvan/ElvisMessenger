@@ -13,6 +13,7 @@ class UserPersonalSettings private constructor() {
     var username: String = ""
     var about: String = ""
     var status: String = ""
+    var notificationVolume: Int = 100
 
     companion object {
         private var instance: UserPersonalSettings = UserPersonalSettings()
