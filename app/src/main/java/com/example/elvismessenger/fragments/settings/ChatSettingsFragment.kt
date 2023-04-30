@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.elvismessenger.R
 import com.example.elvismessenger.activities.MainActivity
+import com.example.elvismessenger.utils.UserPersonalSettings
 
 class ChatSettingsFragment : Fragment() {
 
@@ -20,8 +21,10 @@ class ChatSettingsFragment : Fragment() {
         newTextSize = view.findViewById(R.id.new_text_size)
         currentTextSize = view.findViewById(R.id.current_text_size)
 
-        newTextSize.progress = MainActivity.sp.getInt(SettingsFragment.TEXT_SIZE, 18)
-        currentTextSize.text = newTextSize.progress.toString()
+        UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
+            newTextSize.progress = it.textSize
+            currentTextSize.text = newTextSize.progress.toString()
+        }
 
         newTextSize.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 

@@ -20,7 +20,10 @@ class EmailSettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         newEmail = view.findViewById(R.id.new_email)
-        newEmail.setText(MainActivity.sp.getString(SettingsFragment.EMAIL, "test password"))
+
+        UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
+            newEmail.setText(it.email)
+        }
         newEmail.setOnFocusChangeListener { v, hasFocus ->
             if(!hasFocus) {
                 Log.d("test performance", "entered")

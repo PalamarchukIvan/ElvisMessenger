@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import com.example.elvismessenger.R
 import com.example.elvismessenger.activities.MainActivity
 import com.example.elvismessenger.fragments.settings.SettingsFragment
+import com.example.elvismessenger.utils.UserPersonalSettings
 
 class PasswordSettingsFragment : Fragment() {
 
@@ -18,7 +19,9 @@ class PasswordSettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         newPassword = view.findViewById(R.id.new_password)
-        newPassword.setText(MainActivity.sp.getString(SettingsFragment.PASSWORD, "test email"))
+        UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
+            newPassword.setText(it.password)
+        }
         newPassword.setOnFocusChangeListener { v, hasFocus ->
             if(!hasFocus) {
                 saveData()

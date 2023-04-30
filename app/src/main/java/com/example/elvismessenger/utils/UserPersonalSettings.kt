@@ -4,14 +4,14 @@ import androidx.lifecycle.MutableLiveData
 
 
 class UserPersonalSettings private constructor() {
-    var email: String = ""
-    var password: String = ""
-    var phoneNumber: String = ""
+    var email: String = "test email"
+    var password: String = "test pwd"
+    var phoneNumber: String = "123321"
     var ifDarkTheme: Boolean = false
-    var textSize: Int = 0
-    var language: String = ""
-    var username: String = "username"
-    var about: String = ""
+    var textSize: Int = 18
+    var language: String = "English"
+    var username: String = "no username"
+    var about: String = "no about"
     var status: String = "no status"
     var notificationVolume: Int = 100
 

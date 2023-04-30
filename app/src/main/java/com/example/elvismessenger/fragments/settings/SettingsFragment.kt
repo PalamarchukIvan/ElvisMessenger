@@ -44,7 +44,7 @@ class SettingsFragment : Fragment() {
         const val LAST_SEEN_VIS: Int = 1
         const val GROUP_ADD_VIS: Int = 2
 
-        const val LANGUAGE_SELECTED:String = "language"
+        const val LANGUAGE_SELECTED: String = "language"
         const val USERNAME: String = "username"
         const val STATUS: String = "status"
         const val ABOUT: String = "about"
@@ -62,8 +62,13 @@ class SettingsFragment : Fragment() {
         toEditProfile = view.findViewById(R.id.to_edit_profile_btn)
         currentLanguage = view.findViewById(R.id.current_language)
 
-        theme.isChecked = userSettings.value?.ifDarkTheme ?: false
-        currentLanguage.text = userSettings.value?.language
+        userSettings.observe(viewLifecycleOwner) {
+            theme.isChecked = userSettings.value?.ifDarkTheme ?: false
+            currentLanguage.text = userSettings.value?.language
+
+            view.findViewById<TextView>(R.id.settings_username).text = userSettings.value?.username
+            view.findViewById<TextView>(R.id.settings_status).text = userSettings.value?.status
+        }
 
         toChatSettings.setOnClickListener {
             Navigation.findNavController(view)
@@ -103,8 +108,6 @@ class SettingsFragment : Fragment() {
 
         loadData()
 
-        view.findViewById<TextView>(R.id.settings_username).text = userSettings.value?.username
-        view.findViewById<TextView>(R.id.settings_status).text = userSettings.value?.status
 
     }
 

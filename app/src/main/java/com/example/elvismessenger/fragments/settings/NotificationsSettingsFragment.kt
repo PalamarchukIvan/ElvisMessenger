@@ -20,8 +20,10 @@ class NotificationsSettingsFragment : Fragment() {
         newNotificationVolume = view.findViewById(R.id.new_notifications_volume)
         currentNotificationVolume = view.findViewById(R.id.current_notifications_volume)
 
-        newNotificationVolume.progress = UserPersonalSettings.livaDataInstance.value!!.notificationVolume
-        currentNotificationVolume.text = newNotificationVolume.progress.toString()
+        UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
+            newNotificationVolume.progress = UserPersonalSettings.livaDataInstance.value!!.notificationVolume
+            currentNotificationVolume.text = newNotificationVolume.progress.toString()
+        }
 
         newNotificationVolume.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 

@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import com.example.elvismessenger.R
 import com.example.elvismessenger.activities.MainActivity
 import com.example.elvismessenger.fragments.settings.SettingsFragment
+import com.example.elvismessenger.utils.UserPersonalSettings
 
 class PhoneNumberSettingsFragment : Fragment() {
 
@@ -18,7 +19,11 @@ class PhoneNumberSettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         newPhoneNumber = view.findViewById(R.id.new_phone_number)
-        newPhoneNumber.setText(MainActivity.sp.getString(SettingsFragment.PHONE_NUMBER, "test phone_number"))
+
+        UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
+            newPhoneNumber.setText(it.phoneNumber)
+        }
+
         newPhoneNumber.setOnFocusChangeListener { v, hasFocus ->
             if(!hasFocus) {
                 saveData()

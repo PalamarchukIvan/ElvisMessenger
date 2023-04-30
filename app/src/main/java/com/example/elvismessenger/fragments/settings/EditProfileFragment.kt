@@ -28,18 +28,20 @@ class EditProfileFragment : Fragment() {
         newName = view.findViewById(R.id.new_username)
         submitBtn = view.findViewById(R.id.submit_profile_btn)
 
-        newStatus.setText(MainActivity.sp.getString(SettingsFragment.STATUS, "no status"))
+        UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
+            newStatus.setText(it.status)
+            newAbout.setText(it.about)
+            newName.setText(it.username)
+        }
+
         newStatus.addTextChangedListener {
             submitBtn.isVisible = true
 
         }
-
-        newAbout.setText(MainActivity.sp.getString(SettingsFragment.ABOUT, "no about"))
         newAbout.addTextChangedListener {
             submitBtn.isVisible = true
         }
 
-        newName.setText(MainActivity.sp.getString(SettingsFragment.USERNAME, "username"))
         newName.addTextChangedListener {
             submitBtn.isVisible = true
         }
