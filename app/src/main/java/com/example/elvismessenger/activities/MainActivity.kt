@@ -54,14 +54,33 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         navigationView = binding.navView
+
+        loadData()
+
         //Первичная настрйока
-        navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = sp.getString(SettingsFragment.USERNAME, "username")
-        navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = sp.getString(SettingsFragment.STATUS, "status")
+        navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = userSettings.value?.username
+        navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = userSettings.value?.status
 
         userSettings.observe(this) {
             navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = userSettings.value?.username
             navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = userSettings.value?.status
         }
+    }
+
+    private fun loadData() {
+        val newSettings = userSettings.value
+
+        newSettings?.phoneNumber = sp.getString(SettingsFragment.PHONE_NUMBER, "").toString()
+        newSettings?.password = sp.getString(SettingsFragment.PASSWORD, "").toString()
+        newSettings?.email = sp.getString(SettingsFragment.EMAIL, "").toString()
+        newSettings?.ifDarkTheme = sp.getBoolean(SettingsFragment.THEME, false)
+        newSettings?.textSize = sp.getInt(SettingsFragment.TEXT_SIZE, 18)
+        newSettings?.language = sp.getString(SettingsFragment.LANGUAGE_SELECTED, "English").toString()
+        newSettings?.username = sp.getString(SettingsFragment.USERNAME, "").toString()
+        newSettings?.about = sp.getString(SettingsFragment.ABOUT, "").toString()
+        newSettings?.status = sp.getString(SettingsFragment.STATUS, "").toString()
+
+        userSettings.postValue(newSettings)
     }
 
     //выдвижение шторки, по сути кликабельность тоггла (кнопки-буттерброт)
