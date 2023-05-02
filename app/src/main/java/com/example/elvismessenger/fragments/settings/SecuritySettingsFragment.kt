@@ -1,6 +1,7 @@
 package com.example.elvismessenger.fragments.settings
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.fragment.app.Fragment
@@ -18,8 +19,10 @@ class SecuritySettingsFragment : Fragment(R.layout.fragment_security_settings) {
     private lateinit var lastSeenVisibility: Spinner
     private lateinit var groupAddVisibility: Spinner
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onResume() {
+        super.onResume()
+
+        SettingsFragment.loadData()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

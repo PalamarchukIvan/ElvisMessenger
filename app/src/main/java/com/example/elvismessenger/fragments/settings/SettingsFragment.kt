@@ -25,12 +25,13 @@ class SettingsFragment : Fragment() {
     private lateinit var currentLanguage: TextView
 
 
-    //Инициализация SharedPreferances
-    val sp = MainActivity.sp
 
-    private val userSettings = UserPersonalSettings.livaDataInstance
 
     companion object {
+        //Инициализация SharedPreferances + LiveData
+        private val sp = MainActivity.sp
+        private val userSettings = UserPersonalSettings.livaDataInstance
+
         const val SHARED_PREFERENCES: String = "settings"
         const val THEME: String = "theme"
         const val TEXT_SIZE: String = "text size"
@@ -48,6 +49,24 @@ class SettingsFragment : Fragment() {
         const val USERNAME: String = "username"
         const val STATUS: String = "status"
         const val ABOUT: String = "about"
+        const val PHOTO = "photo"
+
+        internal fun loadData() {
+            val newSettings = userSettings.value
+
+            newSettings?.phoneNumber = sp.getString(PHONE_NUMBER, "").toString()
+            newSettings?.password = sp.getString(PASSWORD, "").toString()
+            newSettings?.email = sp.getString(EMAIL, "").toString()
+            newSettings?.ifDarkTheme = sp.getBoolean(THEME, false)
+            newSettings?.textSize = sp.getInt(TEXT_SIZE, 18)
+            newSettings?.language = sp.getString(LANGUAGE_SELECTED, "English").toString()
+            newSettings?.username = sp.getString(USERNAME, "").toString()
+            newSettings?.about = sp.getString(ABOUT, "").toString()
+            newSettings?.status = sp.getString(STATUS, "").toString()
+            newSettings?.notificationVolume = sp.getInt(NOTIFICATION_VOLUME, 100)
+
+            userSettings.postValue(newSettings)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -109,23 +128,6 @@ class SettingsFragment : Fragment() {
         loadData()
 
 
-    }
-
-    private fun loadData() {
-        val newSettings = userSettings.value
-
-        newSettings?.phoneNumber = sp.getString(PHONE_NUMBER, "").toString()
-        newSettings?.password = sp.getString(PASSWORD, "").toString()
-        newSettings?.email = sp.getString(EMAIL, "").toString()
-        newSettings?.ifDarkTheme = sp.getBoolean(THEME, false)
-        newSettings?.textSize = sp.getInt(TEXT_SIZE, 18)
-        newSettings?.language = sp.getString(LANGUAGE_SELECTED, "English").toString()
-        newSettings?.username = sp.getString(USERNAME, "").toString()
-        newSettings?.about = sp.getString(ABOUT, "").toString()
-        newSettings?.status = sp.getString(STATUS, "").toString()
-        newSettings?.notificationVolume = sp.getInt(NOTIFICATION_VOLUME, 100)
-
-        userSettings.postValue(newSettings)
     }
 
     override fun onCreateView(

@@ -49,6 +49,7 @@
                 android:layout_marginStart="20dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/current_photo_edit_profile"
                     android:layout_width="112dp"
                     android:layout_height="112dp"
                     android:src="@drawable/dornan" />

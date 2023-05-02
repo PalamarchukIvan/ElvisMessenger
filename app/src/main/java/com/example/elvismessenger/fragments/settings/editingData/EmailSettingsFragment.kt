@@ -26,7 +26,6 @@ class EmailSettingsFragment : Fragment() {
         }
         newEmail.setOnFocusChangeListener { v, hasFocus ->
             if(!hasFocus) {
-                Log.d("test performance", "entered")
                 saveData()
             }
         }
