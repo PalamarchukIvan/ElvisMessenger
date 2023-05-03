@@ -45,13 +45,14 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         recyclerView.adapter = chatAdapter
 
         chatAdapter.onItemClick = {
-            val name = Bundle()
-            name.putString("name", it.name)
-            Navigation.findNavController(view).navigate(R.id.action_chatListFragment_to_chatLogFragment, name)
+            val otherUserInfo = Bundle()
+            otherUserInfo.putString("name", it.name)
+            otherUserInfo.putString("about", it.status)
+            Navigation.findNavController(view)
+                .navigate(R.id.action_chatListFragment_to_chatLogFragment, otherUserInfo)
         }
 
     }
-
 
     object FakeChat {
         var fakeItems = mutableListOf<ChatItem>()

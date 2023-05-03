@@ -1,6 +1,7 @@
 package com.example.elvismessenger.fragments
 
 import android.os.Bundle
+import android.view.Menu
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -12,17 +13,23 @@ import com.example.elvismessenger.adapters.ChatLogAdapter
 import com.github.javafaker.Faker
 import java.time.LocalTime
 
-
 class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
     // Да это не дата классы и на это есть причина
     open class ChatMessage(val text: String, val time: String)
     class OtherChatMessage(val name: String, text: String, time: String) : ChatMessage(text, time)
 
-    lateinit var name: String
+    // дата класс с инфой о юзере
+    data class OtherUser(val name: String, val about: String, val status: String)
+
+    lateinit var otherUser: OtherUser
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        name = arguments?.getString("name").toString()
+        otherUser = OtherUser(
+            name = arguments?.getString("name").toString(),
+            about = arguments?.getString("about").toString(),
+            "Offline"
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -39,7 +46,7 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         recyclerView.layoutManager = layoutManager
 
         // Создаем адптер и передаем в него созданый фейкером список
-        val chatLogAdapter = ChatLogAdapter(FakeChat(name).fakeItems)
+        val chatLogAdapter = ChatLogAdapter(FakeChat(otherUser.name).fakeItems, otherUser)
 
         // Передаем адаптер
         recyclerView.adapter = chatLogAdapter

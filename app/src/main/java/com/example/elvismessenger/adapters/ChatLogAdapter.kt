@@ -1,15 +1,18 @@
 package com.example.elvismessenger.adapters
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.fragments.ChatLogFragment
 import com.example.elvismessenger.R
 
-class ChatLogAdapter(private val chatMessages: MutableList<ChatLogFragment.ChatMessage>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ChatLogAdapter(private val chatMessages: MutableList<ChatLogFragment.ChatMessage>, private val otherUser: ChatLogFragment.OtherUser) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     // Константы для обозначения типа сообщения (мое или чужое)
     companion object {
         private const val VIEW_TYPE_USER_MESSAGE_ME = 0
@@ -29,13 +32,12 @@ class ChatLogAdapter(private val chatMessages: MutableList<ChatLogFragment.ChatM
 
     // Холдер для чужих сообщений
     class OtherUserHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val pfp: ImageView = itemView.findViewById(R.id.pfp_image_chat_other)
+        val pfp: ImageView = itemView.findViewById(R.id.pfp_image_chat_other)
         private val name: TextView = itemView.findViewById(R.id.name_text_chat_other)
         private val text: TextView = itemView.findViewById(R.id.msg_text_chat_other)
         private val time:  TextView = itemView.findViewById(R.id.time_text_chat_other)
 
         fun bind(messageItem: ChatLogFragment.OtherChatMessage) {
-            pfp.setImageResource(R.drawable.dornan) // пока просто временное решение, подгрузка фотки из drawable
             name.text = messageItem.name
             text.text = messageItem.text
             time.text = messageItem.time
@@ -80,6 +82,14 @@ class ChatLogAdapter(private val chatMessages: MutableList<ChatLogFragment.ChatM
             VIEW_TYPE_USER_MESSAGE_OTHER -> {
                 holder as OtherUserHolder
                 holder.bind(chatMessages[position] as ChatLogFragment.OtherChatMessage)
+                holder.pfp.setImageResource(R.drawable.dornan) // пока просто временное решение, подгрузка фотки из drawable
+                holder.pfp.setOnClickListener {
+                    val otherUserInfo = Bundle()
+                    otherUserInfo.putString("otherUserName", otherUser.name)
+                    otherUserInfo.putString("otherUserAbout", otherUser.about)
+                    otherUserInfo.putString("otherUserStatus", otherUser.status)
+                    Navigation.findNavController(it).navigate(R.id.action_chatLogFragment_to_otherUserProfile, otherUserInfo)
+                }
             }
         }
     }
