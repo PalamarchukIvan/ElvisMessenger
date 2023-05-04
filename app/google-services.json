@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "182611470816",
+    "project_id": "elvismessenger-4393f",
+    "storage_bucket": "elvismessenger-4393f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:182611470816:android:14799f2acb54ff6efc2385",
+        "android_client_info": {
+          "package_name": "com.example.elvismessenger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "182611470816-dogh22jubb0cesq71g6khrmn7pmjipcj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.elvismessenger",
+            "certificate_hash": "52a6f75aecfcd56420b28b0978f070d56835e896"
+          }
+        },
+        {
+          "client_id": "182611470816-jh2plaki9735sh5npok3rnfuegm7g2vt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNLn8MvlKRHbCy72Rswixeb6oG0s45mKI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "182611470816-jh2plaki9735sh5npok3rnfuegm7g2vt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
