@@ -1,6 +1,7 @@
 package com.example.elvismessenger.db
 
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
@@ -14,12 +15,14 @@ class UserRepository {
         userNodeREf.push().setValue(user)
     }
 
-    fun toUserDB(user: FirebaseUser, uPassword: String = "") =
+    fun getUsers() = FirebaseDatabase.getInstance().getReference("users")
+
+    fun toUserDB(user: FirebaseUser, uPassword: String = "", username: String = "") =
         User(
             uid = user.uid,
-            username = user.displayName ?: "no username",
+            username = user.displayName ?: username,
             photo = user.photoUrl.toString(),
             password = uPassword,
-            phoneNumber = user.phoneNumber ?: "no phonenumber",
+            phoneNumber = user.phoneNumber ?: "no phone number",
         )
 }

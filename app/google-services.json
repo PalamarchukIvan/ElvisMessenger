@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "182611470816",
+    "firebase_url": "https://elvismessenger-4393f-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "elvismessenger-4393f",
     "storage_bucket": "elvismessenger-4393f.appspot.com"
   },
@@ -22,7 +23,7 @@
           }
         },
         {
-          "client_id": "182611470816-jh2plaki9735sh5npok3rnfuegm7g2vt.apps.googleusercontent.com",
+          "client_id": "182611470816-v4kfdvl525chbqvebbf5cu7ouontphvg.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
