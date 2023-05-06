@@ -122,7 +122,7 @@
         tools:layout="@layout/fragment_edit_profile" />
     <fragment
         android:id="@+id/otherUserProfile"
-        android:name="com.example.elvismessenger.OtherUserProfile"
+        android:name="com.example.elvismessenger.fragments.OtherUserProfile"
         android:label="ElvisMessenger"
         tools:layout="@layout/fragment_other_user_profile" />
 </navigation>

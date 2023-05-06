@@ -12,6 +12,7 @@ import androidx.navigation.Navigation
 import com.example.elvismessenger.R
 import com.example.elvismessenger.activities.MainActivity
 import com.example.elvismessenger.activities.RegLogActivity
+import com.example.elvismessenger.db.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 
 class RegistrationFragment : Fragment(R.layout.fragment_registration) {
@@ -48,6 +49,12 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
                 RegLogActivity.GOOD -> {
                     FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener {
                         if(it.isSuccessful) {
+                            //Запихиваем его в базу
+                            FirebaseAuth.getInstance().currentUser.let { userFB ->
+                                UserRepository().createOrUpdateUser(
+                                    UserRepository().toUserDB(userFB!!, password))
+                            }
+
                             Navigation.findNavController(view).navigate(R.id.action_registrationFragment_to_mainActivity)
                             activity?.finish()
                         } else {

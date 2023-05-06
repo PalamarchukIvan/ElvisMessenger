@@ -1,13 +1,11 @@
-package com.example.elvismessenger
+package com.example.elvismessenger.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
+import com.example.elvismessenger.R
 import com.squareup.picasso.Picasso
 
 class OtherUserProfile : Fragment(R.layout.fragment_other_user_profile) {

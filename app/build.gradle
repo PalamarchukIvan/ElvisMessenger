@@ -4,6 +4,7 @@ plugins {
 
     //Firebase
     id 'com.google.gms.google-services'
+    id 'kotlin-parcelize'
 }
 
 android {
