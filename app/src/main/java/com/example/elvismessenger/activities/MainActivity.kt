@@ -74,6 +74,7 @@ class MainActivity : AppCompatActivity() {
     private fun authoriseUser() {
         if(FirebaseAuth.getInstance().currentUser == null) {
             navController.navigate(R.id.action_chatListFragment_to_regLogActivity)
+            finish()
         }
     }
 

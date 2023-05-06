@@ -18,6 +18,8 @@ class RegLogActivity : AppCompatActivity() {
         const val INCORRECT_EMAIL = -2
         const val INCORRECT_PASSWORD = -3
         const val PASSWORDS_DO_NOT_MATCH = -4
+
+        const val INCORRECT_LOGIN_CREDITS = -5
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
