@@ -14,7 +14,7 @@
         tools:targetApi="31">
 
         <activity
-            android:name=".activities.RegLogActivity"
+            android:name=".activities.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,7 +26,7 @@
         </activity>
 
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".activities.RegLogActivity"
             android:exported="false" />
     </application>
 </manifest>
