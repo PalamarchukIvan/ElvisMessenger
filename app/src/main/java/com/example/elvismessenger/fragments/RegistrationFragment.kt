@@ -31,10 +31,10 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
         val registrationButton: Button = view.findViewById(R.id.create_acc_button_reg)
 
         registrationButton.setOnClickListener {
-            val username = regUsername?.text.toString()
-            val email = regEmail?.text.toString()
-            val password = regPassword?.text.toString()
-            val passwordRepeat = regPasswordRepeat?.text.toString()
+            val username = regUsername.text.toString()
+            val email = regEmail.text.toString()
+            val password = regPassword.text.toString()
+            val passwordRepeat = regPasswordRepeat.text.toString()
 
             Log.d("credits", "U: $username E:$email P:$password PE:$passwordRepeat")
 
@@ -51,7 +51,7 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
                             Navigation.findNavController(view).navigate(R.id.action_registrationFragment_to_mainActivity)
                             activity?.finish()
                         } else {
-                            Toast.makeText(context, "something is wrong 0_0", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "something is wrong with server", Toast.LENGTH_SHORT).show()
                         }
                     }.addOnFailureListener {
                         Toast.makeText(context, "error: ${it.message.toString()}", Toast.LENGTH_SHORT).show()
