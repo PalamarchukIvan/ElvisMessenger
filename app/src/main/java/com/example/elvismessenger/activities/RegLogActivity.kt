@@ -11,6 +11,15 @@ import com.example.elvismessenger.databinding.ActivityRegLogBinding
 class RegLogActivity : AppCompatActivity() {
     private lateinit var navController: NavController
 
+    companion object {
+        const val GOOD = 1
+
+        const val INCORRECT_USERNAME = -1
+        const val INCORRECT_EMAIL = -2
+        const val INCORRECT_PASSWORD = -3
+        const val PASSWORDS_DO_NOT_MATCH = -4
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

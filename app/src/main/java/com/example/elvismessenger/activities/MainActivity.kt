@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.*
@@ -16,6 +17,7 @@ import com.example.elvismessenger.databinding.ActivityMainBinding
 import com.example.elvismessenger.fragments.settings.SettingsFragment
 import com.example.elvismessenger.utils.UserPersonalSettings
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
@@ -38,13 +40,15 @@ class MainActivity : AppCompatActivity() {
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        sp = getSharedPreferences(SettingsFragment.SHARED_PREFERENCES, MODE_PRIVATE)
-
         //Поиск главного фрагмента (чата)
         navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
 
         //доступ к дереву навигации
         navController = navHostFragment.findNavController()
+        authoriseUser()
+
+        sp = getSharedPreferences(SettingsFragment.SHARED_PREFERENCES, MODE_PRIVATE)
+
         drawerLayout = binding.drawerLayout
         //связывание дерева навигации и шторки
         binding.navView.setupWithNavController(navController)
@@ -64,6 +68,12 @@ class MainActivity : AppCompatActivity() {
         userSettings.observe(this) {
             navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = userSettings.value?.username
             navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = userSettings.value?.status
+        }
+    }
+
+    private fun authoriseUser() {
+        if(FirebaseAuth.getInstance().currentUser == null) {
+            navController.navigate(R.id.action_chatListFragment_to_regLogActivity)
         }
     }
 
