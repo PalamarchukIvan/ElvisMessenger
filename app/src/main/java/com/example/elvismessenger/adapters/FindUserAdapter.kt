@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.db.User
+import com.example.elvismessenger.db.UserRepository
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.squareup.picasso.Picasso
@@ -28,8 +29,8 @@ class FindUserAdapter(
         fun bind(user: User) {
             Log.d("credit: ", "$user")
             chatName.text = user.username
-            lastMsg.text = "TO BE IMPLEMENTED"
-            lastMsgDate.text = "TO BE IMPLEMENTED"
+            lastMsg.text = "last msg"
+            lastMsgDate.text = "time"
             user.photo.let {
                 if(it.isNotEmpty()) {
                     Picasso.get()
@@ -62,6 +63,7 @@ class FindUserAdapter(
     }
 
     override fun onBindViewHolder(holder: FindUserViewHolder, position: Int, model: User) {
+        Log.d("onBindViewHolder(): ", "${UserRepository().getUsers()}")
         holder.bind(model)
     }
 

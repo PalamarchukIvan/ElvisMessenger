@@ -17,12 +17,15 @@ class UserRepository {
 
     fun getUsers() = FirebaseDatabase.getInstance().getReference("users")
 
-    fun toUserDB(user: FirebaseUser, uPassword: String = "", username: String = "") =
-        User(
-            uid = user.uid,
-            username = user.displayName ?: username,
-            photo = user.photoUrl.toString(),
-            password = uPassword,
-            phoneNumber = user.phoneNumber ?: "no phone number",
-        )
+    companion object {
+        fun toUserDB(user: FirebaseUser, uPassword: String = "", username: String = "") =
+            User(
+                uid = user.uid,
+                username = user.displayName ?: username,
+                photo = user.photoUrl.toString(),
+                email = user.email ?: "no email",
+                password = uPassword,
+                phoneNumber = user.phoneNumber ?: "no phone number",
+            )
+    }
 }

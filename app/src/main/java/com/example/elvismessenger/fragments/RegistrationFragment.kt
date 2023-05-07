@@ -52,7 +52,7 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
                             //Запихиваем его в базу
                             FirebaseAuth.getInstance().currentUser.let { userFB ->
                                 UserRepository().createOrUpdateUser(
-                                    UserRepository().toUserDB(userFB!!, password, username))
+                                    UserRepository.toUserDB(userFB!!, password, username))
                             }
 
                             Navigation.findNavController(view).navigate(R.id.action_registrationFragment_to_mainActivity)
