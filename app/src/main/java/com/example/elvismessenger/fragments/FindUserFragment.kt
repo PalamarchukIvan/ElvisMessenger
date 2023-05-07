@@ -14,23 +14,23 @@ import com.example.elvismessenger.adapters.FindUserAdapter
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
 import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.snapshots
 
 class FindUserFragment : Fragment(R.layout.fragment_find_user) {
 
     private val options = FirebaseRecyclerOptions.Builder<User>()
         .setLifecycleOwner(this)
-        .setQuery(
-            UserRepository()
-                .getUsers()
-                .limitToFirst(50), User::class.java
-        )
+        .setQuery(UserRepository().getUsers(), User::class.java)
         .build()
 
     private lateinit var adapter: FindUserAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         val recyclerView: RecyclerView = view.findViewById(R.id.found_user_list_find_user)
 
         // Добавление линии между элементами чата

@@ -47,7 +47,7 @@ class FindUserAdapter(
     }
 
     fun onFindByPartOfName(name: String) {
-
+        Log.d("List of all users: ", snapshots[0].toString())
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FindUserViewHolder {
