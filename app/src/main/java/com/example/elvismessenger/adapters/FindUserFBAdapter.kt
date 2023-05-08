@@ -6,16 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isGone
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.db.User
-
+import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.squareup.picasso.Picasso
 
-class FindUserAdapter(
-    private val userToShoList: MutableList<User>,
+class FindUserFBAdapter(
+    private val options: FirebaseRecyclerOptions<User>,
     private val onItemClick: ((User) -> Unit)
-) : RecyclerView.Adapter<FindUserAdapter.FindUserViewHolder>() {
+) : FirebaseRecyclerAdapter<User, FindUserFBAdapter.FindUserViewHolder>(options) {
 
     class FindUserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -25,6 +27,7 @@ class FindUserAdapter(
         private val lastMsg: TextView = itemView.findViewById(R.id.status_text_chat_item)
 
         fun bind(user: User) {
+
             Log.d("credit: ", "$user")
             chatName.text = user.username
             lastMsg.text = "last msg"
@@ -43,20 +46,27 @@ class FindUserAdapter(
         }
     }
 
+    fun updateUserToShowList(newList: MutableList<User>) {
+
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FindUserViewHolder {
         val holder = FindUserViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.chats_item, parent, false)
         )
         holder.itemView.setOnClickListener {
-            onItemClick.invoke(userToShoList[holder.absoluteAdapterPosition])
+            onItemClick.invoke(options.snapshots[holder.absoluteAdapterPosition])
         }
+
         return holder
     }
 
-    override fun onBindViewHolder(holder: FindUserViewHolder, position: Int) {
-        holder.bind(userToShoList[position])
+    override fun onBindViewHolder(holder: FindUserViewHolder, position: Int, model: User) {
+
+        holder.bind(model)
     }
 
-    override fun getItemCount() = userToShoList.size
+    override fun onDataChanged() {
 
+    }
 }
