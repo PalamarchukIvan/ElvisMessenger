@@ -1,11 +1,13 @@
 package com.example.elvismessenger.fragments
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
@@ -22,6 +24,8 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
     private lateinit var regPassword: EditText
     private lateinit var regPasswordRepeat: EditText
 
+    private lateinit var logo: ImageView
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         regUsername = view.findViewById(R.id.username_text_reg)
@@ -29,7 +33,10 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
         regPassword = view.findViewById(R.id.password_text_reg)
         regPasswordRepeat = view.findViewById(R.id.password_again_text_reg)
 
+        logo = view.findViewById(R.id.reg_logo_img)
         val registrationButton: Button = view.findViewById(R.id.create_acc_button_reg)
+
+        setUpLayout()
 
         registrationButton.setOnClickListener {
             val username = regUsername.text.toString()
@@ -80,6 +87,19 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
             return RegLogActivity.PASSWORDS_DO_NOT_MATCH
         }
         return RegLogActivity.GOOD
+    }
+
+    private fun setUpLayout() {
+        val displayWidth = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            requireContext().display!!.width
+        } else {
+            1500
+        }
+
+        logo.layoutParams.width = displayWidth
+        logo.layoutParams.height = displayWidth * 6 / 14
+        Log.d("height1: ", logo.layoutParams.height.toString())
+        Log.d("width: : ", logo.layoutParams.width.toString())
     }
 
 }

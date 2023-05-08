@@ -11,52 +11,23 @@
         android:layout_height="match_parent"
         android:background="@color/elvis_main_color">
 
-        <TextView
-            android:id="@+id/temp_logo_text_reg"
-            android:layout_width="127dp"
-            android:layout_height="189dp"
-            android:layout_marginStart="40dp"
-            android:text="@string/elvis_msg_logo"
-            android:textColor="@color/elvis_text_color"
-            android:textSize="144sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/logo_elvis_text_reg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="56dp"
-            android:text="@string/elvis_msg_logo_elvis_text"
-            android:textColor="@color/elvis_primary_light_variant_color"
-            android:textSize="40sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/temp_logo_text_reg"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/logo_msg_text_reg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="40dp"
-            android:text="@string/elvis_msg_logo_msg_text"
-            android:textColor="@color/white"
-            android:textSize="40sp"
-            android:textStyle="bold"
+        <ImageView
+            android:id="@+id/reg_logo_img"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/logo_big"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/temp_logo_text_reg"
-            app:layout_constraintTop_toBottomOf="@+id/logo_elvis_text_reg" />
-
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
             android:id="@+id/username_text_reg"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginStart="40dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="32dp"
             android:layout_marginEnd="40dp"
             android:background="@drawable/reg_log_edit_text"
             android:drawableStart="@drawable/ic_custom_username"
@@ -70,7 +41,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/temp_logo_text_reg" />
+            app:layout_constraintTop_toBottomOf="@+id/reg_logo_img" />
 
         <EditText
             android:id="@+id/email_text_reg"
