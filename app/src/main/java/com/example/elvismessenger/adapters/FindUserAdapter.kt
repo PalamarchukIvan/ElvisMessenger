@@ -6,18 +6,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.db.User
-import com.example.elvismessenger.db.UserRepository
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.github.javafaker.Bool
 import com.squareup.picasso.Picasso
+import kotlin.coroutines.coroutineContext
 
 class FindUserAdapter(
     private val options: FirebaseRecyclerOptions<User>,
-    private val onItemClick: ((User)-> Unit)
-): FirebaseRecyclerAdapter<User, FindUserAdapter.FindUserViewHolder>(options) {
+    private val toShowList: MutableList<User>,
+    private val onItemClick: ((User) -> Unit)
+) : FirebaseRecyclerAdapter<User, FindUserAdapter.FindUserViewHolder>(options) {
 
     class FindUserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -26,18 +30,20 @@ class FindUserAdapter(
         private val lastMsgDate: TextView = itemView.findViewById(R.id.time_text_chat_item)
         private val lastMsg: TextView = itemView.findViewById(R.id.status_text_chat_item)
 
-        fun bind(user: User) {
+        fun bind(user: User, isVisible: Boolean) {
+
+            itemView.isGone = !isVisible
+
             Log.d("credit: ", "$user")
             chatName.text = user.username
             lastMsg.text = "last msg"
             lastMsgDate.text = "time"
             user.photo.let {
-                if(it.isNotEmpty()) {
+                if (it.isNotEmpty()) {
                     Picasso.get()
                         .load(it)
                         .into(photo)
-                }
-                else {
+                } else {
                     Picasso.get()
                         .load(R.drawable.dornan)
                         .into(photo)
@@ -46,15 +52,14 @@ class FindUserAdapter(
         }
     }
 
-    fun onFindByPartOfName(name: String) {
-        Log.d("List of all users: ", snapshots[0].toString())
+    fun updateUserToShowList(newList: MutableList<User>) {
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FindUserViewHolder {
-        val holder =  FindUserViewHolder(
+        val holder = FindUserViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.chats_item, parent, false)
         )
-
         holder.itemView.setOnClickListener {
             onItemClick.invoke(options.snapshots[holder.absoluteAdapterPosition])
         }
@@ -63,8 +68,8 @@ class FindUserAdapter(
     }
 
     override fun onBindViewHolder(holder: FindUserViewHolder, position: Int, model: User) {
-        Log.d("onBindViewHolder(): ", "${UserRepository().getUsers()}")
-        holder.bind(model)
+
+        holder.bind(model, toShowList.contains(model))
     }
 
     override fun onDataChanged() {

@@ -1,9 +1,13 @@
 package com.example.elvismessenger.db
 
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.values
+import com.google.firebase.database.ktx.getValue
+import com.google.firebase.database.ktx.snapshots
 import com.google.firebase.ktx.Firebase
 
 class UserRepository {
@@ -16,9 +20,13 @@ class UserRepository {
         userNodeREf.setValue(user)
     }
 
-    fun getUsers() = FirebaseDatabase.getInstance().getReference("users")
+    fun getAllUsers() = FirebaseDatabase.getInstance().getReference("users")
 
-    fun getUser(uid: String) = FirebaseDatabase.getInstance().getReference("users").child(uid)
+    fun getUserByUID(uid: String) = FirebaseDatabase.getInstance().getReference("users").child(uid)
+
+    fun getAllUsersWithNameContaining(partOfName: String) {
+
+    }
 
     companion object {
         fun toUserDB(user: FirebaseUser, uPassword: String = "", username: String = "") =
