@@ -96,8 +96,8 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
             1500
         }
 
-        logo.layoutParams.width = displayWidth
-        logo.layoutParams.height = displayWidth * 6 / 14
+        logo.layoutParams.width = displayWidth - 80
+        logo.layoutParams.height = displayWidth * 6 / 14 - 30
         Log.d("height1: ", logo.layoutParams.height.toString())
         Log.d("width: : ", logo.layoutParams.width.toString())
     }
