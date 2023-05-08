@@ -23,16 +23,13 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ktx.snapshots
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class FindUserFragment : Fragment(R.layout.fragment_find_user) {
 
     private val userRepository = UserRepository()
-
-    private lateinit var options: FirebaseRecyclerOptions<User>
-
-    private lateinit var adapterFB: FindUserFBAdapter
 
     private lateinit var adapter: FindUserAdapter
 
@@ -83,9 +80,6 @@ class FindUserFragment : Fragment(R.layout.fragment_find_user) {
             }.toMutableList()
             recyclerView.adapter = FindUserAdapter(newUserList) {
 
-            }
-            if(it.isNullOrBlank()) {
-                recyclerView.adapter = adapterFB
             }
         }
     }
