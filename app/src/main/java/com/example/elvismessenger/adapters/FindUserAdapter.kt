@@ -13,7 +13,7 @@ import com.example.elvismessenger.db.User
 import com.squareup.picasso.Picasso
 
 class FindUserAdapter(
-    private val userToShoList: MutableList<User>,
+    var userToShowList: MutableList<User>,
     private val onItemClick: ((User) -> Unit)
 ) : RecyclerView.Adapter<FindUserAdapter.FindUserViewHolder>() {
 
@@ -48,15 +48,15 @@ class FindUserAdapter(
             LayoutInflater.from(parent.context).inflate(R.layout.chats_item, parent, false)
         )
         holder.itemView.setOnClickListener {
-            onItemClick.invoke(userToShoList[holder.absoluteAdapterPosition])
+            onItemClick.invoke(userToShowList[holder.absoluteAdapterPosition])
         }
         return holder
     }
 
     override fun onBindViewHolder(holder: FindUserViewHolder, position: Int) {
-        holder.bind(userToShoList[position])
+        holder.bind(userToShowList[position])
     }
 
-    override fun getItemCount() = userToShoList.size
+    override fun getItemCount() = userToShowList.size
 
 }

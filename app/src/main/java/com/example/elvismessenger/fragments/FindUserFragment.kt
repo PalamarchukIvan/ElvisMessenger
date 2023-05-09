@@ -78,9 +78,8 @@ class FindUserFragment : Fragment(R.layout.fragment_find_user) {
             val newUserList = userList.filter { user ->
                 user.username.contains(it.toString())
             }.toMutableList()
-            recyclerView.adapter = FindUserAdapter(newUserList) {
-
-            }
+            adapter.userToShowList = newUserList
+            adapter.notifyDataSetChanged()
         }
     }
 }
