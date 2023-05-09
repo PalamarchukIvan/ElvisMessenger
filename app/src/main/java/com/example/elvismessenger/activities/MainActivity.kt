@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -20,6 +21,7 @@ import com.example.elvismessenger.databinding.ActivityMainBinding
 import com.example.elvismessenger.fragments.settings.SettingsFragment
 import com.example.elvismessenger.utils.UserPersonalSettings
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
@@ -71,9 +73,16 @@ class MainActivity : AppCompatActivity() {
         //Устонавливаем слушатель на кнопку выхода
         navigationView.setNavigationItemSelectedListener {
             if(it.itemId == R.id.regLogActivity) {
-                FirebaseAuth.getInstance().signOut()
-                startActivity(Intent(this, RegLogActivity::class.java))
-                finish()
+                AlertDialog.Builder(this)
+                    .setTitle("Logout")
+                    .setMessage("Are you sure that you want to logout?")
+                    .setNegativeButton("no", null)
+                    .setPositiveButton("yes") { _, _ ->
+                        FirebaseAuth.getInstance().signOut()
+                        startActivity(Intent(this, RegLogActivity::class.java))
+                        finish()
+                    }
+                    .show()
             }
             drawerLayout.closeDrawer(GravityCompat.START)
             true
