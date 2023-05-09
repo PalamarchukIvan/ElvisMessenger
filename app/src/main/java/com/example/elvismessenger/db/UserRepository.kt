@@ -30,13 +30,14 @@ class UserRepository private constructor() {
     companion object {
         var currentUser: User? = null
             get() {
-                if (field == null) {
+                if (field == null || field!!.uid != FirebaseAuth.getInstance().currentUser!!.uid) {
                     CoroutineScope(SupervisorJob() + Dispatchers.Main).launch {
                         getInstance().getUserByUID(FirebaseAuth.getInstance().currentUser!!.uid).snapshots.collect {
                             field = it.getValue(User::class.java)!!
                         }
                     }
                 }
+                Log.d("userCurrent ", field.toString())
                 return field
             }
 
