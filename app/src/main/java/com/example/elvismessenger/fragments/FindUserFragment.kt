@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 
 class FindUserFragment : Fragment(R.layout.fragment_find_user) {
 
-    private val userRepository = UserRepository()
+    private val userRepository = UserRepository.getInstance()
 
     private lateinit var adapter: FindUserAdapter
 

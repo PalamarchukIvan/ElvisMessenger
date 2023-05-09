@@ -12,12 +12,19 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import com.example.elvismessenger.R
 import com.example.elvismessenger.activities.MainActivity
 import com.example.elvismessenger.activities.RegLogActivity
+import com.example.elvismessenger.db.User
+import com.example.elvismessenger.db.UserRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.ktx.getValue
+import com.google.firebase.database.ktx.snapshots
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.flow.publish
+import kotlinx.coroutines.launch
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
 

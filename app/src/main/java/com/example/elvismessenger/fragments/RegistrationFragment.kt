@@ -1,5 +1,6 @@
 package com.example.elvismessenger.fragments
 
+import android.app.Application
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -58,8 +59,9 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
                         if(it.isSuccessful) {
                             //Запихиваем его в базу
                             FirebaseAuth.getInstance().currentUser.let { userFB ->
-                                UserRepository().createOrUpdateUser(
+                                UserRepository.getInstance().createOrUpdateUser(
                                     UserRepository.toUserDB(userFB!!, password, username))
+//                                ElvisMessenger.currentUser.postValue(UserRepository.toUserDB(userFB, password, username))
                             }
 
                             Navigation.findNavController(view).navigate(R.id.action_registrationFragment_to_mainActivity)
@@ -77,9 +79,6 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
         if(username == "" || username.length < 6) {
             return RegLogActivity.INCORRECT_USERNAME
         }
-//        if(email.contains(........)) {
-//            return RegLogActivity.INCORRECT_EMAIL
-//        }
         if(password.length < 6) {//1цифра, 1 латинская буква, 6+ симовлов
             return RegLogActivity.INCORRECT_PASSWORD
         }

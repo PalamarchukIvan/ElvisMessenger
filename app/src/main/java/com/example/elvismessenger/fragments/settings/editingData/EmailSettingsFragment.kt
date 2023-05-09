@@ -10,8 +10,10 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.elvismessenger.R
 import com.example.elvismessenger.activities.MainActivity
+import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.fragments.settings.SettingsFragment
 import com.example.elvismessenger.utils.UserPersonalSettings
+import com.google.firebase.auth.FirebaseAuth
 
 class EmailSettingsFragment : Fragment() {
 
@@ -40,10 +42,13 @@ class EmailSettingsFragment : Fragment() {
     }
 
     private fun saveData() {
-
         val editor =
             MainActivity.sp.edit()
         editor?.putString(SettingsFragment.EMAIL, newEmail.text.toString())
         editor?.apply()
+
+        UserRepository.currentUser?.email = newEmail.text.toString()
+        UserRepository.getInstance().createOrUpdateUser(UserRepository.currentUser!!)
+        FirebaseAuth.getInstance().currentUser?.updateEmail(newEmail.text.toString())
     }
 }

@@ -18,8 +18,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.*
 import com.example.elvismessenger.R
 import com.example.elvismessenger.databinding.ActivityMainBinding
+import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.fragments.settings.SettingsFragment
 import com.example.elvismessenger.utils.UserPersonalSettings
+import com.firebase.ui.auth.data.model.User
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.auth.FirebaseAuth
@@ -67,8 +69,8 @@ class MainActivity : AppCompatActivity() {
         SettingsFragment.loadData()
 
         //Первичная настрйока
-        navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = userSettings.value?.username ?: "no username"
-        navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = userSettings.value?.status ?: "no status"
+        navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = UserRepository.currentUser?.username ?: "no username"
+        navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = UserRepository.currentUser?.status ?: "no status"
 
         //Устонавливаем слушатель на кнопку выхода
         navigationView.setNavigationItemSelectedListener {
@@ -83,14 +85,16 @@ class MainActivity : AppCompatActivity() {
                         finish()
                     }
                     .show()
+            } else {
+                navController.navigate(it.itemId)
             }
             drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
 
         userSettings.observe(this) {
-            navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = userSettings.value?.username
-            navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = userSettings.value?.status
+            navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = UserRepository.currentUser?.username ?: "no username"
+            navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = UserRepository.currentUser?.status ?: "no status"
         }
     }
 
