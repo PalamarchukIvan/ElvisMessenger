@@ -1,11 +1,14 @@
 package com.example.elvismessenger.activities
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -65,6 +68,17 @@ class MainActivity : AppCompatActivity() {
         navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = userSettings.value?.username ?: "no username"
         navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = userSettings.value?.status ?: "no status"
 
+        //Устонавливаем слушатель на кнопку выхода
+        navigationView.setNavigationItemSelectedListener {
+            if(it.itemId == R.id.regLogActivity) {
+                FirebaseAuth.getInstance().signOut()
+                startActivity(Intent(this, RegLogActivity::class.java))
+                finish()
+            }
+            drawerLayout.closeDrawer(GravityCompat.START)
+            true
+        }
+
         userSettings.observe(this) {
             navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = userSettings.value?.username
             navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = userSettings.value?.status
@@ -86,6 +100,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        drawerLayout.closeDrawer(GravityCompat.START)
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
     }
 
