@@ -7,10 +7,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.snapshots
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class UserRepository private constructor() {
 
@@ -31,7 +28,7 @@ class UserRepository private constructor() {
         var currentUser: User? = null
             get() {
                 if (field == null || field!!.uid != FirebaseAuth.getInstance().currentUser!!.uid) {
-                    CoroutineScope(SupervisorJob() + Dispatchers.Main).launch {
+                    GlobalScope.launch(Dispatchers.IO) {
                         getInstance().getUserByUID(FirebaseAuth.getInstance().currentUser!!.uid).snapshots.collect {
                             field = it.getValue(User::class.java)!!
                         }

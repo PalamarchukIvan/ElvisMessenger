@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        authoriseUser()
         super.onCreate(savedInstanceState)
 
         val binding = ActivityMainBinding.inflate(layoutInflater)
@@ -52,7 +53,6 @@ class MainActivity : AppCompatActivity() {
 
         //доступ к дереву навигации
         navController = navHostFragment.findNavController()
-        authoriseUser()
 
         sp = getSharedPreferences(SettingsFragment.SHARED_PREFERENCES, MODE_PRIVATE)
 
@@ -67,10 +67,6 @@ class MainActivity : AppCompatActivity() {
         navigationView = binding.navView
 
         SettingsFragment.loadData()
-
-        //Первичная настрйока
-        navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = UserRepository.currentUser?.username ?: "no username"
-        navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = UserRepository.currentUser?.status ?: "no status"
 
         //Устонавливаем слушатель на кнопку выхода
         navigationView.setNavigationItemSelectedListener {
@@ -93,8 +89,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         userSettings.observe(this) {
-            navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = UserRepository.currentUser?.username ?: "no username"
-            navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = UserRepository.currentUser?.status ?: "no status"
+            navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = UserRepository.currentUser?.username ?: FirebaseAuth.getInstance().currentUser!!.displayName
+            navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = UserRepository.currentUser?.status ?: ""
         }
     }
 

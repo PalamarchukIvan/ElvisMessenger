@@ -17,6 +17,7 @@ import com.example.elvismessenger.activities.MainActivity
 import com.example.elvismessenger.activities.RegLogActivity
 import com.example.elvismessenger.db.UserRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 
 class RegistrationFragment : Fragment(R.layout.fragment_registration) {
 
@@ -61,7 +62,9 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
                             FirebaseAuth.getInstance().currentUser.let { userFB ->
                                 UserRepository.getInstance().createOrUpdateUser(
                                     UserRepository.toUserDB(userFB!!, password, username))
-//                                ElvisMessenger.currentUser.postValue(UserRepository.toUserDB(userFB, password, username))
+                                userFB.updateProfile(UserProfileChangeRequest.Builder()
+                                    .setDisplayName(username)
+                                    .build())
                             }
 
                             Navigation.findNavController(view).navigate(R.id.action_registrationFragment_to_mainActivity)
