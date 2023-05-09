@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "182611470816-dogh22jubb0cesq71g6khrmn7pmjipcj.apps.googleusercontent.com",
+          "client_id": "182611470816-4su1791svpnquv6q38pqmpkc4r02dpk3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.elvismessenger",
-            "certificate_hash": "52a6f75aecfcd56420b28b0978f070d56835e896"
+            "certificate_hash": "10f1e4d70ca60a009fa4c29a2be21b1b462e5b20"
           }
         },
         {

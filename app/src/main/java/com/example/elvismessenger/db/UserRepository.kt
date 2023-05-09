@@ -28,6 +28,9 @@ class UserRepository private constructor() {
     companion object {
         var currentUser: MutableLiveData<User>? = null
             get() {
+                if(FirebaseAuth.getInstance().currentUser == null) {
+                    return field
+                }
                 if (field == null || field!!.value!!.uid != FirebaseAuth.getInstance().currentUser!!.uid) {
                     field = MutableLiveData()
                     GlobalScope.launch(Dispatchers.IO) {
