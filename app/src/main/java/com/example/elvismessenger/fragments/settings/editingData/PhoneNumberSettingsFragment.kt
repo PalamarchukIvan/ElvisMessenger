@@ -40,8 +40,11 @@ class PhoneNumberSettingsFragment : Fragment() {
         editor.putString(SettingsFragment.PHONE_NUMBER, newPhoneNumber.text.toString())
         editor.apply()
 
-        UserRepository.currentUser?.phoneNumber = newPhoneNumber.text.toString()
-        UserRepository.getInstance().createOrUpdateUser(UserRepository.currentUser!!)
+        val newUser = UserRepository.currentUser?.value
+        newUser?.password = newPhoneNumber.text.toString()
+
+        UserRepository.currentUser?.postValue(newUser)
+        UserRepository.getInstance().createOrUpdateUser(newUser!!)
     }
 
     override fun onCreateView(

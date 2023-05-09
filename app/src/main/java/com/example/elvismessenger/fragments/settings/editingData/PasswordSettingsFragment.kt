@@ -37,8 +37,11 @@ class PasswordSettingsFragment : Fragment() {
         editor?.putString(SettingsFragment.PASSWORD, newPassword.text.toString())
         editor?.apply()
 
-        UserRepository.currentUser?.password = newPassword.text.toString()
-        UserRepository.getInstance().createOrUpdateUser(UserRepository.currentUser!!)
+        val newUser = UserRepository.currentUser?.value
+        newUser?.password = newPassword.text.toString()
+
+        UserRepository.currentUser?.postValue(newUser)
+        UserRepository.getInstance().createOrUpdateUser(newUser!!)
     }
 
     override fun onCreateView(

@@ -1,6 +1,7 @@
 package com.example.elvismessenger.db
 
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
@@ -25,16 +26,17 @@ class UserRepository private constructor() {
     fun getUserByUID(uid: String) = FirebaseDatabase.getInstance().getReference("users").child(uid)
 
     companion object {
-        var currentUser: User? = null
+        var currentUser: MutableLiveData<User>? = null
             get() {
-                if (field == null || field!!.uid != FirebaseAuth.getInstance().currentUser!!.uid) {
+                if (field == null || field!!.value!!.uid != FirebaseAuth.getInstance().currentUser!!.uid) {
+                    field = MutableLiveData()
                     GlobalScope.launch(Dispatchers.IO) {
                         getInstance().getUserByUID(FirebaseAuth.getInstance().currentUser!!.uid).snapshots.collect {
-                            field = it.getValue(User::class.java)!!
+                            field!!.postValue(it.getValue(User::class.java)!!)
                         }
                     }
                 }
-                Log.d("userCurrent ", field.toString())
+                Log.d("userCurrent ", field!!.value.toString())
                 return field
             }
 

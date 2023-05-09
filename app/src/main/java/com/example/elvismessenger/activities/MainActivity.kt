@@ -88,9 +88,9 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        userSettings.observe(this) {
-            navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = UserRepository.currentUser?.username ?: FirebaseAuth.getInstance().currentUser!!.displayName
-            navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = UserRepository.currentUser?.status ?: ""
+        UserRepository.currentUser?.observe(this) {
+            navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = UserRepository.currentUser?.value?.username ?: FirebaseAuth.getInstance().currentUser!!.displayName
+            navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = UserRepository.currentUser?.value?.status ?: ""
         }
     }
 

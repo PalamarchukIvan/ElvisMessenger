@@ -47,8 +47,10 @@ class EmailSettingsFragment : Fragment() {
         editor?.putString(SettingsFragment.EMAIL, newEmail.text.toString())
         editor?.apply()
 
-        UserRepository.currentUser?.email = newEmail.text.toString()
-        UserRepository.getInstance().createOrUpdateUser(UserRepository.currentUser!!)
+        val newUser = UserRepository.currentUser?.value
+        newUser?.email = newEmail.text.toString()
+        UserRepository.currentUser?.postValue(newUser)
+        UserRepository.getInstance().createOrUpdateUser(newUser!!)
         FirebaseAuth.getInstance().currentUser?.updateEmail(newEmail.text.toString())
     }
 }
