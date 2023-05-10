@@ -1,5 +1,6 @@
 package com.example.elvismessenger.fragments
 
+import android.content.ContentProviderClient
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -19,7 +20,15 @@ import com.example.elvismessenger.activities.MainActivity
 import com.example.elvismessenger.activities.RegLogActivity
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.SignInButton
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.database.ktx.snapshots
 import com.google.firebase.ktx.Firebase
@@ -27,6 +36,14 @@ import kotlinx.coroutines.flow.publish
 import kotlinx.coroutines.launch
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
+
+    companion object {
+        const val GOOGLE_SIGN_IN_TAG = "GoogleSignIn"
+        const val GOOGLE_SIGN_IN = 111
+    }
+
+    private lateinit var auth: FirebaseAuth
+    private lateinit var googleSignInClient: GoogleSignInClient
 
     private lateinit var logEmail: EditText
     private lateinit var logPassword: EditText
@@ -36,14 +53,25 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         super.onViewCreated(view, savedInstanceState)
 
         logo = view.findViewById(R.id.login_logo_img)
+
         val loginButton: Button = view.findViewById(R.id.login_button_login)
         val noAccountTextLogin: TextView = view.findViewById(R.id.no_account_text_login)
 
         logEmail = view.findViewById(R.id.email_text_login)
         logPassword = view.findViewById(R.id.password_text_login)
 
+        val googleSignInButton: SignInButton = view.findViewById(R.id.google_sign_in_button)
+
         setUpLayout()
 
+        // Sign in через гугл
+        auth = Firebase.auth
+        googleSignInClient = GoogleSignIn.getClient(requireContext(), getGSO())
+        googleSignInButton.setOnClickListener {
+            googleSignIn()
+        }
+
+        // Логирование через емейл и пароль
         loginButton.setOnClickListener {
 
             val email = logEmail.text.toString()
@@ -52,7 +80,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             val validation = validateLogData(email, password)
 
             when(validation) {
-
                 RegLogActivity.GOOD -> {
                     FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener {
@@ -79,6 +106,58 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             Navigation.findNavController(view)
                 .navigate(R.id.action_loginFragment_to_registrationFragment)
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == GOOGLE_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                val account = task.getResult(ApiException::class.java)!!
+                firebaseAuthWithGoogle(account.idToken!!)
+            } catch (e: ApiException) {
+                Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show()
+                Log.d(GOOGLE_SIGN_IN_TAG, e.message.toString())
+            }
+        }
+    }
+
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(requireActivity()) { task ->
+                if (task.isSuccessful) {
+                    //Запихиваем его в базу
+                    FirebaseAuth.getInstance().currentUser.let { userFB ->
+                        UserRepository.getInstance().createOrUpdateUser(
+                            UserRepository.toUserDB(userFB!!))
+                    }
+
+                    view?.let {
+                        Navigation.findNavController(it)
+                            .navigate(R.id.action_loginFragment_to_mainActivity)
+                    }
+                    activity?.finish()
+                    Toast.makeText(requireContext(), "Success", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Something went wrong during authentication with Google",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+    }
+    private fun googleSignIn() {
+        val signInIntent = googleSignInClient.signInIntent
+        startActivityForResult(signInIntent, GOOGLE_SIGN_IN)
+    }
+
+    private fun getGSO(): GoogleSignInOptions {
+        return  GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
     }
 
     private fun validateLogData(email: String, password: String) : Int{

@@ -27,7 +27,6 @@ class FindUserFBAdapter(
         private val lastMsg: TextView = itemView.findViewById(R.id.status_text_chat_item)
 
         fun bind(user: User) {
-
             Log.d("credit: ", "$user")
             chatName.text = user.username
             lastMsg.text = "last msg"

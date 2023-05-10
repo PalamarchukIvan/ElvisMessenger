@@ -18,6 +18,7 @@ class UserRepository private constructor() {
 
         val userDBRef = database.getReference("users")
         val userNodeREf = userDBRef.child(user.uid)
+
         userNodeREf.setValue(user)
     }
 
@@ -28,7 +29,7 @@ class UserRepository private constructor() {
     companion object {
         var currentUser: MutableLiveData<User>? = null
             get() {
-                if(FirebaseAuth.getInstance().currentUser == null) {
+                if (FirebaseAuth.getInstance().currentUser == null) {
                     return field
                 }
                 if (field == null || field!!.value!!.uid != FirebaseAuth.getInstance().currentUser!!.uid) {
