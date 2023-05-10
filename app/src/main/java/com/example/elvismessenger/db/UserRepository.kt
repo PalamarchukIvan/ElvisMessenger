@@ -31,7 +31,7 @@ class UserRepository private constructor() {
                 if(FirebaseAuth.getInstance().currentUser == null) {
                     return field
                 }
-                if (field == null || field!!.value!!.uid != FirebaseAuth.getInstance().currentUser!!.uid) {
+                if (field == null || field?.value?.uid != FirebaseAuth.getInstance().currentUser?.uid) {
                     field = MutableLiveData()
                     GlobalScope.launch(Dispatchers.IO) {
                         getInstance().getUserByUID(FirebaseAuth.getInstance().currentUser!!.uid).snapshots.collect {
