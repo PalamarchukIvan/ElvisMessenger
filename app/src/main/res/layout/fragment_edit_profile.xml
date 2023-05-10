@@ -30,8 +30,9 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <RelativeLayout
@@ -90,6 +91,7 @@
                         android:layout_marginBottom="5dp"
                         android:background="@drawable/custom_edit_text"
                         android:text="user_name"
+                        android:inputType="textShortMessage"
                         android:textColor="@color/white" />
 
                     <EditText
@@ -100,6 +102,7 @@
                         android:layout_marginBottom="5dp"
                         android:background="@drawable/custom_edit_text"
                         android:text="about"
+                        android:inputType="textShortMessage"
                         android:textColor="@color/white" />
 
                     <EditText
@@ -110,6 +113,7 @@
                         android:layout_marginBottom="10dp"
                         android:background="@drawable/custom_edit_text"
                         android:text="satus"
+                        android:inputType="textShortMessage"
                         android:textColor="@color/white" />
 
                 </LinearLayout>
@@ -123,11 +127,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/confirm"
-            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
             android:paddingHorizontal="60dp"
             android:visibility="invisible"
             android:background="@drawable/round_button_white"
-            android:layout_marginTop="170dp"/>
+            android:layout_marginTop="30dp"/>
 
-    </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>

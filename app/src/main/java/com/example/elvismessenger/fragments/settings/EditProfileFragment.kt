@@ -15,6 +15,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.elvismessenger.R
 import com.example.elvismessenger.activities.MainActivity
+import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.utils.UserPersonalSettings
 
 class EditProfileFragment : Fragment() {
@@ -40,16 +41,23 @@ class EditProfileFragment : Fragment() {
         currentPhoto = view.findViewById(R.id.current_photo_edit_profile)
         newPhotoBtn = view.findViewById(R.id.change_photo_btn)
 
-        UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
+
+        UserRepository.currentUser?.observe(viewLifecycleOwner) {
             newStatus.setText(it.status)
             newAbout.setText(it.about)
             newName.setText(it.username)
+            submitBtn.isVisible = false
+        } ?: UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
+            newStatus.setText(it.status)
+            newAbout.setText(it.about)
+            newName.setText(it.username)
+            submitBtn.isVisible = false
         }
 
         newStatus.addTextChangedListener {
             submitBtn.isVisible = true
-
         }
+
         newAbout.addTextChangedListener {
             submitBtn.isVisible = true
         }
@@ -91,6 +99,18 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun saveData() {
+
+        val newUser = UserRepository.currentUser?.value
+        newUser?.status = newStatus.text.toString()
+        newUser?.username = newName.text.toString()
+        newUser?.about = newAbout.text.toString()
+
+        UserRepository.currentUser?.postValue(newUser)
+
+        UserRepository.currentUser?.value?.apply {
+            UserRepository.getInstance().createOrUpdateUser(this)
+        }
+
         val editor =
             MainActivity.sp.edit()
         editor?.putString(SettingsFragment.STATUS, newStatus.text.toString())
