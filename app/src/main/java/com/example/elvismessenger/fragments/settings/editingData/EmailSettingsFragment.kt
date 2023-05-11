@@ -52,6 +52,9 @@ class EmailSettingsFragment : Fragment() {
     }
 
     private fun saveData() {
+
+        if(!checkForProvider()) return
+
         val credential = EmailAuthProvider.getCredential(
             UserRepository.currentUser?.value!!.email,
             UserRepository.currentUser?.value!!.password
@@ -79,6 +82,16 @@ class EmailSettingsFragment : Fragment() {
             }
 
 
+    }
+
+    private fun checkForProvider(): Boolean{
+        for(provider in FirebaseAuth.getInstance().currentUser!!.providerData) {
+            if(provider.providerId != "firebase" && provider.providerId != "password") {
+                Toast.makeText(requireContext(), "Illegal operation", Toast.LENGTH_SHORT).show()
+                return false
+            }
+        }
+        return true
     }
 
     private fun makeWarning(error: String) {

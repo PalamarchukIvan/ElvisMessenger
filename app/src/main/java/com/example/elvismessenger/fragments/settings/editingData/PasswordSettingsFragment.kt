@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.elvismessenger.R
@@ -43,6 +44,9 @@ class PasswordSettingsFragment : Fragment() {
     }
 
     private fun saveData() {
+
+        if(!checkForProvider()) return
+
         val credential = EmailAuthProvider.getCredential(
         UserRepository.currentUser?.value!!.email,
         UserRepository.currentUser?.value!!.password
@@ -70,6 +74,16 @@ class PasswordSettingsFragment : Fragment() {
             ?.addOnFailureListener {//Ошибка переавторизации
                 makeWarning(it.message.toString())
             }
+    }
+
+    private fun checkForProvider(): Boolean{
+        for(provider in FirebaseAuth.getInstance().currentUser!!.providerData) {
+            if(provider.providerId != "firebase" && provider.providerId != "password") {
+                Toast.makeText(requireContext(), "Illegal operation", Toast.LENGTH_SHORT).show()
+                return false
+            }
+        }
+        return true
     }
 
     override fun onCreateView(
