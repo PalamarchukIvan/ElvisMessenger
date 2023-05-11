@@ -23,10 +23,10 @@ class OtherUserProfile : Fragment(R.layout.fragment_other_user_profile) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val otherUserProfilePicture: ImageView = view.findViewById(R.id.other_user_pfp_image)
+        val otherUserProfilePicture: ImageView = view.findViewById(R.id.user_pfp_image)
         val otherUserName: TextView = view.findViewById(R.id.other_username)
         val otherUserStatus: TextView = view.findViewById(R.id.other_user_status)
-        val otherUserAbout: TextView = view.findViewById(R.id.other_user_about)
+        val otherUserAbout: TextView = view.findViewById(R.id.edit_about)
 
         otherUserName.text = name
         otherUserStatus.text = status
