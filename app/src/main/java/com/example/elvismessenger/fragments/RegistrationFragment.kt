@@ -53,7 +53,7 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
             when (validation) {
                 RegLogActivity.INCORRECT_USERNAME -> Toast.makeText(context, "username must be 6 characters long", Toast.LENGTH_SHORT).show()
                 RegLogActivity.INCORRECT_EMAIL -> Toast.makeText(context, "Incorrect email", Toast.LENGTH_SHORT).show()
-                RegLogActivity.INCORRECT_PASSWORD -> Toast.makeText(context, "password must be at least 6 characters long and contain 1 latin letter and 1 number", Toast.LENGTH_SHORT).show()
+                RegLogActivity.INCORRECT_PASSWORD -> Toast.makeText(context, "password must be at least 6 characters long", Toast.LENGTH_SHORT).show()
                 RegLogActivity.PASSWORDS_DO_NOT_MATCH -> Toast.makeText(context, "passwords must be same!", Toast.LENGTH_SHORT).show()
                 RegLogActivity.GOOD -> {
                     FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener {

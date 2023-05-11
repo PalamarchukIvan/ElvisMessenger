@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
@@ -126,6 +127,11 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun saveData() {
+
+        if(newName.text.toString().length < 6) {
+            Toast.makeText(requireContext(), "New username is badly formatted", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         val newUser = UserRepository.currentUser?.value
         newUser?.status = newStatus.text.toString()

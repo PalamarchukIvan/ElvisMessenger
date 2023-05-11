@@ -46,6 +46,9 @@ class PasswordSettingsFragment : Fragment() {
     private fun saveData() {
 
         if(!checkForProvider()) return
+        if(newPassword.text.toString().length < 6) {
+            Toast.makeText(requireContext(), "Password must be at least 6 characters long", Toast.LENGTH_SHORT).show()
+        }
 
         val credential = EmailAuthProvider.getCredential(
         UserRepository.currentUser?.value!!.email,
