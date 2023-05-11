@@ -79,7 +79,7 @@ class PasswordSettingsFragment : Fragment() {
     private fun checkForProvider(): Boolean{
         for(provider in FirebaseAuth.getInstance().currentUser!!.providerData) {
             if(provider.providerId != "firebase" && provider.providerId != "password") {
-                Toast.makeText(requireContext(), "Illegal operation", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Illegal operation. You've signed in with google", Toast.LENGTH_SHORT).show()
                 return false
             }
         }
