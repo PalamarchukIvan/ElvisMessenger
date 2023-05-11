@@ -14,6 +14,7 @@ class UserPersonalSettings private constructor() {
     var about: String = "no about"
     var status: String = "no status"
     var notificationVolume: Int = 100
+    var photo: String = ""
 
     companion object {
         private var instance: UserPersonalSettings = UserPersonalSettings()
