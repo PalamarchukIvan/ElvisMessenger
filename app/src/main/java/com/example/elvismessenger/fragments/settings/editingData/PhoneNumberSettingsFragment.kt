@@ -23,7 +23,9 @@ class PhoneNumberSettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         newPhoneNumber = view.findViewById(R.id.new_phone_number)
 
-        UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
+        UserRepository.currentUser?.observe(viewLifecycleOwner) {
+            newPhoneNumber.setText(it.phoneNumber)
+        } ?: UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
             newPhoneNumber.setText(it.phoneNumber)
         }
 

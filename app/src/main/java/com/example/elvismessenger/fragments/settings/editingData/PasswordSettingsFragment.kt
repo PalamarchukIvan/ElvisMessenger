@@ -25,6 +25,10 @@ class PasswordSettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         newPassword = view.findViewById(R.id.new_password)
+
+        UserRepository.currentUser?.observe(viewLifecycleOwner) {
+            newPassword.setText(it.password)
+        } ?:
         UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
             newPassword.setText(it.password)
         }

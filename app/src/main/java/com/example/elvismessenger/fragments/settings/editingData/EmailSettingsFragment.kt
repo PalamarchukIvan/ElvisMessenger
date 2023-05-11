@@ -28,7 +28,9 @@ class EmailSettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         newEmail = view.findViewById(R.id.new_email)
 
-        UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
+        UserRepository.currentUser?.observe(viewLifecycleOwner){
+            newEmail.setText(it.email)
+        } ?: UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
             newEmail.setText(it.email)
         }
         newEmail.setOnEditorActionListener { _, actionId, _ ->
