@@ -12,7 +12,10 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.example.elvismessenger.R
 import com.example.elvismessenger.activities.MainActivity
+import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.utils.UserPersonalSettings
+import com.squareup.picasso.Picasso
+import de.hdodenhof.circleimageview.CircleImageView
 
 class SettingsFragment : Fragment() {
     private lateinit var toChatSettings: ImageView
@@ -23,9 +26,7 @@ class SettingsFragment : Fragment() {
     private lateinit var theme: SwitchCompat
     private lateinit var toEditProfile: AppCompatButton
     private lateinit var currentLanguage: TextView
-
-
-
+    private lateinit var userPhoto: CircleImageView
 
     companion object {
         //Инициализация SharedPreferances + LiveData
@@ -64,6 +65,7 @@ class SettingsFragment : Fragment() {
             newSettings?.about = sp.getString(ABOUT, "").toString()
             newSettings?.status = sp.getString(STATUS, "").toString()
             newSettings?.notificationVolume = sp.getInt(NOTIFICATION_VOLUME, 100)
+            newSettings?.photo = sp.getString(PHOTO, "").toString()
 
             userSettings.postValue(newSettings)
         }
@@ -80,13 +82,39 @@ class SettingsFragment : Fragment() {
         theme = view.findViewById(R.id.if_dark_theme_button)
         toEditProfile = view.findViewById(R.id.to_edit_profile_btn)
         currentLanguage = view.findViewById(R.id.current_language)
+        userPhoto = view.findViewById(R.id.settings_user_photo)
 
-        userSettings.observe(viewLifecycleOwner) {
+
+        UserRepository.currentUser?.observe(viewLifecycleOwner) {
+            theme.isChecked = userSettings.value?.ifDarkTheme ?: false
+            currentLanguage.text = userSettings.value?.language
+
+            view.findViewById<TextView>(R.id.settings_username).text = it.username
+            view.findViewById<TextView>(R.id.settings_status).text = it.status
+            if (it.photo.isNotBlank()) {
+                userPhoto.let { photo ->
+                    Picasso.get()
+                        .load(it.photo)
+                        .into(photo)
+                }
+            } else {
+                userPhoto.let { photo ->
+                    Picasso.get()
+                        .load(R.drawable.dornan)
+                        .into(photo)
+                }
+            }
+        } ?: userSettings.observe(viewLifecycleOwner) {
             theme.isChecked = userSettings.value?.ifDarkTheme ?: false
             currentLanguage.text = userSettings.value?.language
 
             view.findViewById<TextView>(R.id.settings_username).text = userSettings.value?.username
             view.findViewById<TextView>(R.id.settings_status).text = userSettings.value?.status
+            userPhoto.let {
+                Picasso.get()
+                    .load(R.drawable.dornan)
+                    .into(it)
+            }
         }
 
         toChatSettings.setOnClickListener {

@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
@@ -25,6 +27,7 @@ import com.firebase.ui.auth.data.model.User
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.auth.FirebaseAuth
+import com.squareup.picasso.Picasso
 
 class MainActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
@@ -92,6 +95,17 @@ class MainActivity : AppCompatActivity() {
         UserRepository.currentUser?.observe(this) {
             navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = UserRepository.currentUser?.value?.username ?: FirebaseAuth.getInstance().currentUser!!.displayName
             navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = UserRepository.currentUser?.value?.status ?: ""
+            navigationView.getHeaderView(0).findViewById<ImageView>(R.id.pfp_image_nav_header).apply {
+                if(UserRepository.currentUser!!.value!!.photo.isNotBlank()) {
+                    Picasso.get()
+                        .load(UserRepository.currentUser!!.value!!.photo.toUri())
+                        .into(this)
+                } else {
+                    Picasso.get()
+                        .load(R.drawable.dornan)
+                        .into(this)
+                }
+            }
         }
     }
 
