@@ -17,46 +17,60 @@ class FindUserAdapter(
     private val onItemClick: ((User) -> Unit)
 ) : RecyclerView.Adapter<FindUserAdapter.FindUserViewHolder>() {
 
+    companion object {
+        private const val EVEN_USER = 0
+        private const val ODD_USER = 1
+    }
+
     class FindUserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private val chatName: TextView = itemView.findViewById(R.id.name_text_chat_item)
-        private val photo: ImageView = itemView.findViewById(R.id.pfp_image_chat_item)
-        private val lastMsgDate: TextView = itemView.findViewById(R.id.time_text_chat_item)
-        private val lastMsg: TextView = itemView.findViewById(R.id.status_text_chat_item)
+        private val chatName: TextView = itemView.findViewById(R.id.name_text_find_user_item)
+        private val pfp: ImageView = itemView.findViewById(R.id.pfp_image_find_user_item)
+        private val status: TextView = itemView.findViewById(R.id.status_text_find_user_item)
 
         fun bind(user: User) {
             Log.d("credit: ", "$user")
             chatName.text = user.username
-            lastMsg.text = "last msg"
-            lastMsgDate.text = "time"
+            status.text = user.status
             user.photo.let {
                 if (it.isNotEmpty()) {
                     Picasso.get()
                         .load(it)
-                        .into(photo)
+                        .into(pfp)
                 } else {
                     Picasso.get()
                         .load(R.drawable.dornan)
-                        .into(photo)
+                        .into(pfp)
                 }
             }
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FindUserViewHolder {
-        val holder = FindUserViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.chats_item, parent, false)
-        )
-        holder.itemView.setOnClickListener {
-            onItemClick.invoke(userToShowList[holder.absoluteAdapterPosition])
+    override fun getItemViewType(position: Int): Int {
+        return when (position % 2) {
+            0 -> EVEN_USER
+            else -> ODD_USER
         }
-        return holder
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FindUserViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
+
+        return when(viewType) {
+            EVEN_USER -> FindUserViewHolder(layoutInflater.inflate(R.layout.find_user_item_even, parent, false))
+            ODD_USER -> FindUserViewHolder(layoutInflater.inflate(R.layout.find_user_item, parent, false))
+            else -> FindUserViewHolder(layoutInflater.inflate(R.layout.find_user_item_even, parent, false))
+        }
     }
 
     override fun onBindViewHolder(holder: FindUserViewHolder, position: Int) {
         holder.bind(userToShowList[position])
+
+        // Тут обработка клика
+        holder.itemView.setOnClickListener {
+            onItemClick.invoke(userToShowList[holder.absoluteAdapterPosition])
+        }
     }
 
     override fun getItemCount() = userToShowList.size
-
 }

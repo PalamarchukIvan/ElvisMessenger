@@ -31,7 +31,7 @@ class FindUserFragment : Fragment(R.layout.fragment_find_user) {
 
         userList = mutableListOf()
 
-        //Заполнение списка юзеров из репозитория
+        // Заполнение списка юзеров из репозитория
         val query = userRepository.getAllUsers()
 
         lifecycleScope.launch {

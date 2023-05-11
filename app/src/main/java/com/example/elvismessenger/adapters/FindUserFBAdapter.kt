@@ -14,6 +14,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.squareup.picasso.Picasso
 
+// Пока что нигде не используется
 class FindUserFBAdapter(
     private val options: FirebaseRecyclerOptions<User>,
     private val onItemClick: ((User) -> Unit)
