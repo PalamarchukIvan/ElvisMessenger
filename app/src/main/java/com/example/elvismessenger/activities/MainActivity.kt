@@ -91,20 +91,27 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
-
         UserRepository.currentUser?.observe(this) {
-            navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = UserRepository.currentUser?.value?.username ?: FirebaseAuth.getInstance().currentUser!!.displayName
-            navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = UserRepository.currentUser?.value?.status ?: ""
+            navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = it.username
+            navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = it.status
             navigationView.getHeaderView(0).findViewById<ImageView>(R.id.pfp_image_nav_header).apply {
-                if(UserRepository.currentUser!!.value!!.photo.isNotBlank()) {
+                if(it.photo.isNotBlank()) {
                     Picasso.get()
-                        .load(UserRepository.currentUser!!.value!!.photo.toUri())
+                        .load(it.photo.toUri())
                         .into(this)
                 } else {
                     Picasso.get()
                         .load(R.drawable.dornan)
                         .into(this)
                 }
+            }
+        } ?: userSettings.observe(this) {
+            navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = it.username
+            navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = it.status
+            navigationView.getHeaderView(0).findViewById<ImageView>(R.id.pfp_image_nav_header).apply {
+                Picasso.get()
+                    .load(R.drawable.dornan)
+                    .into(this)
             }
         }
     }

@@ -20,4 +20,8 @@ class UserPersonalSettings private constructor() {
         private var instance: UserPersonalSettings = UserPersonalSettings()
         val livaDataInstance = MutableLiveData(instance)
     }
+
+    override fun toString(): String {
+        return "UserPersonalSettings(email='$email', password='$password', phoneNumber='$phoneNumber', ifDarkTheme=$ifDarkTheme, textSize=$textSize, language='$language', username='$username', about='$about', status='$status', notificationVolume=$notificationVolume, photo='$photo')"
+    }
 }

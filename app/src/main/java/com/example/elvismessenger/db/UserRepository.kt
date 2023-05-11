@@ -56,10 +56,12 @@ class UserRepository private constructor() {
                     return field
                 }
                 if (field == null || field?.value?.uid != FirebaseAuth.getInstance().currentUser?.uid) {
-                    field = MutableLiveData()
-                    GlobalScope.launch(Dispatchers.IO) {
-                        getInstance().getUserByUID(FirebaseAuth.getInstance().currentUser!!.uid).snapshots.collect {
-                            field!!.postValue(it.getValue(User::class.java)!!)
+                    FirebaseAuth.getInstance().currentUser?.also {
+                        field = MutableLiveData()
+                        GlobalScope.launch(Dispatchers.IO) {
+                            getInstance().getUserByUID(it.uid).snapshots.collect {
+                                field!!.postValue(it.getValue(User::class.java)!!)
+                            }
                         }
                     }
                 }
