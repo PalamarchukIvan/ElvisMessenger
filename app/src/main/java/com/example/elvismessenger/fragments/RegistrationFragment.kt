@@ -20,7 +20,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 
 class RegistrationFragment : Fragment(R.layout.fragment_registration) {
-
     private lateinit var regUsername: EditText
     private lateinit var regEmail: EditText
     private lateinit var regPassword: EditText
@@ -58,14 +57,14 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
                 RegLogActivity.GOOD -> {
                     FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener {
                         if(it.isSuccessful) {
-                            //Запихиваем его в базу
+                            // Запихиваем его в базу
                             FirebaseAuth.getInstance().currentUser.let { userFB ->
                                 UserRepository.getInstance().createOrUpdateUser(
                                     UserRepository.toUserDB(userFB!!, password, username))
                             }
 
-                            Navigation.findNavController(view).navigate(R.id.action_registrationFragment_to_mainActivity)
-                            activity?.finish()
+                            // Перход на Welcome стрраничку
+                            Navigation.findNavController(view).navigate(R.id.action_registrationFragment_to_welcomingEditProfileFragment)
                         }
                     }.addOnFailureListener {
                         Toast.makeText(context, "error: ${it.message.toString()}", Toast.LENGTH_SHORT).show()

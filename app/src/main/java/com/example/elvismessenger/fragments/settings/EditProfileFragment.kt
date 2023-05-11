@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatButton
-import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -19,8 +18,6 @@ import com.example.elvismessenger.R
 import com.example.elvismessenger.activities.MainActivity
 import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.utils.UserPersonalSettings
-import com.google.firebase.firestore.auth.User
-import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 
 class EditProfileFragment : Fragment() {
@@ -42,7 +39,7 @@ class EditProfileFragment : Fragment() {
         newStatus = view.findViewById(R.id.new_status)
         newAbout = view.findViewById(R.id.new_about)
         newName = view.findViewById(R.id.new_username)
-        submitBtn = view.findViewById(R.id.submit_profile_btn)
+        submitBtn = view.findViewById(R.id.edit_profile_button)
         currentPhoto = view.findViewById(R.id.current_photo_edit_profile)
         newPhotoBtn = view.findViewById(R.id.change_photo_btn)
 

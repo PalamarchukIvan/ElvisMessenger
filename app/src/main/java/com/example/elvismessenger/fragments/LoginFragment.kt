@@ -1,22 +1,15 @@
 package com.example.elvismessenger.fragments
 
-import android.content.ContentProviderClient
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
-import androidx.annotation.RequiresApi
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import com.example.elvismessenger.R
-import com.example.elvismessenger.activities.MainActivity
 import com.example.elvismessenger.activities.RegLogActivity
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
@@ -27,12 +20,9 @@ import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.database.ktx.snapshots
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.flow.publish
 import kotlinx.coroutines.launch
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
@@ -127,17 +117,34 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
-                    //Запихиваем его в базу
-                    FirebaseAuth.getInstance().currentUser.let { userFB ->
-                        UserRepository.getInstance().createOrUpdateUser(
-                            UserRepository.toUserDB(userFB!!))
+                    var user: User?
+
+                    lifecycleScope.launch {
+                        UserRepository.getInstance()
+                            .getUserByUID(FirebaseAuth.getInstance().currentUser!!.uid).snapshots.collect {
+                                user = it.getValue(User::class.java)
+                                if (user != null) {
+                                    view?.let {
+                                        Navigation.findNavController(it)
+                                            .navigate(R.id.action_loginFragment_to_mainActivity)
+                                        activity?.finish()
+                                    }
+                                } else {
+                                    // Запихиваем его в базу
+                                    FirebaseAuth.getInstance().currentUser.let { userFB ->
+                                        UserRepository.getInstance().createOrUpdateUser(
+                                            UserRepository.toUserDB(userFB!!)
+                                        )
+                                    }
+
+                                    view?.let {
+                                        Navigation.findNavController(it)
+                                            .navigate(R.id.action_loginFragment_to_welcomingEditProfileFragment)
+                                    }
+                                }
+                            }
                     }
 
-                    view?.let {
-                        Navigation.findNavController(it)
-                            .navigate(R.id.action_loginFragment_to_mainActivity)
-                    }
-                    activity?.finish()
                     Toast.makeText(requireContext(), "Success", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(
