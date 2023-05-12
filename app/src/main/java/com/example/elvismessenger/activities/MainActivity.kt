@@ -111,9 +111,9 @@ class MainActivity : AppCompatActivity() {
 
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
-
-        if(networkInfo != null && networkInfo.isConnected) {
-            UserRepository.currentUser?.observe(this) {
+        UserRepository.currentUser?.observe(this) {
+            if(networkInfo != null && networkInfo.isConnected) {
+                RegLogActivity.updateSharedPreferances(it)
                 navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = it.username
                 navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = it.status
                 navigationView.getHeaderView(0).findViewById<ImageView>(R.id.pfp_image_nav_header)
@@ -129,9 +129,10 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
             }
-        } else {
-            SettingsFragment.loadData()
-            userSettings.observe(this) {
+        }
+        SettingsFragment.loadData()
+        userSettings.observe(this) {
+            if(networkInfo == null || !networkInfo.isConnected) {
                 navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = it.username
                 navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = it.status
                 navigationView.getHeaderView(0).findViewById<ImageView>(R.id.pfp_image_nav_header)

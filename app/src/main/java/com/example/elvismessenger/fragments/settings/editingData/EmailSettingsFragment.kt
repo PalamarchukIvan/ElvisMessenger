@@ -74,10 +74,10 @@ class EmailSettingsFragment : Fragment() {
                 FirebaseAuth.getInstance().currentUser?.updateEmail(newEmail.text.toString())
                     ?.addOnSuccessListener {
                         makeSuccess()
-                        val editor =
-                            MainActivity.sp.edit()
+                        val editor = MainActivity.sp.edit()
                         editor?.putString(SettingsFragment.EMAIL, newEmail.text.toString())
                         editor?.apply()
+
                         val newUser = UserRepository.currentUser?.value
                         newUser?.email = newEmail.text.toString()
                         UserRepository.currentUser?.postValue(newUser)

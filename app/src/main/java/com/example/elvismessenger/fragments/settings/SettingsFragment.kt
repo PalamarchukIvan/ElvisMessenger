@@ -119,10 +119,18 @@ class SettingsFragment : Fragment() {
                 view.findViewById<TextView>(R.id.settings_username).text =
                     userSettings.value?.username
                 view.findViewById<TextView>(R.id.settings_status).text = userSettings.value?.status
-                userPhoto.let {
-                    Picasso.get()
-                        .load(R.drawable.dornan)
-                        .into(it)
+                if (it.photo.isNotBlank()) {
+                    userPhoto.let { photo ->
+                        Picasso.get()
+                            .load(it.photo)
+                            .into(photo)
+                    }
+                } else {
+                    userPhoto.let { photo ->
+                        Picasso.get()
+                            .load(R.drawable.dornan)
+                            .into(photo)
+                    }
                 }
             }
         }

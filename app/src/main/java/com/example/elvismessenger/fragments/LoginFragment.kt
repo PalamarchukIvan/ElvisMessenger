@@ -10,9 +10,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import com.example.elvismessenger.R
+import com.example.elvismessenger.activities.MainActivity
 import com.example.elvismessenger.activities.RegLogActivity
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
+import com.example.elvismessenger.fragments.settings.SettingsFragment
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -74,15 +76,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener {
                             if (it.isSuccessful) {
-                                Navigation.findNavController(view)
-                                    .navigate(R.id.action_loginFragment_to_mainActivity)
+                                RegLogActivity.updateSharedPreferances(UserRepository.toUserDB(FirebaseAuth.getInstance().currentUser!!, uPassword = password))
+                                Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_mainActivity)
                                 activity?.finish()
                             } else {
-                                Toast.makeText(
-                                    context,
-                                    "user with such credits does not exist",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                Toast.makeText(context, "user with such credits does not exist", Toast.LENGTH_SHORT).show()
                             }
                         }
                 }

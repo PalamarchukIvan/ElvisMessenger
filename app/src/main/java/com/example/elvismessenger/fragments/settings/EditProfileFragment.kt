@@ -47,42 +47,49 @@ class EditProfileFragment : Fragment() {
         currentPhoto = view.findViewById(R.id.current_photo_edit_profile)
         newPhotoBtn = view.findViewById(R.id.change_photo_btn)
 
+        val connectivityManager = requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
 
-        UserRepository.currentUser?.observe(viewLifecycleOwner) {
-            newStatus.setText(it.status)
-            newAbout.setText(it.about)
-            newName.setText(it.username)
-            currentPhoto.apply {
-                if (it.photo.isNotBlank()) {
-                    Picasso.get()
-                        .load(it.photo.toUri())
-                        .placeholder(R.drawable.dornan)
-                        .into(this)
-                } else {
-                    Picasso.get()
-                        .load(R.drawable.dornan)
-                        .into(this)
+            UserRepository.currentUser?.observe(viewLifecycleOwner) {
+                if(networkInfo != null && networkInfo.isConnected) {
+                    newStatus.setText(it.status)
+                    newAbout.setText(it.about)
+                    newName.setText(it.username)
+                    currentPhoto.apply {
+                        if (it.photo.isNotBlank()) {
+                            Picasso.get()
+                                .load(it.photo.toUri())
+                                .placeholder(R.drawable.dornan)
+                                .into(this)
+                        } else {
+                            Picasso.get()
+                                .load(R.drawable.dornan)
+                                .into(this)
+                        }
+                    }
+                    submitBtn.isVisible = false
                 }
             }
-            submitBtn.isVisible = false
-        } ?: UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
-            newStatus.setText(it.status)
-            newAbout.setText(it.about)
-            newName.setText(it.username)
-            currentPhoto.apply {
-                if (it.photo.isNotBlank()) {
-                    Picasso.get()
-                        .load(it.photo.toUri())
-                        .placeholder(R.drawable.dornan)
-                        .into(this)
-                } else {
-                    Picasso.get()
-                        .load(R.drawable.dornan)
-                        .into(this)
+            UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
+                if(networkInfo == null || !networkInfo.isConnected) {
+                    newStatus.setText(it.status)
+                    newAbout.setText(it.about)
+                    newName.setText(it.username)
+                    currentPhoto.apply {
+                        if (it.photo.isNotBlank()) {
+                            Picasso.get()
+                                .load(it.photo.toUri())
+                                .placeholder(R.drawable.dornan)
+                                .into(this)
+                        } else {
+                            Picasso.get()
+                                .load(R.drawable.dornan)
+                                .into(this)
+                        }
+                    }
+                    submitBtn.isVisible = false
                 }
             }
-            submitBtn.isVisible = false
-        }
 
         newStatus.addTextChangedListener {
             submitBtn.isVisible = true

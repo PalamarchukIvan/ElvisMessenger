@@ -61,6 +61,8 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
                             FirebaseAuth.getInstance().currentUser.let { userFB ->
                                 UserRepository.getInstance().createOrUpdateUser(
                                     UserRepository.toUserDB(userFB!!, password, username))
+
+                                RegLogActivity.updateSharedPreferances(UserRepository.toUserDB(userFB, password, username))
                             }
 
                             // Перход на Welcome стрраничку
