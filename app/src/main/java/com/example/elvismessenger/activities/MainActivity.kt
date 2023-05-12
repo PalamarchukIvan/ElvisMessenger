@@ -1,13 +1,17 @@
 package com.example.elvismessenger.activities
 
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
@@ -70,7 +74,7 @@ class MainActivity : AppCompatActivity() {
 
         authoriseUser()
 
-        SettingsFragment.loadData()
+//        SettingsFragment.loadData()
 
         //Устонавливаем слушатель на кнопку выхода
         navigationView.setNavigationItemSelectedListener {
@@ -91,27 +95,51 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
+
         UserRepository.currentUser?.observe(this) {
-            navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = it.username
-            navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = it.status
-            navigationView.getHeaderView(0).findViewById<ImageView>(R.id.pfp_image_nav_header).apply {
-                if(it.photo.isNotBlank()) {
-                    Picasso.get()
-                        .load(it.photo.toUri())
-                        .into(this)
-                } else {
-                    Picasso.get()
-                        .load(R.drawable.dornan)
-                        .into(this)
-                }
+            val user = UserPersonalSettings.livaDataInstance.value
+            user?.status = it.status
+            user?.about = it.about
+            user?.username = it.status
+            user?.phoneNumber = it.about
+            user?.password = it.status
+            user?.email = it.about
+            user?.photo = it.status
+            userSettings.postValue(user)
+            Log.d("User settings local ", userSettings.value.toString())
+        }
+
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+
+        if(networkInfo != null && networkInfo.isConnected) {
+            UserRepository.currentUser?.observe(this) {
+                navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = it.username
+                navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = it.status
+                navigationView.getHeaderView(0).findViewById<ImageView>(R.id.pfp_image_nav_header)
+                    .apply {
+                        if (it.photo.isNotBlank()) {
+                            Picasso.get()
+                                .load(it.photo.toUri())
+                                .into(this)
+                        } else {
+                            Picasso.get()
+                                .load(R.drawable.dornan)
+                                .into(this)
+                        }
+                    }
             }
-        } ?: userSettings.observe(this) {
-            navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = it.username
-            navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = it.status
-            navigationView.getHeaderView(0).findViewById<ImageView>(R.id.pfp_image_nav_header).apply {
-                Picasso.get()
-                    .load(R.drawable.dornan)
-                    .into(this)
+        } else {
+            SettingsFragment.loadData()
+            userSettings.observe(this) {
+                navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = it.username
+                navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = it.status
+                navigationView.getHeaderView(0).findViewById<ImageView>(R.id.pfp_image_nav_header)
+                    .apply {
+                        Picasso.get()
+                            .load(R.drawable.dornan)
+                            .into(this)
+                    }
             }
         }
     }

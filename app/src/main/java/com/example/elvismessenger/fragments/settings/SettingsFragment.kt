@@ -1,5 +1,7 @@
 package com.example.elvismessenger.fragments.settings
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.SwitchCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.example.elvismessenger.R
@@ -84,36 +87,43 @@ class SettingsFragment : Fragment() {
         currentLanguage = view.findViewById(R.id.current_language)
         userPhoto = view.findViewById(R.id.settings_user_photo)
 
+        val connectivityManager = requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
 
-        UserRepository.currentUser?.observe(viewLifecycleOwner) {
-            theme.isChecked = userSettings.value?.ifDarkTheme ?: false
-            currentLanguage.text = userSettings.value?.language
+        if(networkInfo != null && networkInfo.isConnected) {
+                UserRepository.currentUser?.observe(viewLifecycleOwner) {
+                    theme.isChecked = userSettings.value?.ifDarkTheme ?: false
+                    currentLanguage.text = userSettings.value?.language
 
-            view.findViewById<TextView>(R.id.settings_username).text = it.username
-            view.findViewById<TextView>(R.id.settings_status).text = it.status
-            if (it.photo.isNotBlank()) {
-                userPhoto.let { photo ->
-                    Picasso.get()
-                        .load(it.photo)
-                        .into(photo)
+                    view.findViewById<TextView>(R.id.settings_username).text = it.username
+                    view.findViewById<TextView>(R.id.settings_status).text = it.status
+                    if (it.photo.isNotBlank()) {
+                        userPhoto.let { photo ->
+                            Picasso.get()
+                                .load(it.photo)
+                                .into(photo)
+                        }
+                    } else {
+                        userPhoto.let { photo ->
+                            Picasso.get()
+                                .load(R.drawable.dornan)
+                                .into(photo)
+                        }
+                    }
                 }
             } else {
-                userPhoto.let { photo ->
+            userSettings.observe(viewLifecycleOwner) {
+                theme.isChecked = userSettings.value?.ifDarkTheme ?: false
+                currentLanguage.text = userSettings.value?.language
+
+                view.findViewById<TextView>(R.id.settings_username).text =
+                    userSettings.value?.username
+                view.findViewById<TextView>(R.id.settings_status).text = userSettings.value?.status
+                userPhoto.let {
                     Picasso.get()
                         .load(R.drawable.dornan)
-                        .into(photo)
+                        .into(it)
                 }
-            }
-        } ?: userSettings.observe(viewLifecycleOwner) {
-            theme.isChecked = userSettings.value?.ifDarkTheme ?: false
-            currentLanguage.text = userSettings.value?.language
-
-            view.findViewById<TextView>(R.id.settings_username).text = userSettings.value?.username
-            view.findViewById<TextView>(R.id.settings_status).text = userSettings.value?.status
-            userPhoto.let {
-                Picasso.get()
-                    .load(R.drawable.dornan)
-                    .into(it)
             }
         }
 
