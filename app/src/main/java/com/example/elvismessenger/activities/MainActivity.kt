@@ -136,9 +136,16 @@ class MainActivity : AppCompatActivity() {
                 navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = it.status
                 navigationView.getHeaderView(0).findViewById<ImageView>(R.id.pfp_image_nav_header)
                     .apply {
-                        Picasso.get()
-                            .load(R.drawable.dornan)
-                            .into(this)
+                        if (it.photo.isNotBlank()) {
+                            Picasso.get()
+                                .load(it.photo.toUri())
+                                .placeholder(R.drawable.dornan)
+                                .into(this)
+                        } else {
+                            Picasso.get()
+                                .load(R.drawable.dornan)
+                                .into(this)
+                        }
                     }
             }
         }

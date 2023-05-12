@@ -1,7 +1,9 @@
 package com.example.elvismessenger.fragments.settings
 
 import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -12,6 +14,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -49,15 +52,16 @@ class EditProfileFragment : Fragment() {
             newStatus.setText(it.status)
             newAbout.setText(it.about)
             newName.setText(it.username)
-            currentPhoto.let { photo ->
-                if(it.photo.isNotBlank()) {
+            currentPhoto.apply {
+                if (it.photo.isNotBlank()) {
                     Picasso.get()
-                        .load(it.photo)
-                        .into(photo)
+                        .load(it.photo.toUri())
+                        .placeholder(R.drawable.dornan)
+                        .into(this)
                 } else {
                     Picasso.get()
                         .load(R.drawable.dornan)
-                        .into(photo)
+                        .into(this)
                 }
             }
             submitBtn.isVisible = false
@@ -65,15 +69,16 @@ class EditProfileFragment : Fragment() {
             newStatus.setText(it.status)
             newAbout.setText(it.about)
             newName.setText(it.username)
-            currentPhoto.let { photo ->
-                if(it.photo.isNotBlank()) {
+            currentPhoto.apply {
+                if (it.photo.isNotBlank()) {
                     Picasso.get()
-                        .load(it.photo)
-                        .into(photo)
+                        .load(it.photo.toUri())
+                        .placeholder(R.drawable.dornan)
+                        .into(this)
                 } else {
                     Picasso.get()
                         .load(R.drawable.dornan)
-                        .into(photo)
+                        .into(this)
                 }
             }
             submitBtn.isVisible = false
@@ -127,6 +132,13 @@ class EditProfileFragment : Fragment() {
 
         if(newName.text.toString().length < 6) {
             Toast.makeText(requireContext(), "New username is badly formatted", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val connectivityManager = requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        if (networkInfo == null || !networkInfo.isConnected) {
+            Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT).show()
             return
         }
 

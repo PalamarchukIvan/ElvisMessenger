@@ -1,6 +1,8 @@
 package com.example.elvismessenger.fragments.settings.editingData
 
+import android.content.Context
 import android.graphics.Color
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -49,6 +51,14 @@ class PasswordSettingsFragment : Fragment() {
         if(newPassword.text.toString().length < 6) {
             Toast.makeText(requireContext(), "Password must be at least 6 characters long", Toast.LENGTH_SHORT).show()
         }
+
+        val connectivityManager = requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        if (networkInfo == null || !networkInfo.isConnected) {
+            Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT).show()
+            return
+        }
+
 
         val credential = EmailAuthProvider.getCredential(
         UserRepository.currentUser?.value!!.email,

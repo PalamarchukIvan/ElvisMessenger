@@ -1,10 +1,13 @@
 package com.example.elvismessenger.fragments.settings.editingData
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.elvismessenger.R
@@ -37,6 +40,15 @@ class PhoneNumberSettingsFragment : Fragment() {
     }
 
     private fun saveData() {
+
+        val connectivityManager = requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        if (networkInfo == null || !networkInfo.isConnected) {
+            Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+
         val editor =
             MainActivity.sp.edit()
         editor.putString(SettingsFragment.PHONE_NUMBER, newPhoneNumber.text.toString())
