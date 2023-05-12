@@ -4,7 +4,9 @@ import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
+import com.example.elvismessenger.activities.MainActivity
 import com.example.elvismessenger.fragments.settings.EditProfileFragment
+import com.example.elvismessenger.fragments.settings.SettingsFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
@@ -80,5 +82,20 @@ class UserRepository private constructor() {
                 password = uPassword,
                 phoneNumber = user.phoneNumber ?: "no phone number",
             )
+
+        fun updateSharedPreferances(user: User) {
+            val editor = MainActivity.sp.edit()
+            editor?.putString(SettingsFragment.EMAIL, user.email)
+            editor?.putString(SettingsFragment.PASSWORD, user.password)
+            editor?.putString(SettingsFragment.USERNAME, user.username)
+            editor?.putString(SettingsFragment.ABOUT, user.about)
+            editor?.putString(SettingsFragment.STATUS, user.status)
+            editor?.putString(SettingsFragment.PHOTO, user.photo)
+            editor?.putString(SettingsFragment.PHOTO, user.photo)
+            editor?.apply()
+
+            SettingsFragment.loadData()
+        }
+
     }
 }

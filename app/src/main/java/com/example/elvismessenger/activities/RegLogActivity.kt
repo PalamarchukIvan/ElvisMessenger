@@ -28,19 +28,6 @@ class RegLogActivity : AppCompatActivity() {
         const val INCORRECT_STATUS_SIZE = -7
         const val INCORRECT_ABOUT_SIZE = -8
 
-        fun updateSharedPreferances(user: User) {
-            val editor = MainActivity.sp.edit()
-            editor?.putString(SettingsFragment.EMAIL, user.email)
-            editor?.putString(SettingsFragment.PASSWORD, user.password)
-            editor?.putString(SettingsFragment.USERNAME, user.username)
-            editor?.putString(SettingsFragment.ABOUT, user.about)
-            editor?.putString(SettingsFragment.STATUS, user.status)
-            editor?.putString(SettingsFragment.PHOTO, user.photo)
-            editor?.putString(SettingsFragment.PHOTO, user.photo)
-            editor?.apply()
-
-            SettingsFragment.loadData()
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

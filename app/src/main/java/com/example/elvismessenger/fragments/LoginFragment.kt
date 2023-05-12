@@ -76,7 +76,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener {
                             if (it.isSuccessful) {
-                                RegLogActivity.updateSharedPreferances(UserRepository.toUserDB(FirebaseAuth.getInstance().currentUser!!, uPassword = password))
+                                UserRepository.updateSharedPreferances(UserRepository.toUserDB(FirebaseAuth.getInstance().currentUser!!, uPassword = password))
                                 Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_mainActivity)
                                 activity?.finish()
                             } else {

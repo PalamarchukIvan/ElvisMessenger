@@ -62,7 +62,7 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
                                 UserRepository.getInstance().createOrUpdateUser(
                                     UserRepository.toUserDB(userFB!!, password, username))
 
-                                RegLogActivity.updateSharedPreferances(UserRepository.toUserDB(userFB, password, username))
+                                UserRepository.updateSharedPreferances(UserRepository.toUserDB(userFB, password, username))
                             }
 
                             // Перход на Welcome стрраничку
