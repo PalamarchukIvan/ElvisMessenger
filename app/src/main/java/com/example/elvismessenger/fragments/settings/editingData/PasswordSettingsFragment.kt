@@ -29,11 +29,18 @@ class PasswordSettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         newPassword = view.findViewById(R.id.new_password)
 
+        val connectivityManager = requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+
         UserRepository.currentUser?.observe(viewLifecycleOwner) {
-            newPassword.setText(it.password)
-        } ?:
+            if(networkInfo != null && networkInfo.isConnected) {
+                newPassword.setText(it.password)
+            }
+        }
         UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
-            newPassword.setText(it.password)
+            if(networkInfo == null || !networkInfo.isConnected) {
+                newPassword.setText(it.password)
+            }
         }
         newPassword.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {

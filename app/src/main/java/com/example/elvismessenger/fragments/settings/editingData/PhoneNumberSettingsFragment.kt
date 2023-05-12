@@ -26,10 +26,18 @@ class PhoneNumberSettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         newPhoneNumber = view.findViewById(R.id.new_phone_number)
 
+        val connectivityManager = requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+
         UserRepository.currentUser?.observe(viewLifecycleOwner) {
-            newPhoneNumber.setText(it.phoneNumber)
-        } ?: UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
-            newPhoneNumber.setText(it.phoneNumber)
+            if(networkInfo != null && networkInfo.isConnected) {
+                newPhoneNumber.setText(it.phoneNumber)
+            }
+        }
+        UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
+            if(networkInfo == null || !networkInfo.isConnected) {
+                newPhoneNumber.setText(it.phoneNumber)
+            }
         }
 
         newPhoneNumber.setOnFocusChangeListener { v, hasFocus ->

@@ -30,10 +30,18 @@ class EmailSettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         newEmail = view.findViewById(R.id.new_email)
 
+        val connectivityManager = requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+
         UserRepository.currentUser?.observe(viewLifecycleOwner){
-            newEmail.setText(it.email)
-        } ?: UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
-            newEmail.setText(it.email)
+            if(networkInfo != null && networkInfo.isConnected) {
+                newEmail.setText(it.email)
+            }
+        }
+        UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
+            if(networkInfo == null || !networkInfo.isConnected) {
+                newEmail.setText(it.email)
+            }
         }
         newEmail.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
