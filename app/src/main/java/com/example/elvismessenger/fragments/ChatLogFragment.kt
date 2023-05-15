@@ -1,10 +1,15 @@
 package com.example.elvismessenger.fragments
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,8 +20,7 @@ import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.database.Query
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import com.squareup.picasso.Picasso
 
 class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
 
@@ -33,12 +37,42 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
     private lateinit var currentUser: User
     private lateinit var chatQuery: Query
 
+    private lateinit var anotherUserPhoto: ImageView
+    private lateinit var anotherUsername: TextView
+    private lateinit var anotherUserState: TextView
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    override fun onDestroyView() {
+        (requireActivity() as AppCompatActivity).supportActionBar?.show()
+        super.onDestroyView()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        anotherUserPhoto = view.findViewById(R.id.user_photo)
+        anotherUsername = view.findViewById(R.id.username)
+        anotherUserState = view.findViewById(R.id.current_state)
 
         arguments?.let {
             it.getParcelable<User>(ANOTHER_USER)?.let { user ->
                 otherUser = user
+                anotherUserPhoto.let{photo ->
+                    Picasso.get()
+                        .load(user.photo)
+                        .into(photo)
+                }
+                anotherUsername.text = user.username
             }
         }
         UserRepository.currentUser?.let {

@@ -30,8 +30,6 @@ class ChatLogAdapter(
             const val ANOTHER = 2
         }
 
-        private var username: TextView? = null
-        private var  photo: ImageView? = null
         private var  message: TextView? = null
         private val  time: TextView = itemView.findViewById(R.id.time_message)
         private lateinit var  messageBlock: CardView
@@ -48,24 +46,13 @@ class ChatLogAdapter(
         }
 
         private fun initForReceiver(msg: ChatLogFragment.ChatMessage) {
-            username = itemView.findViewById(R.id.username_message)
-            photo = itemView.findViewById(R.id.user_image)
             message = itemView.findViewById(R.id.message_text)
-            messageBlock = itemView.findViewById(R.id.chat_message_card)
-
             message?.text = msg.text
-            username?.text = otherUser.username
-            otherUser.photo.let {
-                Picasso.get()
-                    .load(it.toUri())
-                    .placeholder(R.drawable.dornan)
-                    .into(photo)
-            }
         }
 
         private fun initForSender(msg: ChatLogFragment.ChatMessage) {
             message = itemView.findViewById(R.id.message_text)
-            message!!.text = msg.text
+            message?.text = msg.text
         }
     }
 
