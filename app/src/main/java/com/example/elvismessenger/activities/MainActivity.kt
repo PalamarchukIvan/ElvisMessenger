@@ -78,19 +78,23 @@ class MainActivity : AppCompatActivity() {
 
         //Устонавливаем слушатель на кнопку выхода
         navigationView.setNavigationItemSelectedListener {
-            if(it.itemId == R.id.regLogActivity) {
-                AlertDialog.Builder(this)
-                    .setTitle("Logout")
-                    .setMessage("Are you sure that you want to logout?")
-                    .setNegativeButton("no", null)
-                    .setPositiveButton("yes") { _, _ ->
-                        FirebaseAuth.getInstance().signOut()
-                        startActivity(Intent(this, RegLogActivity::class.java))
-                        finish()
-                    }
-                    .show()
-            } else {
-                navController.navigate(it.itemId)
+            when(it.itemId) {
+                R.id.regLogActivity -> {
+                    AlertDialog.Builder(this)
+                        .setTitle("Logout")
+                        .setMessage("Are you sure that you want to logout?")
+                        .setNegativeButton("no", null)
+                        .setPositiveButton("yes") { _, _ ->
+                            FirebaseAuth.getInstance().signOut()
+                            startActivity(Intent(this, RegLogActivity::class.java))
+                            finish()
+                        }
+                        .show()
+                }
+                R.id.settingsFragment -> {
+                    navController.navigate(it.itemId)
+                }
+                else -> Toast.makeText(this, "In progress", Toast.LENGTH_SHORT).show()
             }
             drawerLayout.closeDrawer(GravityCompat.START)
             true
