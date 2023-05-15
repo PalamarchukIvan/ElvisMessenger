@@ -8,7 +8,7 @@ class ChatRepository private constructor(){
         //Забил болт
     }
 
-    fun getChat(child: String) = FirebaseDatabase.getInstance().getReference("chats").child(child).limitToLast(50)
+    fun getChat(child: String) = FirebaseDatabase.getInstance().getReference("chats").child(child)
 
     companion object {
         fun getInstance() = ChatRepository()
