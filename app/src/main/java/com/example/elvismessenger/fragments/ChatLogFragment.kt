@@ -67,14 +67,20 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         arguments?.let {
             it.getParcelable<User>(ANOTHER_USER)?.let { user ->
                 otherUser = user
-                anotherUserPhoto.let{photo ->
-                    Picasso.get()
-                        .load(user.photo)
-                        .into(photo)
+
+                if (user.photo != "") {
+                    anotherUserPhoto.let { photo ->
+                        Picasso.get()
+                            .load(user.photo)
+                            .into(photo)
+                    }
+                } else {
+                    Picasso.get().load(R.drawable.dornan).into(anotherUserPhoto)
                 }
                 anotherUsername.text = user.username
             }
         }
+
         UserRepository.currentUser?.let {
             it.value?.let { user ->
                 currentUser = user
@@ -105,7 +111,7 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         val inputText: EditText = view.findViewById(R.id.input_edit_text_chat_log)
 
         sendButton.setOnClickListener {
-            val msg = ChatMessage(currentUser.uid, otherUser.uid,  inputText.text.toString(), System.currentTimeMillis() )
+            val msg = ChatMessage(currentUser.uid, otherUser.uid,  inputText.text.toString(), System.currentTimeMillis())
             chatQuery.ref.push().setValue(msg) { error, _ ->
                 error?.let {
                     Toast.makeText(requireContext(), error.message, Toast.LENGTH_SHORT).show()
