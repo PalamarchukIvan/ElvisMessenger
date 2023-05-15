@@ -24,6 +24,12 @@ class ChatLogAdapter(
 ) : FirebaseRecyclerAdapter<ChatLogFragment.ChatMessage, ChatLogAdapter.ChatViewHolder>(options) {
 
     class ChatViewHolder(itemView: View, private val otherUser: User) : RecyclerView.ViewHolder(itemView) {
+
+        companion object {
+            const val ME = 1
+            const val ANOTHER = 2
+        }
+
         private var username: TextView? = null
         private var  photo: ImageView? = null
         private var  message: TextView? = null
@@ -64,30 +70,34 @@ class ChatLogAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
-        val holder = if(otherUser.uid != FirebaseAuth.getInstance().currentUser!!.uid) {
-            ChatViewHolder(
+        val holder = when(viewType) {
+            ChatViewHolder.ME -> ChatViewHolder(
                 LayoutInflater.from(parent.context).inflate(R.layout.chat_item, parent, false),
                 otherUser
             )
-        } else {
-            ChatViewHolder(
+            ChatViewHolder.ANOTHER -> ChatViewHolder(
                 LayoutInflater.from(parent.context).inflate(R.layout.chat_me_item, parent, false),
                 otherUser
             )
+
+            else -> null
         }
 
-        holder.itemView.setOnClickListener {
+        holder!!.itemView.setOnClickListener {
             onItemClick.invoke(options.snapshots[holder.absoluteAdapterPosition])
         }
 
         return holder
+    }
+    override fun getItemViewType(position: Int): Int {
+        return when (options.snapshots[position].currentUserUID != FirebaseAuth.getInstance().currentUser!!.uid) {
+            true -> ChatViewHolder.ME
+            false -> ChatViewHolder.ANOTHER
+        }
     }
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int, model: ChatLogFragment.ChatMessage) {
         holder.bind(model)
     }
 
-    override fun onDataChanged() {
-
-    }
 }
