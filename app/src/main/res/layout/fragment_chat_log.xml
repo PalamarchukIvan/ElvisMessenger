@@ -21,7 +21,6 @@
             android:background="@drawable/reg_log_edit_text"
             android:ems="10"
             android:hint="@string/chat_log_enter_msg_hint"
-            android:inputType="textPersonName"
             android:minHeight="48dp"
             android:paddingLeft="8dp"
             android:textColor="@color/white"

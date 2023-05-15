@@ -1,90 +1,82 @@
 package com.example.elvismessenger.fragments
 
 import android.os.Bundle
-import android.view.Menu
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.adapters.ChatLogAdapter
-import com.github.javafaker.Faker
-import java.time.LocalTime
+import com.example.elvismessenger.db.ChatRepository
+import com.example.elvismessenger.db.User
+import com.example.elvismessenger.db.UserRepository
+import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.firebase.database.Query
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
 class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
-    // Да это не дата классы и на это есть причина
-    open class ChatMessage(val text: String, val time: String)
-    class OtherChatMessage(val name: String, text: String, time: String) : ChatMessage(text, time)
 
-    // дата класс с инфой о юзере
-    data class OtherUser(val name: String, val about: String, val status: String)
+    data class ChatMessage(val currentUserUID: String = "",
+                           val otherUserUID: String = "",
+                           val text: String = "",
+                           val time: Long = 0)
 
-    lateinit var otherUser: OtherUser
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        otherUser = OtherUser(
-            name = arguments?.getString("name").toString(),
-            about = arguments?.getString("about").toString(),
-            "Offline"
-        )
+    companion object {
+        const val ANOTHER_USER = "another_user"
     }
+
+    private lateinit var otherUser: User
+    private lateinit var currentUser: User
+    private lateinit var chatQuery: Query
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        arguments?.let {
+            it.getParcelable<User>(ANOTHER_USER)?.let { user ->
+                otherUser = user
+            }
+        }
+        UserRepository.currentUser?.let {
+            it.value?.let { user ->
+                currentUser = user
+            }
+        }
+
+        chatQuery = ChatRepository.getInstance().getChat(ChatRepository.getChatID(currentUser.uid, otherUser.uid))
+
         // Часть кода для работы списка чатов
         val recyclerView: RecyclerView = view.findViewById(R.id.list_recycler_view_chat_log)
-
         val layoutManager = LinearLayoutManager(context)
-
-        // Реверсим layout
-        layoutManager.reverseLayout = true
         // Пердаем layout в наш recycleView
         recyclerView.layoutManager = layoutManager
 
-        // Создаем адптер и передаем в него созданый фейкером список
-        val chatLogAdapter = ChatLogAdapter(FakeChat(otherUser.name).fakeItems, otherUser)
+        val options = FirebaseRecyclerOptions.Builder<ChatMessage>()
+            .setQuery(chatQuery, ChatMessage::class.java)
+            .setLifecycleOwner(this)
+            .build()
 
+        val adapter = ChatLogAdapter(options, otherUser) {
+            Toast.makeText(requireContext(), "You clicked on ${otherUser.username}", Toast.LENGTH_SHORT).show()
+        }
         // Передаем адаптер
-        recyclerView.adapter = chatLogAdapter
+        recyclerView.adapter = adapter
 
         // Для отправки сообщения локально
         val sendButton: Button = view.findViewById(R.id.send_button_chat_log)
         val inputText: EditText = view.findViewById(R.id.input_edit_text_chat_log)
 
         sendButton.setOnClickListener {
-            chatLogAdapter.addMessage(
-                ChatMessage(
-                    "${inputText.text}",
-                    "${LocalTime.now().hour}:${LocalTime.now().minute}"
-                )
-            )
-            inputText.text.clear()
-        }
-    }
-
-    class FakeChat(val name: String) {
-        var fakeItems = mutableListOf<ChatMessage>()
-
-        init {
-            val faker = Faker.instance()
-            repeat(5) {
-                fakeItems.add(
-                    ChatMessage(
-                        text = faker.gameOfThrones().quote(),
-                        time = "12:34"
-                    )
-                )
-                fakeItems.add(
-                    OtherChatMessage(
-                        name = name,
-                        text = faker.gameOfThrones().quote(),
-                        time = "12:34"
-                    )
-                )
+            val msg = ChatMessage(currentUser.uid, otherUser.uid,  inputText.text.toString(), System.currentTimeMillis() )
+            chatQuery.ref.push().setValue(msg) { error, _ ->
+                error?.let {
+                    Toast.makeText(requireContext(), error.message, Toast.LENGTH_SHORT).show()
+                }
+                inputText.text.clear()
             }
         }
     }

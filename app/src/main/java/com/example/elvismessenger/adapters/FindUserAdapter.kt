@@ -29,7 +29,6 @@ class FindUserAdapter(
         private val status: TextView = itemView.findViewById(R.id.status_text_find_user_item)
 
         fun bind(user: User) {
-            Log.d("credit: ", "$user")
             chatName.text = user.username
             status.text = user.status
             user.photo.let {

@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.fragments.ChatListFragment
 import com.example.elvismessenger.R
 
-class ChatsListAdapter(private val chatItems: List<ChatListFragment.ChatItem>) : RecyclerView.Adapter<ChatsListAdapter.ChatViewHolder>() {
+class ChatsListAdapter(private val chatItems: List<ChatListFragment.ChatItem>) : RecyclerView.Adapter<ChatsListAdapter.ChatListViewHolder>() {
     // В переменную передаем из ChatsListActivity что наш клик на чат будет делать (лямбда)
     var onItemClick: ((ChatListFragment.ChatItem) -> Unit)? = null
 
@@ -18,7 +18,7 @@ class ChatsListAdapter(private val chatItems: List<ChatListFragment.ChatItem>) :
         private const val ODD_CHAT = 1
     }
 
-    class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ChatListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val pfp: ImageView = itemView.findViewById(R.id.pfp_image_chat_item)
         private val name: TextView = itemView.findViewById(R.id.name_text_chat_item)
         private val status: TextView = itemView.findViewById(R.id.status_text_chat_item)
@@ -39,19 +39,19 @@ class ChatsListAdapter(private val chatItems: List<ChatListFragment.ChatItem>) :
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatListViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
 
         return when(viewType) {
-            EVEN_CHAT -> ChatViewHolder(layoutInflater.inflate(R.layout.chats_item_even, parent, false))
-            ODD_CHAT -> ChatViewHolder(layoutInflater.inflate(R.layout.chats_item, parent, false))
-            else -> ChatViewHolder(layoutInflater.inflate(R.layout.chats_item_even, parent, false))
+            EVEN_CHAT -> ChatListViewHolder(layoutInflater.inflate(R.layout.chats_item_even, parent, false))
+            ODD_CHAT -> ChatListViewHolder(layoutInflater.inflate(R.layout.chats_item, parent, false))
+            else -> ChatListViewHolder(layoutInflater.inflate(R.layout.chats_item_even, parent, false))
         }
     }
 
     override fun getItemCount() = chatItems.size
 
-    override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ChatListViewHolder, position: Int) {
         val chatItem = chatItems[position]
 
         holder.bind(chatItem)

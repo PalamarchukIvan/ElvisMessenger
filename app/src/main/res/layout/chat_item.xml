@@ -7,7 +7,7 @@
     android:layout_marginTop="16dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/pfp_image_chat_other"
+        android:id="@+id/user_image"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginStart="8dp"
@@ -15,18 +15,18 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/name_text_chat_other"
+        android:id="@+id/username_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="John Doe"
+        android:text=""
         android:textColor="@android:color/white"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/pfp_image_chat_other"
+        app:layout_constraintStart_toEndOf="@+id/user_image"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/card_gchat_message_other"
+        android:id="@+id/chat_message_card"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
@@ -35,17 +35,17 @@
         app:cardElevation="0dp"
         app:cardPreventCornerOverlap="false"
         app:cardUseCompatPadding="true"
-        app:layout_constraintStart_toEndOf="@+id/pfp_image_chat_other"
-        app:layout_constraintTop_toBottomOf="@+id/name_text_chat_other">
+        app:layout_constraintStart_toEndOf="@+id/user_image"
+        app:layout_constraintTop_toBottomOf="@+id/username_message">
 
         <LinearLayout
-            android:id="@+id/layout_gchat_container_other"
+            android:id="@+id/message_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/msg_text_chat_other"
+                android:id="@+id/message_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -62,14 +62,15 @@
 
 
     <TextView
-        android:id="@+id/time_text_chat_other"
+        android:id="@+id/time_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:text="10:00"
         android:textColor="@color/elvis_text_light_variant_color"
         android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/card_gchat_message_other"
-        app:layout_constraintStart_toEndOf="@+id/card_gchat_message_other" />
+        app:layout_constraintBottom_toBottomOf="@+id/chat_message_card"
+        app:layout_constraintStart_toEndOf="@+id/chat_message_card" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

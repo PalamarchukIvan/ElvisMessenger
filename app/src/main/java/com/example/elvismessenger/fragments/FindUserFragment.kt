@@ -6,6 +6,7 @@ import android.widget.EditText
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -44,8 +45,10 @@ class FindUserFragment : Fragment(R.layout.fragment_find_user) {
                         }
                     }
                 }
-                adapter = FindUserAdapter(userList) {
-
+                adapter = FindUserAdapter(userList) { anotherUser ->
+                    val args = Bundle()
+                    args.putParcelable(ChatLogFragment.ANOTHER_USER, anotherUser)
+                    Navigation.findNavController(view).navigate(R.id.action_findUserFragment_to_chatLogFragment, args)
                 }
                 recyclerView.adapter = adapter
             }
