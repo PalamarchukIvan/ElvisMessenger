@@ -27,6 +27,10 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.snapshots
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.database.FirebaseDatabase
+
 import com.squareup.picasso.Picasso
 
 class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
@@ -72,7 +76,7 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         anotherUsername = view.findViewById(R.id.username)
         anotherUserState = view.findViewById(R.id.current_state)
         returnBtn = view.findViewById(R.id.return_btn)
-        
+
         returnBtn.setOnClickListener {
             activity?.onBackPressed()
         }
@@ -80,10 +84,15 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         arguments?.let {
             it.getParcelable<User>(ANOTHER_USER)?.let { user ->
                 otherUser = user
-                anotherUserPhoto.let{photo ->
-                    Picasso.get()
-                        .load(user.photo)
-                        .into(photo)
+
+                if (user.photo != "") {
+                    anotherUserPhoto.let { photo ->
+                        Picasso.get()
+                            .load(user.photo)
+                            .into(photo)
+                    }
+                } else {
+                    Picasso.get().load(R.drawable.dornan).into(anotherUserPhoto)
                 }
                 anotherUsername.text = user.username
             }
@@ -111,12 +120,44 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
 
         })
 
+import com.github.marlonlom.utilities.timeago.TimeAgo
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.snapshots
+    private lateinit var returnBtn: ImageView
+        returnBtn = view.findViewById(R.id.return_btn)
+
+        returnBtn.setOnClickListener {
+            activity?.onBackPressed()
+        }
+
+
+        UserRepository.getInstance().getUserByUID(otherUser.uid).addValueEventListener (object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val user = snapshot.getValue(User::class.java)
+
+                anotherUserState.text = if (user!!.isActive) {
+                    "Online"
+                } else {
+                    "Last seen ${TimeAgo.using(user.lastSeen)}"
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
+
 
         chatQuery = ChatRepository.getInstance().getChat(ChatRepository.getChatID(currentUser.uid, otherUser.uid))
 
         // Часть кода для работы списка чатов
         val recyclerView: RecyclerView = view.findViewById(R.id.list_recycler_view_chat_log)
         val layoutManager = LinearLayoutManager(context)
+
         // Пердаем layout в наш recycleView
         recyclerView.layoutManager = layoutManager
 
@@ -136,7 +177,19 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         val inputText: EditText = view.findViewById(R.id.input_edit_text_chat_log)
 
         sendButton.setOnClickListener {
-            val msg = ChatMessage(currentUser.uid, otherUser.uid,  inputText.text.toString(), System.currentTimeMillis() )
+
+            // Для отправки сообщения
+            val msg = ChatMessage(currentUser.uid, otherUser.uid,  inputText.text.toString(), System.currentTimeMillis())
+
+            // Для записи этого же сообщения в список последних сообщений всех юзеров
+            val chatItemMsg = ChatListFragment.ChatItem(name = otherUser.username, pfp = otherUser.photo, inputText.text.toString(), System.currentTimeMillis(), otherUser)
+            val latestMsgRef = FirebaseDatabase.getInstance().getReference("/users/${currentUser.uid}/latest-messages/${otherUser.uid}")
+            latestMsgRef.setValue(chatItemMsg)
+
+            val chatItemMsgTo = ChatListFragment.ChatItem(name = currentUser.username, pfp = currentUser.photo, inputText.text.toString(), System.currentTimeMillis(), currentUser)
+            val latestMsgToRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/latest-messages/${currentUser.uid}")
+            latestMsgToRef.setValue(chatItemMsgTo)
+
             chatQuery.ref.push().setValue(msg) { error, _ ->
                 error?.let {
                     Toast.makeText(requireContext(), error.message, Toast.LENGTH_SHORT).show()
