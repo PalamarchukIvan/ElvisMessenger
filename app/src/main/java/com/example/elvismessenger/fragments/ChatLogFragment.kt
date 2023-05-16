@@ -145,11 +145,11 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
 
             // Для записи этого же сообщения в список последних сообщений всех юзеров
             val chatItemMsg = ChatListFragment.ChatItem(name = otherUser.username, pfp = otherUser.photo, inputText.text.toString(), System.currentTimeMillis(), otherUser)
-            val latestMsgRef = FirebaseDatabase.getInstance().getReference("/users/${currentUser.uid}/latest-messages/${otherUser.uid}")
+            val latestMsgRef = FirebaseDatabase.getInstance().getReference("/users/${currentUser.uid}/latestMessages/${otherUser.uid}")
             latestMsgRef.setValue(chatItemMsg)
 
             val chatItemMsgTo = ChatListFragment.ChatItem(name = currentUser.username, pfp = currentUser.photo, inputText.text.toString(), System.currentTimeMillis(), currentUser)
-            val latestMsgToRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/latest-messages/${currentUser.uid}")
+            val latestMsgToRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/latestMessages/${currentUser.uid}")
             latestMsgToRef.setValue(chatItemMsgTo)
 
             chatQuery.ref.push().setValue(msg) { error, _ ->

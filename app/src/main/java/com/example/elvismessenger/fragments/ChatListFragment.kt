@@ -1,6 +1,7 @@
 package com.example.elvismessenger.fragments
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.view.Menu
 import android.view.View
@@ -18,13 +19,18 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.getValue
+import com.google.firebase.database.ktx.snapshots
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
 
 class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
+    @Parcelize
     data class ChatItem(val name: String = "",
                         val pfp: String = "",
                         val text: String = "",
                         val time: Long = 0,
-                        val user: User? = null)
+                        val user: User? = null) : Parcelable
 
     private lateinit var chatListAdapter: ChatListAdapter
     private lateinit var recyclerView: RecyclerView
@@ -49,6 +55,12 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
 
         // Добавление линии между элементами чата
         recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+
+        GlobalScope.launch {
+            UserRepository.getInstance().getAllUsers().snapshots.collect {
+
+            }
+        }
 
         chatListAdapter = ChatListAdapter(mutableListOf()) { anotherUser ->
             val args = Bundle()
@@ -76,7 +88,7 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
 
     private fun listenForLatestMessages() {
         val currentUser = UserRepository.currentUser?.value
-        val ref = FirebaseDatabase.getInstance().getReference("/users/${currentUser?.uid}/latest-messages/")
+        val ref = FirebaseDatabase.getInstance().getReference("/users/${currentUser?.uid}/latestMessages/")
         ref.addChildEventListener(object : ChildEventListener {
                 override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                     latestMessagesMap[snapshot.key!!] = snapshot.getValue<ChatItem>()!!
