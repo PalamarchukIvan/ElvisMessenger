@@ -74,8 +74,6 @@ class MainActivity : AppCompatActivity() {
 
         authoriseUser()
 
-//        SettingsFragment.loadData()
-
         //Устонавливаем слушатель на кнопку выхода
         navigationView.setNavigationItemSelectedListener {
             when(it.itemId) {
@@ -87,6 +85,7 @@ class MainActivity : AppCompatActivity() {
                         .setPositiveButton("yes") { _, _ ->
                             FirebaseAuth.getInstance().signOut()
                             startActivity(Intent(this, RegLogActivity::class.java))
+                            UserRepository.getInstance().makeNotActive()
                             finish()
                         }
                         .show()
@@ -156,10 +155,31 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        if(FirebaseAuth.getInstance().currentUser != null) {
+            UserRepository.getInstance().makeNotActive()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(FirebaseAuth.getInstance().currentUser != null) {
+            UserRepository.getInstance().makeActive()
+        }
+    }
+
     private fun authoriseUser() {
         if(FirebaseAuth.getInstance().currentUser == null) {
             navController.navigate(R.id.action_chatListFragment_to_regLogActivity)
             finish()
+        } else {
+            UserRepository.initCurrentUser()
+            Thread {
+                do {
+                    val checked = UserRepository.getInstance().makeActive()
+                } while (!checked)
+            }.start()
         }
     }
 

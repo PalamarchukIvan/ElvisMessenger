@@ -12,5 +12,7 @@ data class User(
     var phoneNumber: String = "",
     var status: String = "",
     var about: String = "",
-    var photo: String = ""
+    var photo: String = "",
+    var isActive: Boolean = false,
+    var lastSeen: Long = 0
 ) : Parcelable

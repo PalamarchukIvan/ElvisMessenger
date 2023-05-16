@@ -2,10 +2,8 @@ package com.example.elvismessenger.db
 
 import android.net.Uri
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.example.elvismessenger.activities.MainActivity
-import com.example.elvismessenger.fragments.settings.EditProfileFragment
 import com.example.elvismessenger.fragments.settings.SettingsFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -51,25 +49,44 @@ class UserRepository private constructor() {
 
     fun getUserByUID(uid: String) = FirebaseDatabase.getInstance().getReference("users").child(uid)
 
+
+    fun makeActive() : Boolean {
+        currentUser?.let {
+            it.value?.let { user ->
+                user.isActive = true
+                user.lastSeen = -1
+//                it.postValue(user)
+                createOrUpdateUser(user)
+                return true
+            }
+        }
+        return false
+    }
+
+    fun makeNotActive() {
+        currentUser?.let {
+            it.value?.let { user ->
+                user.isActive = false
+                user.lastSeen = System.currentTimeMillis()
+                createOrUpdateUser(user)
+//                it.postValue(user)
+            }
+        }
+    }
     companion object {
         var currentUser: MutableLiveData<User>? = null
-            get() {
-                if (FirebaseAuth.getInstance().currentUser == null) {
-                    return field
-                }
-                if (field == null || field?.value?.uid != FirebaseAuth.getInstance().currentUser?.uid) {
-                    FirebaseAuth.getInstance().currentUser?.also {
-                        field = MutableLiveData()
-                        GlobalScope.launch(Dispatchers.IO) {
-                            getInstance().getUserByUID(it.uid).snapshots.collect {
-                                field!!.postValue(it.getValue(User::class.java)!!)
-                            }
-                        }
+            private set
+
+        fun initCurrentUser() {
+            FirebaseAuth.getInstance().currentUser?.also {
+                currentUser = MutableLiveData()
+                GlobalScope.launch(Dispatchers.IO) {
+                    getInstance().getUserByUID(it.uid).snapshots.collect {
+                        currentUser!!.postValue(it.getValue(User::class.java)!!)
                     }
                 }
-                Log.d("userCurrent ", field!!.value.toString())
-                return field
             }
+        }
 
         fun getInstance() = UserRepository()
 
@@ -98,4 +115,5 @@ class UserRepository private constructor() {
         }
 
     }
+
 }
