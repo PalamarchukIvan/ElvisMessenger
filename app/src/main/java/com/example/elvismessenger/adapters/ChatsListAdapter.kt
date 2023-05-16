@@ -8,8 +8,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.fragments.ChatListFragment
 import com.example.elvismessenger.R
+import com.example.elvismessenger.fragments.ChatLogFragment
+import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.github.marlonlom.utilities.timeago.TimeAgo
+import com.squareup.picasso.Picasso
 
-class ChatsListAdapter(private val chatItems: List<ChatListFragment.ChatItem>) : RecyclerView.Adapter<ChatsListAdapter.ChatListViewHolder>() {
+class ChatsListAdapter(
+    private val options: FirebaseRecyclerOptions<ChatListFragment.ChatItem>
+) : FirebaseRecyclerAdapter<ChatListFragment.ChatItem, ChatsListAdapter.ChatListViewHolder>(options) {
     // В переменную передаем из ChatsListActivity что наш клик на чат будет делать (лямбда)
     var onItemClick: ((ChatListFragment.ChatItem) -> Unit)? = null
 
@@ -25,10 +32,14 @@ class ChatsListAdapter(private val chatItems: List<ChatListFragment.ChatItem>) :
         private val time: TextView = itemView.findViewById(R.id.time_text_chat_item)
 
         fun bind(chatItem: ChatListFragment.ChatItem) {
-            pfp.setImageResource(R.drawable.dornan) // пока просто временное решение, подгрузка фотки из drawable
+            if (chatItem.pfp != "") {
+                Picasso.get().load(chatItem.pfp).into(pfp)
+            } else {
+                Picasso.get().load(R.drawable.dornan).into(pfp)
+            }
             name.text = chatItem.name
-            status.text = chatItem.status
-            time.text = chatItem.time
+            status.text = chatItem.text
+            time.text = TimeAgo.using(chatItem.time)
         }
     }
 
@@ -49,16 +60,11 @@ class ChatsListAdapter(private val chatItems: List<ChatListFragment.ChatItem>) :
         }
     }
 
-    override fun getItemCount() = chatItems.size
-
-    override fun onBindViewHolder(holder: ChatListViewHolder, position: Int) {
-        val chatItem = chatItems[position]
-
-        holder.bind(chatItem)
-
-        // Обрабатываем клик
-        holder.itemView.setOnClickListener {
-            onItemClick?.invoke(chatItem)
-        }
+    override fun onBindViewHolder(
+        holder: ChatListViewHolder,
+        position: Int,
+        model: ChatListFragment.ChatItem
+    ) {
+        holder.bind(model)
     }
 }

@@ -63,6 +63,7 @@ class MainActivity : AppCompatActivity() {
         sp = getSharedPreferences(SettingsFragment.SHARED_PREFERENCES, MODE_PRIVATE)
 
         drawerLayout = binding.drawerLayout
+
         //связывание дерева навигации и шторки
         binding.navView.setupWithNavController(navController)
 

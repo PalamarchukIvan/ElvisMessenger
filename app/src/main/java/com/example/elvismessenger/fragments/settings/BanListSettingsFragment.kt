@@ -26,9 +26,5 @@ class BanListSettingsFragment : Fragment(R.layout.fragment_ban_list_settings) {
         )
 
         recyclerView.layoutManager = LinearLayoutManager(context)
-
-        val users = ChatListFragment.FakeChat.fakeItems
-
-        recyclerView.adapter = ChatsListAdapter(users)
     }
 }

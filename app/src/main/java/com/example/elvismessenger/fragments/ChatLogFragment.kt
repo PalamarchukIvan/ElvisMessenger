@@ -19,7 +19,10 @@ import com.example.elvismessenger.db.ChatRepository
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
 import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 
 class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
@@ -92,6 +95,7 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         // Часть кода для работы списка чатов
         val recyclerView: RecyclerView = view.findViewById(R.id.list_recycler_view_chat_log)
         val layoutManager = LinearLayoutManager(context)
+
         // Пердаем layout в наш recycleView
         recyclerView.layoutManager = layoutManager
 
@@ -111,7 +115,18 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         val inputText: EditText = view.findViewById(R.id.input_edit_text_chat_log)
 
         sendButton.setOnClickListener {
+            // Для отправки сообщения
             val msg = ChatMessage(currentUser.uid, otherUser.uid,  inputText.text.toString(), System.currentTimeMillis())
+
+            // Для записи этого же сообщения в список последних сообщений всех юзеров
+            val chatItemMsg = ChatListFragment.ChatItem(name = otherUser.username, pfp = otherUser.photo, inputText.text.toString(), System.currentTimeMillis())
+            val latestMsgRef = FirebaseDatabase.getInstance().getReference("/users/${currentUser.uid}/latest-messages/${otherUser.uid}")
+            latestMsgRef.setValue(chatItemMsg)
+
+            val chatItemMsgTo = ChatListFragment.ChatItem(name = currentUser.username, pfp = currentUser.photo, inputText.text.toString(), System.currentTimeMillis())
+            val latestMsgToRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/latest-messages/${currentUser.uid}")
+            latestMsgToRef.setValue(chatItemMsgTo)
+
             chatQuery.ref.push().setValue(msg) { error, _ ->
                 error?.let {
                     Toast.makeText(requireContext(), error.message, Toast.LENGTH_SHORT).show()
