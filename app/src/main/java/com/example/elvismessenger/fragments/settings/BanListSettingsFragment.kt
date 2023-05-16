@@ -7,8 +7,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
-import com.example.elvismessenger.adapters.ChatsListAdapter
-import com.example.elvismessenger.fragments.ChatListFragment
 
 class BanListSettingsFragment : Fragment(R.layout.fragment_ban_list_settings) {
 

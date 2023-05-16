@@ -75,8 +75,6 @@ class MainActivity : AppCompatActivity() {
 
         authoriseUser()
 
-//        SettingsFragment.loadData()
-
         //Устонавливаем слушатель на кнопку выхода
         navigationView.setNavigationItemSelectedListener {
             when(it.itemId) {

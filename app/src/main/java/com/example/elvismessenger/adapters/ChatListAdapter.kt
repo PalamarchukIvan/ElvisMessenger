@@ -6,19 +6,15 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.elvismessenger.fragments.ChatListFragment
 import com.example.elvismessenger.R
-import com.example.elvismessenger.fragments.ChatLogFragment
-import com.firebase.ui.database.FirebaseRecyclerAdapter
-import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.example.elvismessenger.db.User
+import com.example.elvismessenger.fragments.ChatListFragment
 import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.squareup.picasso.Picasso
 
-class ChatsListAdapter(
-    private val options: FirebaseRecyclerOptions<ChatListFragment.ChatItem>
-) : FirebaseRecyclerAdapter<ChatListFragment.ChatItem, ChatsListAdapter.ChatListViewHolder>(options) {
-    // В переменную передаем из ChatsListActivity что наш клик на чат будет делать (лямбда)
-    var onItemClick: ((ChatListFragment.ChatItem) -> Unit)? = null
+class ChatListAdapter(
+    var chatList: MutableList<ChatListFragment.ChatItem>,
+) : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>() {
 
     companion object {
         private const val EVEN_CHAT = 0
@@ -54,17 +50,35 @@ class ChatsListAdapter(
         val layoutInflater = LayoutInflater.from(parent.context)
 
         return when(viewType) {
-            EVEN_CHAT -> ChatListViewHolder(layoutInflater.inflate(R.layout.chats_item_even, parent, false))
-            ODD_CHAT -> ChatListViewHolder(layoutInflater.inflate(R.layout.chats_item, parent, false))
-            else -> ChatListViewHolder(layoutInflater.inflate(R.layout.chats_item_even, parent, false))
+            EVEN_CHAT -> ChatListViewHolder(
+                layoutInflater.inflate(
+                    R.layout.chats_item_even,
+                    parent,
+                    false
+                )
+            )
+            ODD_CHAT -> ChatListViewHolder(
+                layoutInflater.inflate(
+                    R.layout.chats_item,
+                    parent,
+                    false
+                )
+            )
+            else -> ChatListViewHolder(
+                layoutInflater.inflate(
+                    R.layout.chats_item_even,
+                    parent,
+                    false
+                )
+            )
         }
     }
 
-    override fun onBindViewHolder(
-        holder: ChatListViewHolder,
-        position: Int,
-        model: ChatListFragment.ChatItem
-    ) {
-        holder.bind(model)
+    override fun onBindViewHolder(holder: ChatListViewHolder, position: Int) {
+        holder.bind(chatList[position])
+    }
+
+    override fun getItemCount(): Int {
+        return chatList.size
     }
 }
