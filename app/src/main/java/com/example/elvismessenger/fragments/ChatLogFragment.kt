@@ -1,6 +1,5 @@
 package com.example.elvismessenger.fragments
 
-import android.media.Image
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,16 +20,11 @@ import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.github.marlonlom.utilities.timeago.TimeAgo
-import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.snapshots
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.database.FirebaseDatabase
-
 import com.squareup.picasso.Picasso
 
 class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
@@ -120,44 +114,12 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
 
         })
 
-import com.github.marlonlom.utilities.timeago.TimeAgo
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.snapshots
-    private lateinit var returnBtn: ImageView
-        returnBtn = view.findViewById(R.id.return_btn)
-
-        returnBtn.setOnClickListener {
-            activity?.onBackPressed()
-        }
-
-
-        UserRepository.getInstance().getUserByUID(otherUser.uid).addValueEventListener (object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val user = snapshot.getValue(User::class.java)
-
-                anotherUserState.text = if (user!!.isActive) {
-                    "Online"
-                } else {
-                    "Last seen ${TimeAgo.using(user.lastSeen)}"
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-
-        })
-
 
         chatQuery = ChatRepository.getInstance().getChat(ChatRepository.getChatID(currentUser.uid, otherUser.uid))
 
         // Часть кода для работы списка чатов
         val recyclerView: RecyclerView = view.findViewById(R.id.list_recycler_view_chat_log)
         val layoutManager = LinearLayoutManager(context)
-
         // Пердаем layout в наш recycleView
         recyclerView.layoutManager = layoutManager
 

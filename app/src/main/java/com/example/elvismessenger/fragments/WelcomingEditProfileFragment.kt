@@ -95,6 +95,15 @@ class WelcomingEditProfileFragment : Fragment(R.layout.fragment_welcoming_edit_p
 
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        UserRepository.initCurrentUser()
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
