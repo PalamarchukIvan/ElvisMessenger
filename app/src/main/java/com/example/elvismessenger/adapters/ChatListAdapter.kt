@@ -8,12 +8,18 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.db.User
+import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.fragments.ChatListFragment
 import com.github.marlonlom.utilities.timeago.TimeAgo
+import com.google.firebase.database.ktx.snapshots
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlin.concurrent.thread
 
 class ChatListAdapter(
     var chatList: MutableList<ChatListFragment.ChatItem>,
+    private val onItemClick: ((User) -> Unit)
 ) : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>() {
 
     companion object {
@@ -76,6 +82,10 @@ class ChatListAdapter(
 
     override fun onBindViewHolder(holder: ChatListViewHolder, position: Int) {
         holder.bind(chatList[position])
+
+        holder.itemView.setOnClickListener {
+            onItemClick.invoke(chatList[position].user!!)
+        }
     }
 
     override fun getItemCount(): Int {

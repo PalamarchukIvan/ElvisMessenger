@@ -1,39 +1,32 @@
 package com.example.elvismessenger.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
-import com.example.elvismessenger.activities.MainActivity
 import com.example.elvismessenger.adapters.ChatListAdapter
-import com.example.elvismessenger.adapters.ChatsListAdapterFB
+import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
-import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.getValue
-import com.google.firebase.database.ktx.snapshots
-import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
     data class ChatItem(val name: String = "",
                         val pfp: String = "",
                         val text: String = "",
-                        val time: Long = 0)
+                        val time: Long = 0,
+                        val user: User? = null)
 
+    private lateinit var chatListAdapter: ChatListAdapter
     private lateinit var recyclerView: RecyclerView
     private val latestMessagesMap = HashMap<String, ChatItem>()
 
@@ -57,6 +50,14 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         // Добавление линии между элементами чата
         recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
+        chatListAdapter = ChatListAdapter(mutableListOf()) { anotherUser ->
+            val args = Bundle()
+            args.putParcelable(ChatLogFragment.ANOTHER_USER, anotherUser)
+            Navigation.findNavController(view).navigate(R.id.action_chatListFragment_to_chatLogFragment, args)
+        }
+
+        recyclerView.adapter = chatListAdapter
+
         listenForLatestMessages()
     }
 
@@ -69,34 +70,34 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
 
         chatList.sortByDescending { it.time }
 
-        recyclerView.adapter = ChatListAdapter(chatList)
+        chatListAdapter.chatList = chatList
+        chatListAdapter.notifyDataSetChanged()
     }
 
     private fun listenForLatestMessages() {
         val currentUser = UserRepository.currentUser?.value
         val ref = FirebaseDatabase.getInstance().getReference("/users/${currentUser?.uid}/latest-messages/")
-
         ref.addChildEventListener(object : ChildEventListener {
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                latestMessagesMap[snapshot.key!!] = snapshot.getValue<ChatItem>()!!
-                refreshLatestMessagesMap()
-            }
+                override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                    latestMessagesMap[snapshot.key!!] = snapshot.getValue<ChatItem>()!!
+                    refreshLatestMessagesMap()
+                }
 
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                latestMessagesMap[snapshot.key!!] = snapshot.getValue<ChatItem>()!!
-                refreshLatestMessagesMap()
-            }
-            override fun onChildRemoved(snapshot: DataSnapshot) {
-                TODO("Not yet implemented")
-            }
+                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                    latestMessagesMap[snapshot.key!!] = snapshot.getValue<ChatItem>()!!
+                    refreshLatestMessagesMap()
+                }
+                override fun onChildRemoved(snapshot: DataSnapshot) {
+                    TODO("Not yet implemented")
+                }
 
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-                TODO("Not yet implemented")
-            }
+                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                    TODO("Not yet implemented")
+                }
 
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
         })
     }
 }

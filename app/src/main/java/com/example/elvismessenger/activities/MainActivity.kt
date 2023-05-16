@@ -47,7 +47,6 @@ class MainActivity : AppCompatActivity() {
         lateinit var sp: SharedPreferences
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -159,6 +158,11 @@ class MainActivity : AppCompatActivity() {
         if(FirebaseAuth.getInstance().currentUser == null) {
             navController.navigate(R.id.action_chatListFragment_to_regLogActivity)
             finish()
+        } else {
+            // Инит юзера (костыль)
+            runOnUiThread {
+                UserRepository.initCurrentUser()
+            }
         }
     }
 

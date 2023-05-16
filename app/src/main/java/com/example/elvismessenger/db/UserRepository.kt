@@ -53,23 +53,35 @@ class UserRepository private constructor() {
 
     companion object {
         var currentUser: MutableLiveData<User>? = null
-            get() {
-                if (FirebaseAuth.getInstance().currentUser == null) {
-                    return field
-                }
-                if (field == null || field?.value?.uid != FirebaseAuth.getInstance().currentUser?.uid) {
-                    FirebaseAuth.getInstance().currentUser?.also {
-                        field = MutableLiveData()
-                        GlobalScope.launch(Dispatchers.IO) {
-                            getInstance().getUserByUID(it.uid).snapshots.collect {
-                                field!!.postValue(it.getValue(User::class.java)!!)
-                            }
-                        }
+        private set
+//            get() {
+//                if (FirebaseAuth.getInstance().currentUser == null) {
+//                    return field
+//                }
+//                if (field == null || field?.value?.uid != FirebaseAuth.getInstance().currentUser?.uid) {
+//                    FirebaseAuth.getInstance().currentUser?.also {
+//                        field = MutableLiveData()
+//                        GlobalScope.launch(Dispatchers.IO) {
+//                            getInstance().getUserByUID(it.uid).snapshots.collect {
+//                                field!!.postValue(it.getValue(User::class.java)!!)
+//                            }
+//                        }
+//                    }
+//                }
+//                Log.d("userCurrent ", field!!.value.toString())
+//                return field
+//            }
+
+        fun initCurrentUser() {
+            FirebaseAuth.getInstance().currentUser?.also {
+                currentUser = MutableLiveData()
+                GlobalScope.launch(Dispatchers.IO) {
+                    getInstance().getUserByUID(it.uid).snapshots.collect {
+                        currentUser!!.postValue(it.getValue(User::class.java)!!)
                     }
                 }
-                Log.d("userCurrent ", field!!.value.toString())
-                return field
             }
+        }
 
         fun getInstance() = UserRepository()
 
