@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,6 +15,7 @@ import com.example.elvismessenger.R
 import com.example.elvismessenger.adapters.ChatListAdapter
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -56,21 +58,25 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         // Добавление линии между элементами чата
         recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
-        GlobalScope.launch {
-            UserRepository.getInstance().getAllUsers().snapshots.collect {
+        lifecycleScope.launch {
+            val chatList: MutableList<ChatItem> = mutableListOf()
+            FirebaseDatabase.getInstance().getReference("/users/${FirebaseAuth.getInstance().currentUser?.uid}/latestMessages/").snapshots.collect {
+                for (i in it.children) {
+                    chatList.add(i.getValue(ChatItem::class.java)!!)
+                }
 
+                chatListAdapter = ChatListAdapter(chatList) { anotherUser ->
+                    val args = Bundle()
+                    args.putParcelable(ChatLogFragment.ANOTHER_USER, anotherUser)
+                    Navigation.findNavController(view).navigate(R.id.action_chatListFragment_to_chatLogFragment, args)
+                }
+
+                recyclerView.adapter = chatListAdapter
+
+                listenForLatestMessages()
             }
         }
 
-        chatListAdapter = ChatListAdapter(mutableListOf()) { anotherUser ->
-            val args = Bundle()
-            args.putParcelable(ChatLogFragment.ANOTHER_USER, anotherUser)
-            Navigation.findNavController(view).navigate(R.id.action_chatListFragment_to_chatLogFragment, args)
-        }
-
-        recyclerView.adapter = chatListAdapter
-
-        listenForLatestMessages()
     }
 
     private fun refreshLatestMessagesMap() {
