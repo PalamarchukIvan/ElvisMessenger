@@ -27,9 +27,7 @@ import kotlinx.parcelize.Parcelize
 
 class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
     @Parcelize
-    data class ChatItem(val name: String = "",
-                        val pfp: String = "",
-                        val text: String = "",
+    data class ChatItem(val text: String = "",
                         val time: Long = 0,
                         val user: User? = null) : Parcelable
 

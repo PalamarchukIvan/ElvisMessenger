@@ -31,12 +31,12 @@ class ChatsListAdapterFB(
         private val time: TextView = itemView.findViewById(R.id.time_text_chat_item)
 
         fun bind(chatItem: ChatListFragment.ChatItem) {
-            if (chatItem.pfp != "") {
-                Picasso.get().load(chatItem.pfp).into(pfp)
+            if (chatItem.user?.photo != "") {
+                Picasso.get().load(chatItem.user?.photo).into(pfp)
             } else {
                 Picasso.get().load(R.drawable.dornan).into(pfp)
             }
-            name.text = chatItem.name
+            name.text = chatItem.user?.username
             status.text = chatItem.text
             time.text = TimeAgo.using(chatItem.time)
         }

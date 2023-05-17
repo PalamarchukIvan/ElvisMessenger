@@ -19,11 +19,11 @@ class ChatRepository private constructor(){
 
     fun sendMessage(msg: ChatLogFragment.ChatMessage, currentUser: User, otherUser: User, chatQuery: Query, errorHandler: (DatabaseError?) -> Unit) {
         // Для записи этого же сообщения в список последних сообщений всех юзеров
-        val chatItemMsg = ChatListFragment.ChatItem(name = otherUser.username, pfp = otherUser.photo, msg.text, System.currentTimeMillis(), otherUser)
+        val chatItemMsg = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), otherUser)
         val latestMsgRef = FirebaseDatabase.getInstance().getReference("/users/${currentUser.uid}/latestMessages/${otherUser.uid}")
         latestMsgRef.setValue(chatItemMsg)
 
-        val chatItemMsgTo = ChatListFragment.ChatItem(name = currentUser.username, pfp = currentUser.photo, msg.text, System.currentTimeMillis(), currentUser)
+        val chatItemMsgTo = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), currentUser)
         val latestMsgToRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/latestMessages/${currentUser.uid}")
         latestMsgToRef.setValue(chatItemMsgTo)
 
