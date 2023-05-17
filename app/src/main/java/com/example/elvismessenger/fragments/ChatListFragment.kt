@@ -22,7 +22,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.database.ktx.snapshots
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
@@ -75,10 +74,13 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
                         if(chatList.size == 0) {
                             for (i in it.children) {
                                 chatList.add(i.getValue(ChatItem::class.java)!!)
+                                chatList.sortByDescending {chatItem ->
+                                    chatItem.time
+                                }
                                 chatListAdapter.notifyDataSetChanged()
                             }
                         }
-                }
+                    }
             }
         } else {
             recyclerView.adapter = chatListAdapter
@@ -105,26 +107,26 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         val currentUser = UserRepository.currentUser?.value
         val ref = FirebaseDatabase.getInstance().getReference("/users/${currentUser?.uid}/latestMessages/")
         ref.addChildEventListener(object : ChildEventListener {
-                override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                    latestMessagesMap[snapshot.key!!] = snapshot.getValue<ChatItem>()!!
-                    refreshLatestMessagesMap()
-                }
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                latestMessagesMap[snapshot.key!!] = snapshot.getValue<ChatItem>()!!
+                refreshLatestMessagesMap()
+            }
 
-                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                    latestMessagesMap[snapshot.key!!] = snapshot.getValue<ChatItem>()!!
-                    refreshLatestMessagesMap()
-                }
-                override fun onChildRemoved(snapshot: DataSnapshot) {
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                latestMessagesMap[snapshot.key!!] = snapshot.getValue<ChatItem>()!!
+                refreshLatestMessagesMap()
+            }
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                TODO("Not yet implemented")
+            }
 
-                }
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                TODO("Not yet implemented")
+            }
 
-                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-
-                }
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
         })
     }
 }

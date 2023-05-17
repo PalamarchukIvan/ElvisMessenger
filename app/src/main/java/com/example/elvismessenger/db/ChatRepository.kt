@@ -6,6 +6,7 @@ import com.example.elvismessenger.fragments.ChatLogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
 
 class ChatRepository private constructor(){
     fun newMessage(msg: ChatLogFragment.ChatMessage) {
@@ -16,22 +17,21 @@ class ChatRepository private constructor(){
 
     fun getOpenToUserChat() = FirebaseDatabase.getInstance().getReference("/users/${FirebaseAuth.getInstance().currentUser?.uid}/latestMessages/")
 
-    fun sendMessage(msg: ChatLogFragment.ChatMessage, from: User, to: User, errorHandler: (DatabaseError?) -> Unit) {
+    fun sendMessage(msg: ChatLogFragment.ChatMessage, currentUser: User, otherUser: User, chatQuery: Query, errorHandler: (DatabaseError?) -> Unit) {
         // Для записи этого же сообщения в список последних сообщений всех юзеров
-        val chatItemMsg = ChatListFragment.ChatItem(name = to.username, pfp = to.photo, msg.text, System.currentTimeMillis(), to)
-        val latestMsgRef = FirebaseDatabase.getInstance().getReference("/users/${from.uid}/latestMessages/${to.uid}")
+        val chatItemMsg = ChatListFragment.ChatItem(name = otherUser.username, pfp = otherUser.photo, msg.text, System.currentTimeMillis(), otherUser)
+        val latestMsgRef = FirebaseDatabase.getInstance().getReference("/users/${currentUser.uid}/latestMessages/${otherUser.uid}")
         latestMsgRef.setValue(chatItemMsg)
 
-        val chatItemMsgTo = ChatListFragment.ChatItem(name = from.username, pfp = from.photo, msg.text, System.currentTimeMillis(), from)
-        val latestMsgToRef = FirebaseDatabase.getInstance().getReference("/users/${to.uid}/latestMessages/${from.uid}")
+        val chatItemMsgTo = ChatListFragment.ChatItem(name = currentUser.username, pfp = currentUser.photo, msg.text, System.currentTimeMillis(), currentUser)
+        val latestMsgToRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/latestMessages/${currentUser.uid}")
         latestMsgToRef.setValue(chatItemMsgTo)
-
-        val chatQuery = getInstance().getChat(getChatID(from.uid, to.uid))
 
         chatQuery.ref.push().setValue(msg) { error, _ ->
             errorHandler.invoke(error)
         }
     }
+
 
     companion object {
         fun getInstance() = ChatRepository()
