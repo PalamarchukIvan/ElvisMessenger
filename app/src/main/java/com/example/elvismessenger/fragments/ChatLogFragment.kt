@@ -49,6 +49,8 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
     private lateinit var anotherUserState: TextView
     private lateinit var returnBtn: ImageView
 
+    private lateinit var adapter: ChatLogAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -125,12 +127,23 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         // Пердаем layout в наш recycleView
         recyclerView.layoutManager = layoutManager
 
+        chatQuery.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                recyclerView.smoothScrollToPosition((snapshot.childrenCount - 1).toInt())
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
+
         val options = FirebaseRecyclerOptions.Builder<ChatMessage>()
             .setQuery(chatQuery, ChatMessage::class.java)
             .setLifecycleOwner(this)
             .build()
 
-        val adapter = ChatLogAdapter(options, otherUser) {
+        adapter = ChatLogAdapter(options, otherUser) {
             Toast.makeText(requireContext(), "You clicked on ${otherUser.username}", Toast.LENGTH_SHORT).show()
         }
         // Передаем адаптер
@@ -159,6 +172,8 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
                 }
                 inputText.text.clear()
             }
+
+            recyclerView.smoothScrollToPosition(adapter.itemCount - 1)
         }
     }
 }
