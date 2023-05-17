@@ -37,6 +37,7 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
     private lateinit var chatListAdapter: ChatListAdapter
     private lateinit var recyclerView: RecyclerView
     private val latestMessagesMap = HashMap<String, ChatItem>()
+    private var chatList: MutableList<ChatItem> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,37 +59,45 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         // Добавление линии между элементами чата
         recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
-        lifecycleScope.launch {
-            val chatList: MutableList<ChatItem> = mutableListOf()
-            FirebaseDatabase.getInstance().getReference("/users/${FirebaseAuth.getInstance().currentUser?.uid}/latestMessages/").snapshots.collect {
-                for (i in it.children) {
-                    chatList.add(i.getValue(ChatItem::class.java)!!)
-                }
-
-                chatListAdapter = ChatListAdapter(chatList) { anotherUser ->
-                    val args = Bundle()
-                    args.putParcelable(ChatLogFragment.ANOTHER_USER, anotherUser)
-                    Navigation.findNavController(view).navigate(R.id.action_chatListFragment_to_chatLogFragment, args)
-                }
-
-                recyclerView.adapter = chatListAdapter
-
-                listenForLatestMessages()
-            }
+        chatListAdapter = ChatListAdapter(chatList) { anotherUser ->
+            val args = Bundle()
+            args.putParcelable(ChatLogFragment.ANOTHER_USER, anotherUser)
+            Navigation.findNavController(view).navigate(R.id.action_chatListFragment_to_chatLogFragment, args)
         }
+
+
+        if(chatList.size == 0) {
+            lifecycleScope.launch {
+                recyclerView.adapter = chatListAdapter
+                FirebaseDatabase.getInstance()
+                    .getReference("/users/${FirebaseAuth.getInstance().currentUser?.uid}/latestMessages/")
+                    .snapshots.collect {
+                        if(chatList.size == 0) {
+                            for (i in it.children) {
+                                chatList.add(i.getValue(ChatItem::class.java)!!)
+                                chatListAdapter.notifyDataSetChanged()
+                            }
+                        }
+                }
+            }
+        } else {
+            recyclerView.adapter = chatListAdapter
+        }
+
+        listenForLatestMessages()
 
     }
 
     private fun refreshLatestMessagesMap() {
-        val chatList = mutableListOf<ChatItem>()
+        val newChatList = mutableListOf<ChatItem>()
 
         latestMessagesMap.values.forEach {
-            chatList.add(it)
+            newChatList.add(it)
         }
 
-        chatList.sortByDescending { it.time }
+        newChatList.sortByDescending { it.time }
 
-        chatListAdapter.chatList = chatList
+        chatListAdapter.chatList = newChatList
         chatListAdapter.notifyDataSetChanged()
     }
 

@@ -24,34 +24,38 @@ class FindUserFragment : Fragment(R.layout.fragment_find_user) {
 
     private lateinit var adapter: FindUserAdapter
 
-    private lateinit var userList: MutableList<User>//Сюда можно будет передать список друзей, типо сначала друзья появляют
+    private var userList: MutableList<User> = mutableListOf()//Сюда можно будет передать список друзей, типо сначала друзья появляют
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val recyclerView: RecyclerView = view.findViewById(R.id.found_user_list_find_user)
 
-        userList = mutableListOf()
+        adapter = FindUserAdapter(userList) { anotherUser ->
+            val args = Bundle()
+            args.putParcelable(ChatLogFragment.ANOTHER_USER, anotherUser)
+            Navigation.findNavController(view).navigate(R.id.action_findUserFragment_to_chatLogFragment, args)
+        }
 
-        // Заполнение списка юзеров из репозитория
-        val query = userRepository.getAllUsers()
+        if(userList.size == 0) {
+            // Заполнение списка юзеров из репозитория
+            val query = userRepository.getAllUsers()
 
-        lifecycleScope.launch {
-            query.snapshots.collect {
-                for(i in it.children) {
-                    val user = i.getValue(User::class.java)
-                    user.let {
-                        if(user?.uid != FirebaseAuth.getInstance().currentUser?.uid) {
-                            userList.add(user!!)
+            lifecycleScope.launch {
+                query.snapshots.collect {
+                    recyclerView.adapter = adapter
+                    for (i in it.children) {
+                        val user = i.getValue(User::class.java)
+                        user.let {
+                            if (user?.uid != FirebaseAuth.getInstance().currentUser?.uid) {
+                                userList.add(user!!)
+                                adapter.notifyItemChanged(0)
+                            }
                         }
                     }
                 }
-                adapter = FindUserAdapter(userList) { anotherUser ->
-                    val args = Bundle()
-                    args.putParcelable(ChatLogFragment.ANOTHER_USER, anotherUser)
-                    Navigation.findNavController(view).navigate(R.id.action_findUserFragment_to_chatLogFragment, args)
-                }
-                recyclerView.adapter = adapter
             }
+        } else {
+            recyclerView.adapter = adapter
         }
 
         // Добавление линии между элементами чата
