@@ -129,7 +129,7 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
 
         chatQuery.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                recyclerView.smoothScrollToPosition((snapshot.childrenCount - 1).toInt())
+                recyclerView.smoothScrollToPosition((snapshot.childrenCount).toInt())
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -173,7 +173,7 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
                 inputText.text.clear()
             }
 
-            recyclerView.smoothScrollToPosition(adapter.itemCount - 1)
+            recyclerView.smoothScrollToPosition(adapter.itemCount)
         }
     }
 }
