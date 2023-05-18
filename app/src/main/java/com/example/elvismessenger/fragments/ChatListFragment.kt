@@ -2,9 +2,9 @@ package com.example.elvismessenger.fragments
 
 import android.os.Bundle
 import android.os.Parcelable
-import android.util.Log
 import android.view.Menu
 import android.view.View
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
@@ -33,6 +33,8 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
 
     private lateinit var chatListAdapter: ChatListAdapter
     private lateinit var recyclerView: RecyclerView
+    private lateinit var progressBar: ProgressBar
+
     private val latestMessagesMap = HashMap<String, ChatItem>()
     private var chatList: MutableList<ChatItem> = mutableListOf()
 
@@ -50,7 +52,7 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         super.onViewCreated(view, savedInstanceState)
 
         // Часть кода для работы списка чатов
-        recyclerView= view.findViewById(R.id.list_recycler_view_chats_list)
+        recyclerView = view.findViewById(R.id.list_recycler_view_chats_list)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
         // Добавление линии между элементами чата
@@ -62,9 +64,11 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
             Navigation.findNavController(view).navigate(R.id.action_chatListFragment_to_chatLogFragment, args)
         }
 
+        progressBar = view.findViewById(R.id.progress_bar_chat_list)
 
         if(chatList.size == 0) {
             lifecycleScope.launch {
+                progressBar.visibility = View.VISIBLE
                 recyclerView.adapter = chatListAdapter
                 FirebaseDatabase.getInstance()
                     .getReference("/users/${FirebaseAuth.getInstance().currentUser?.uid}/latestMessages/")
@@ -78,6 +82,7 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
                                 chatListAdapter.notifyDataSetChanged()
                             }
                         }
+                        progressBar.visibility = View.INVISIBLE
                     }
             }
         } else {
@@ -85,7 +90,6 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         }
 
         listenForLatestMessages()
-
     }
 
     private fun refreshLatestMessagesMap() {
