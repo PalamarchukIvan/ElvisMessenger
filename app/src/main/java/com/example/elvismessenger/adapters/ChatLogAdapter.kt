@@ -23,7 +23,7 @@ class ChatLogAdapter(
     private val onItemClick: ((ChatLogFragment.ChatMessage) -> Unit)
 ) : FirebaseRecyclerAdapter<ChatLogFragment.ChatMessage, ChatLogAdapter.ChatViewHolder>(options) {
 
-    class ChatViewHolder(itemView: View, private val otherUser: User) : RecyclerView.ViewHolder(itemView) {
+    class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         companion object {
             const val ME = 1
@@ -32,7 +32,6 @@ class ChatLogAdapter(
 
         private var  message: TextView? = null
         private val  time: TextView = itemView.findViewById(R.id.time_message)
-        private lateinit var  messageBlock: CardView
 
         fun bind(msg: ChatLogFragment.ChatMessage) {
 
@@ -59,12 +58,10 @@ class ChatLogAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
         val holder = when(viewType) {
             ChatViewHolder.ME -> ChatViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.chat_item, parent, false),
-                otherUser
+                LayoutInflater.from(parent.context).inflate(R.layout.chat_item, parent, false)
             )
             ChatViewHolder.ANOTHER -> ChatViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.chat_me_item, parent, false),
-                otherUser
+                LayoutInflater.from(parent.context).inflate(R.layout.chat_me_item, parent, false)
             )
 
             else -> null

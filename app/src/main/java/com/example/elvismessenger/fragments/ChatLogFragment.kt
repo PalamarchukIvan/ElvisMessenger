@@ -18,6 +18,7 @@ import com.example.elvismessenger.adapters.ChatLogAdapter
 import com.example.elvismessenger.db.ChatRepository
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
+import com.example.elvismessenger.utils.LinearLayoutManagerWrapper
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.google.firebase.database.DataSnapshot
@@ -39,6 +40,8 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
     companion object {
         const val ANOTHER_USER = "another_user"
     }
+
+    private lateinit var recyclerView: RecyclerView
 
     private lateinit var otherUser: User
     private lateinit var currentUser: User
@@ -65,6 +68,11 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
     override fun onDestroyView() {
         (requireActivity() as AppCompatActivity).supportActionBar?.show()
         super.onDestroyView()
+    }
+
+    override fun onResume() {
+        recyclerView.smoothScrollToPosition(adapter.itemCount)
+        super.onResume()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -122,8 +130,8 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         chatQuery = ChatRepository.getInstance().getChat(ChatRepository.getChatID(currentUser.uid, otherUser.uid))
 
         // Часть кода для работы списка чатов
-        val recyclerView: RecyclerView = view.findViewById(R.id.list_recycler_view_chat_log)
-        val layoutManager = LinearLayoutManager(context)
+        recyclerView = view.findViewById(R.id.list_recycler_view_chat_log)
+        val layoutManager = LinearLayoutManagerWrapper(context)
         // Пердаем layout в наш recycleView
         recyclerView.layoutManager = layoutManager
 
