@@ -16,5 +16,6 @@ data class User(
     var photo: String = "",
     var isActive: Boolean = false,
     var lastSeen: Long = 0,
-    var latestMessages: HashMap<String, ChatListFragment.ChatItem> = hashMapOf()
+    var latestMessages: HashMap<String, ChatListFragment.ChatItem> = hashMapOf(),
+    var cloudToken: String =  ""
 ) : Parcelable

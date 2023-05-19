@@ -11,6 +11,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.snapshots
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.*
 
@@ -73,24 +74,37 @@ class UserRepository private constructor() {
             }
         }
     }
+
     companion object {
-        var currentUser: MutableLiveData<User>? = null
+        var currentUser: MutableLiveData<User> = MutableLiveData()
             private set
 
         fun initCurrentUser() {
             FirebaseAuth.getInstance().currentUser?.also {
-                currentUser = MutableLiveData()
-                GlobalScope.launch(Dispatchers.IO) {
-                    getInstance().getUserByUID(it.uid).snapshots.collect {
-                        currentUser!!.postValue(it.getValue(User::class.java)!!)
-                    }
+                getInstance().getUserByUID(it.uid).get().addOnSuccessListener { userDB ->
+                    currentUser.postValue(userDB.getValue(User::class.java))
+                    setUpFirebaseMessaging()
                 }
+            }
+        }
+
+        private fun setUpFirebaseMessaging() {
+            FirebaseMessaging.getInstance().token.addOnCompleteListener {
+                if(!it.isSuccessful)
+                    return@addOnCompleteListener
+
+                val token = it.result
+                Log.d("Token: ", token!!)
+                val newUser = currentUser.value
+                newUser!!.cloudToken = token
+                currentUser.postValue(newUser!!)
+                getInstance().createOrUpdateUser(newUser)
             }
         }
 
         fun getInstance() = UserRepository()
 
-        fun toUserDB(user: FirebaseUser, uPassword: String = "", username: String = "") =
+        fun toUserDB(user: FirebaseUser, uPassword: String = "", username: String = "", token: String = "") =
             User(
                 uid = user.uid,
                 username = user.displayName ?: username,
@@ -98,6 +112,7 @@ class UserRepository private constructor() {
                 email = user.email ?: "no email",
                 password = uPassword,
                 phoneNumber = user.phoneNumber ?: "no phone number",
+                cloudToken = token,
             )
 
         fun updateSharedPreferances(user: User) {

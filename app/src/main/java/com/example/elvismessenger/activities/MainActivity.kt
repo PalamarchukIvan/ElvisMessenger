@@ -1,7 +1,9 @@
 package com.example.elvismessenger.activities
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.os.Bundle
@@ -26,11 +28,14 @@ import com.example.elvismessenger.R
 import com.example.elvismessenger.databinding.ActivityMainBinding
 import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.fragments.settings.SettingsFragment
+import com.example.elvismessenger.utils.NotificationService
 import com.example.elvismessenger.utils.UserPersonalSettings
 import com.firebase.ui.auth.data.model.User
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.FirebaseMessagingService
 import com.squareup.picasso.Picasso
 
 class MainActivity : AppCompatActivity() {
@@ -42,6 +47,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navigationView: NavigationView
 
     private val userSettings = UserPersonalSettings.livaDataInstance
+
+    private var pushNotificationsBroadcastReceiver: BroadcastReceiver? = null
 
     companion object {
         lateinit var sp: SharedPreferences
@@ -155,10 +162,34 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+//    private fun setUpFirebaseMessaging() {
+//        FirebaseMessaging.getInstance().token.addOnCompleteListener {
+//            if(!it.isSuccessful)
+//                return@addOnCompleteListener
+//
+//            val token = it.result
+//            Log.d("Token: ", token!!)
+//            val newUser = UserRepository.currentUser.value
+//            newUser!!.cloudToken = token
+//            UserRepository.currentUser.postValue(newUser)
+//            UserRepository.getInstance().createOrUpdateUser(newUser)
+//        }
+//    }
+
     override fun onPause() {
         super.onPause()
         if(FirebaseAuth.getInstance().currentUser != null) {
             UserRepository.getInstance().makeNotActive()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if(FirebaseAuth.getInstance().currentUser != null) {
+            UserRepository.getInstance().makeNotActive()
+        }
+        pushNotificationsBroadcastReceiver?.let {
+            unregisterReceiver(it)
         }
     }
 
@@ -175,12 +206,39 @@ class MainActivity : AppCompatActivity() {
             finish()
         } else {
             UserRepository.initCurrentUser()
-            Thread {
-                do {
-                    val checked = UserRepository.getInstance().makeActive()
-                } while (!checked)
-            }.start()
+            UserRepository.getInstance().makeActive()
+
+//            setUpFirebaseMessaging()
+            setUpBroadcastReceiver()
         }
+    }
+
+    private fun setUpBroadcastReceiver() {
+        pushNotificationsBroadcastReceiver = object: BroadcastReceiver(){
+            override fun onReceive(context: Context?, intent: Intent?) {
+                val extras = intent?.extras
+
+                extras?.let {extras ->
+                    extras.keySet().firstOrNull {it == NotificationService.ACTION_KEY }?.let {key ->
+                        when(extras.getString(key)) {
+                            NotificationService.ACTION_NOTIFICATION -> extras.getString(NotificationService.MESSAGE_KEY)?.let {message ->
+                                Toast.makeText(
+                                    this@MainActivity,
+                                    message,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            else -> {}
+                        }
+                    }
+                }
+            }
+        }
+        //Это значит, что наш бродкаст ресивер тригерится на все акшены с ключем INTENT_FINTER
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(NotificationService.INTENT_FILTER)
+
+        registerReceiver(pushNotificationsBroadcastReceiver, intentFilter)
     }
 
     //выдвижение шторки, по сути кликабельность тоггла (кнопки-буттерброт)
