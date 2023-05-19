@@ -3,6 +3,7 @@ package com.example.elvismessenger.fragments
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
+import android.widget.ProgressBar
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -22,6 +23,8 @@ class FindUserFragment : Fragment(R.layout.fragment_find_user) {
 
     private val userRepository = UserRepository.getInstance()
 
+    private lateinit var progressBar: ProgressBar
+
     private lateinit var adapter: FindUserAdapter
 
     private var userList: MutableList<User> = mutableListOf()//Сюда можно будет передать список друзей, типо сначала друзья появляют
@@ -36,13 +39,17 @@ class FindUserFragment : Fragment(R.layout.fragment_find_user) {
             Navigation.findNavController(view).navigate(R.id.action_findUserFragment_to_chatLogFragment, args)
         }
 
+        progressBar = view.findViewById(R.id.progress_bar_find_user)
+
         if(userList.size == 0) {
             // Заполнение списка юзеров из репозитория
             val query = userRepository.getAllUsers()
 
             lifecycleScope.launch {
+                progressBar.visibility = View.VISIBLE
                 query.snapshots.collect {
                     recyclerView.adapter = adapter
+                    userList.clear()
                     for (i in it.children) {
                         val user = i.getValue(User::class.java)
                         user.let {
@@ -52,6 +59,7 @@ class FindUserFragment : Fragment(R.layout.fragment_find_user) {
                             }
                         }
                     }
+                    progressBar.visibility = View.INVISIBLE
                 }
             }
         } else {

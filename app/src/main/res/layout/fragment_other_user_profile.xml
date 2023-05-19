@@ -11,6 +11,7 @@
         android:layout_height="wrap_content">
 
         <RelativeLayout
+            android:id="@+id/main_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/round_settings_background">
@@ -39,8 +40,9 @@
                     android:background="@drawable/custom_edit_text">
 
                     <TextView
-                        android:id="@+id/other_user_status"
+                        android:id="@+id/other_user_state"
                         android:layout_width="wrap_content"
+                        android:maxWidth="64dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
@@ -69,10 +71,10 @@
 
                         <TextView
                             android:id="@+id/other_username"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin="8dp"
                             android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
                             android:layout_marginEnd="8dp"
                             android:layout_marginBottom="8dp"
                             android:background="@drawable/custom_edit_text"
@@ -86,12 +88,33 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
+                        android:background="@drawable/custom_edit_text">
+
+                        <TextView
+                            android:id="@+id/other_user_status"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:background="@drawable/custom_edit_text"
+                            android:text="My status"
+                            android:textColor="@color/elvis_text_variant_color"
+                            android:textSize="18sp" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
                         android:background="@drawable/custom_edit_text">
 
                         <TextView
                             android:id="@+id/edit_about"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
                             android:layout_marginTop="8dp"
@@ -103,6 +126,34 @@
                             android:textSize="18sp" />
 
                     </RelativeLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center">
+
+                        <ImageView
+                            android:id="@+id/add_to_group"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/baseline_person_add_24" />
+
+                        <ImageView
+                            android:id="@+id/delete"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/ic_block"
+                            android:layout_marginLeft="16dp"/>
+
+                        <ImageView
+                            android:id="@+id/ban"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/baseline_delete_24"
+                            android:layout_marginLeft="16dp"/>
+
+                    </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
     </RelativeLayout>

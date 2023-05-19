@@ -69,38 +69,45 @@
             android:src="@drawable/ic_back"
             android:layout_marginStart="8dp"/>
 
+    <LinearLayout
+        android:id = "@+id/other_user_profile"
+        android:layout_marginLeft="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/user_photo"
-            android:layout_gravity="center_vertical"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="20dp"
-            android:src="@drawable/dornan"/>
+                android:id="@+id/user_photo"
+                android:layout_gravity="center_vertical"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/dornan"/>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/username"
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                android:layout_marginTop="8dp"
-                android:layout_marginStart="8dp"
-                android:text="Ivan Palamarchuk"/>
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/current_state"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:textColor="@color/elvis_primary_light_variant_color"
-                android:text="Online"/>
+                <TextView
+                    android:id="@+id/username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="8dp"
+                    android:text="Ivan Palamarchuk"/>
+
+                <TextView
+                    android:id="@+id/current_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="@color/elvis_primary_light_variant_color"
+                    android:text="Online"/>
+            </LinearLayout>
         </LinearLayout>
-
     </LinearLayout>
 
 </FrameLayout>
