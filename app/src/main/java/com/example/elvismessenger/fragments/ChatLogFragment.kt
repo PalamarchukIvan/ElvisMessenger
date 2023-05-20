@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.adapters.ChatLogAdapter
 import com.example.elvismessenger.db.*
+import com.example.elvismessenger.utils.FCMSender
 import com.example.elvismessenger.utils.LinearLayoutManagerWrapper
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.github.marlonlom.utilities.timeago.TimeAgo
@@ -185,7 +186,7 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
                 }
                 inputText.text.clear()
             }
-
+            FCMSender.pushNotification(context, otherUser.cloudToken, otherUser.username, msg.text)
             recyclerView.smoothScrollToPosition(adapter.itemCount)
         }
     }
