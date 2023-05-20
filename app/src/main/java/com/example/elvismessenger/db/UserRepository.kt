@@ -51,39 +51,36 @@ class UserRepository private constructor() {
     fun getUserByUID(uid: String) = FirebaseDatabase.getInstance().getReference("users").child(uid)
 
 
-    fun makeActive() : Boolean {
-        currentUser?.let {
-            it.value?.let { user ->
-                user.isActive = true
-                user.lastSeen = -1
-//                it.postValue(user)
-                createOrUpdateUser(user)
-                return true
-            }
+    fun makeActive() {
+        getInstance().getUserByUID(FirebaseAuth.getInstance().currentUser!!.uid).get().addOnSuccessListener { userDB ->
+            val activeUser = userDB.getValue(User::class.java)!!
+            activeUser.isActive = true
+            getInstance().createOrUpdateUser(activeUser)
         }
-        return false
     }
 
     fun makeNotActive() {
-        currentUser?.let {
-            it.value?.let { user ->
-                user.isActive = false
-                user.lastSeen = System.currentTimeMillis()
-                createOrUpdateUser(user)
-//                it.postValue(user)
-            }
+        FirebaseAuth.getInstance().currentUser?.let {
+            getInstance().getUserByUID(it.uid).get()
+                .addOnSuccessListener { userDB ->
+                    val activeUser = userDB.getValue(User::class.java)!!
+                    activeUser.isActive = false
+                    activeUser.lastSeen = System.currentTimeMillis()
+                    getInstance().createOrUpdateUser(activeUser)
+                }
         }
     }
 
     companion object {
         var currentUser: MutableLiveData<User> = MutableLiveData()
             private set
-
+        private var instance = UserRepository()
         fun initCurrentUser() {
             FirebaseAuth.getInstance().currentUser?.also {
                 getInstance().getUserByUID(it.uid).get().addOnSuccessListener { userDB ->
                     currentUser.postValue(userDB.getValue(User::class.java))
                     setUpFirebaseMessaging()
+                    getInstance().makeActive()
                 }
             }
         }
@@ -102,7 +99,7 @@ class UserRepository private constructor() {
             }
         }
 
-        fun getInstance() = UserRepository()
+        fun getInstance() = instance
 
         fun toUserDB(user: FirebaseUser, uPassword: String = "", username: String = "", token: String = "") =
             User(

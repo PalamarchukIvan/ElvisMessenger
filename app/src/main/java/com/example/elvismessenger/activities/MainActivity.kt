@@ -90,9 +90,9 @@ class MainActivity : AppCompatActivity() {
                         .setMessage("Are you sure that you want to logout?")
                         .setNegativeButton("no", null)
                         .setPositiveButton("yes") { _, _ ->
+                            UserRepository.getInstance().makeNotActive()
                             FirebaseAuth.getInstance().signOut()
                             startActivity(Intent(this, RegLogActivity::class.java))
-                            UserRepository.getInstance().makeNotActive()
                             finish()
                         }
                         .show()
@@ -162,20 +162,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-//    private fun setUpFirebaseMessaging() {
-//        FirebaseMessaging.getInstance().token.addOnCompleteListener {
-//            if(!it.isSuccessful)
-//                return@addOnCompleteListener
-//
-//            val token = it.result
-//            Log.d("Token: ", token!!)
-//            val newUser = UserRepository.currentUser.value
-//            newUser!!.cloudToken = token
-//            UserRepository.currentUser.postValue(newUser)
-//            UserRepository.getInstance().createOrUpdateUser(newUser)
-//        }
-//    }
-
     override fun onPause() {
         super.onPause()
         if(FirebaseAuth.getInstance().currentUser != null) {
@@ -206,9 +192,6 @@ class MainActivity : AppCompatActivity() {
             finish()
         } else {
             UserRepository.initCurrentUser()
-            UserRepository.getInstance().makeActive()
-
-//            setUpFirebaseMessaging()
             setUpBroadcastReceiver()
         }
     }
