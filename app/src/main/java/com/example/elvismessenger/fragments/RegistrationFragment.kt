@@ -1,7 +1,5 @@
 package com.example.elvismessenger.fragments
 
-import android.app.Application
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -13,11 +11,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.example.elvismessenger.R
-import com.example.elvismessenger.activities.MainActivity
 import com.example.elvismessenger.activities.RegLogActivity
 import com.example.elvismessenger.db.UserRepository
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.UserProfileChangeRequest
 
 class RegistrationFragment : Fragment(R.layout.fragment_registration) {
     private lateinit var regUsername: EditText
@@ -62,7 +58,7 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
                                 UserRepository.getInstance().createOrUpdateUser(
                                     UserRepository.toUserDB(userFB!!, password, username))
 
-                                UserRepository.updateSharedPreferances(UserRepository.toUserDB(userFB, password, username))
+                                UserRepository.updateSharedPreferences(UserRepository.toUserDB(userFB, password, username))
                             }
 
                             // Перход на Welcome стрраничку

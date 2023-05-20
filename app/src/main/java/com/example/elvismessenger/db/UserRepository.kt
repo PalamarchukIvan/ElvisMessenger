@@ -9,11 +9,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.snapshots
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.coroutines.*
 
 class UserRepository private constructor() {
 
@@ -112,7 +110,7 @@ class UserRepository private constructor() {
                 cloudToken = token,
             )
 
-        fun updateSharedPreferances(user: User) {
+        fun updateSharedPreferences(user: User) {
             val editor = MainActivity.sp.edit()
             editor?.putString(SettingsFragment.EMAIL, user.email)
             editor?.putString(SettingsFragment.PASSWORD, user.password)
