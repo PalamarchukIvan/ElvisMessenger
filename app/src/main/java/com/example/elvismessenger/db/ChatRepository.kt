@@ -1,6 +1,5 @@
 package com.example.elvismessenger.db
 
-import android.widget.Toast
 import com.example.elvismessenger.fragments.ChatListFragment
 import com.example.elvismessenger.fragments.ChatLogFragment
 import com.google.firebase.auth.FirebaseAuth
@@ -17,20 +16,20 @@ class ChatRepository private constructor(){
 
     fun getOpenToUserChat() = FirebaseDatabase.getInstance().getReference("/users/${FirebaseAuth.getInstance().currentUser?.uid}/latestMessages/")
 
-    fun sendMessage(msg: ChatLogFragment.ChatMessage, currentUser: User, otherUser: User, chatQuery: Query, errorHandler: (DatabaseError?) -> Unit) {
-        // Для записи этого же сообщения в список последних сообщений всех юзеров
-        val chatItemMsg = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), otherUser)
-        val latestMsgRef = FirebaseDatabase.getInstance().getReference("/users/${currentUser.uid}/latestMessages/${otherUser.uid}")
-        latestMsgRef.setValue(chatItemMsg)
-
-        val chatItemMsgTo = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), currentUser)
-        val latestMsgToRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/latestMessages/${currentUser.uid}")
-        latestMsgToRef.setValue(chatItemMsgTo)
-
-        chatQuery.ref.push().setValue(msg) { error, _ ->
-            errorHandler.invoke(error)
-        }
-    }
+//    fun sendMessage(msg: ChatLogFragment.ChatMessage, currentUser: User, otherUser: User, chatQuery: Query, errorHandler: (DatabaseError?) -> Unit) {
+//        // Для записи этого же сообщения в список последних сообщений всех юзеров
+//        val chatItemMsg = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), otherUser)
+//        val latestMsgRef = FirebaseDatabase.getInstance().getReference("/users/${currentUser.uid}/latestMessages/${otherUser.uid}")
+//        latestMsgRef.setValue(chatItemMsg)
+//
+//        val chatItemMsgTo = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), currentUser)
+//        val latestMsgToRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/latestMessages/${currentUser.uid}")
+//        latestMsgToRef.setValue(chatItemMsgTo)
+//
+//        chatQuery.ref.push().setValue(msg) { error, _ ->
+//            errorHandler.invoke(error)
+//        }
+//    }
 
 
     companion object {

@@ -22,14 +22,16 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.database.ktx.snapshots
+import com.google.firebase.database.ktx.values
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
 class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
     @Parcelize
-    data class ChatItem(val text: String = "",
-                        val time: Long = 0,
-                        val user: User? = null) : Parcelable
+    data class ChatItem(
+        val text: String = "",
+        val time: Long = 0,
+        val user: User? = null) : Parcelable
 
     private lateinit var chatListAdapter: ChatListAdapter
     private lateinit var recyclerView: RecyclerView

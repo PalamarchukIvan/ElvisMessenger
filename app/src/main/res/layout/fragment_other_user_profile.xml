@@ -134,20 +134,20 @@
                         android:layout_gravity="center">
 
                         <ImageView
-                            android:id="@+id/add_to_group"
+                            android:id="@+id/add_to_group_btn"
                             android:layout_width="48dp"
                             android:layout_height="48dp"
                             android:src="@drawable/baseline_person_add_24" />
 
                         <ImageView
-                            android:id="@+id/delete"
+                            android:id="@+id/ban_btn"
                             android:layout_width="48dp"
                             android:layout_height="48dp"
                             android:src="@drawable/ic_block"
                             android:layout_marginLeft="16dp"/>
 
                         <ImageView
-                            android:id="@+id/ban"
+                            android:id="@+id/delete_chat_btn"
                             android:layout_width="48dp"
                             android:layout_height="48dp"
                             android:src="@drawable/baseline_delete_24"
