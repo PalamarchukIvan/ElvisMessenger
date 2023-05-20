@@ -5,6 +5,8 @@ import android.os.Parcelable
 import android.view.Menu
 import android.view.View
 import android.widget.ProgressBar
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
@@ -36,7 +38,9 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
 
     private lateinit var chatListAdapter: ChatListAdapter
     private lateinit var recyclerView: RecyclerView
+
     private lateinit var progressBar: ProgressBar
+    private lateinit var deleteFAB: FloatingActionButton
 
     private val latestMessagesMap = HashMap<String, ChatItem>()
     private var chatList: MutableList<ChatItem> = mutableListOf()
@@ -58,17 +62,21 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         recyclerView = view.findViewById(R.id.list_recycler_view_chats_list)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
+        deleteFAB = view.findViewById(R.id.delete_latest_chat_btn)
+
         // Добавление линии между элементами чата
         recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
-        chatListAdapter = ChatListAdapter(chatList, { anotherUser ->
-            val args = Bundle()
-            args.putParcelable(ChatLogFragment.ANOTHER_USER, anotherUser)
-            Navigation.findNavController(view)
-                .navigate(R.id.action_chatListFragment_to_chatLogFragment, args)
-        }, { show ->
-            showDeleteFab(show)
-        })
+        chatListAdapter = ChatListAdapter(chatList,
+            onItemClick = { anotherUser ->
+                val args = Bundle()
+                args.putParcelable(ChatLogFragment.ANOTHER_USER, anotherUser)
+                Navigation.findNavController(view)
+                    .navigate(R.id.action_chatListFragment_to_chatLogFragment, args)
+            },
+            onLongItemClick = { state ->
+                showDeleteFab(state)
+            })
 
         progressBar = view.findViewById(R.id.progress_bar_chat_list)
 
@@ -95,12 +103,17 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
             recyclerView.adapter = chatListAdapter
         }
 
+        deleteFAB.setOnClickListener {
+            chatListAdapter.delete()
+            showDeleteFab(View.INVISIBLE)
+        }
+
         listenForLatestMessages()
     }
 
-    private fun showDeleteFab(state: Boolean) {
-        requireView().findViewById<FloatingActionButton>(R.id.delete_chat_btn).visibility =
-            View.VISIBLE
+    private fun showDeleteFab(state: Int) {
+        Toast.makeText(requireContext(), "worked", Toast.LENGTH_SHORT).show()
+        deleteFAB.visibility = state
     }
 
     private fun refreshLatestMessagesMap() {
@@ -130,7 +143,8 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
                 refreshLatestMessagesMap()
             }
             override fun onChildRemoved(snapshot: DataSnapshot) {
-
+                latestMessagesMap.remove(snapshot.key)
+//                refreshLatestMessagesMap()
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {

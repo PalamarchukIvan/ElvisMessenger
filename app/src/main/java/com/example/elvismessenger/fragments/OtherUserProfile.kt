@@ -1,20 +1,15 @@
 package com.example.elvismessenger.fragments
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.elvismessenger.R
-import com.example.elvismessenger.activities.RegLogActivity
 import com.example.elvismessenger.db.ChatRepository
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
-import com.github.marlonlom.utilities.timeago.TimeAgo
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -36,7 +31,7 @@ class OtherUserProfile : Fragment(R.layout.fragment_other_user_profile) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val deleteChatBtn: ImageView = view.findViewById(R.id.delete_chat_btn)
+        val deleteChatBtn: ImageView = view.findViewById(R.id.delete_chat_history_btn)
 
         val otherUserProfilePicture: ImageView = view.findViewById(R.id.user_pfp_image)
         val otherUserName: TextView = view.findViewById(R.id.other_username)

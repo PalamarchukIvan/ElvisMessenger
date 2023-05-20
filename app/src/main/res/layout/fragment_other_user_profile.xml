@@ -147,7 +147,7 @@
                             android:layout_marginLeft="16dp"/>
 
                         <ImageView
-                            android:id="@+id/delete_chat_btn"
+                            android:id="@+id/delete_chat_history_btn"
                             android:layout_width="48dp"
                             android:layout_height="48dp"
                             android:src="@drawable/baseline_delete_24"

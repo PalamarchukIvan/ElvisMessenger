@@ -12,6 +12,7 @@ import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.fragments.ChatListFragment
 import com.github.marlonlom.utilities.timeago.TimeAgo
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.snapshots
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.GlobalScope
@@ -21,8 +22,10 @@ import kotlin.concurrent.thread
 class ChatListAdapter(
     var chatList: MutableList<ChatListFragment.ChatItem>,
     private val onItemClick: ((User) -> Unit),
-    private val onLongItemClick: ((Boolean) -> Unit)
+    private val onLongItemClick: (Int) -> Unit
 ) : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>() {
+
+    private val chatsSelectedList = mutableListOf<ChatListFragment.ChatItem>()
 
     companion object {
         private const val EVEN_CHAT = 0
@@ -34,6 +37,7 @@ class ChatListAdapter(
         private val name: TextView = itemView.findViewById(R.id.name_text_chat_item)
         private val status: TextView = itemView.findViewById(R.id.status_text_chat_item)
         private val time: TextView = itemView.findViewById(R.id.time_text_chat_item)
+        val checkMark: ImageView = itemView.findViewById(R.id.check_mark)
 
         fun bind(chatItem: ChatListFragment.ChatItem) {
             if (chatItem.user?.photo != "") {
@@ -90,6 +94,9 @@ class ChatListAdapter(
         }
 
         holder.itemView.setOnLongClickListener {
+            chatsSelectedList.add(chatList[position])
+            holder.checkMark.visibility = View.VISIBLE
+            onLongItemClick.invoke(View.VISIBLE)
             true
         }
     }
@@ -97,4 +104,15 @@ class ChatListAdapter(
     override fun getItemCount(): Int {
         return chatList.size
     }
+
+    fun delete() {
+        for (i in chatsSelectedList) {
+            val query = FirebaseDatabase.getInstance().getReference("/users/${UserRepository.currentUser.value!!.uid}/latestMessages/${i.user!!.uid}")
+            query.removeValue()
+            chatList.remove(i)
+        }
+        chatsSelectedList.clear()
+        notifyDataSetChanged()
+    }
+
 }
