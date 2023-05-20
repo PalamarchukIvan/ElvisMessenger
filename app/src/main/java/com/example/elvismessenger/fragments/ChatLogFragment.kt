@@ -171,22 +171,10 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
             // Для отправки сообщения
             val msg = ChatMessage(currentUser.uid, otherUser.uid,  inputText.text.toString(), System.currentTimeMillis())
 
-            // Для записи этого же сообщения в список последних сообщений всех юзеров
-            val chatItemMsg = ChatListFragment.ChatItem(inputText.text.toString(), System.currentTimeMillis(), userToLatestMsgUser(otherUser))
-            val latestMsgRef = FirebaseDatabase.getInstance().getReference("/users/${currentUser.uid}/latestMessages/${otherUser.uid}")
-            latestMsgRef.setValue(chatItemMsg)
-
-            val chatItemMsgTo = ChatListFragment.ChatItem(inputText.text.toString(), System.currentTimeMillis(), userToLatestMsgUser(currentUser))
-            val latestMsgToRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/latestMessages/${currentUser.uid}")
-            latestMsgToRef.setValue(chatItemMsgTo)
-
-            chatQuery.ref.push().setValue(msg) { error, _ ->
-                error?.let {
-                    Toast.makeText(requireContext(), error.message, Toast.LENGTH_SHORT).show()
-                }
-                inputText.text.clear()
+            ChatRepository.getInstance().sendMessage(msg, currentUser, otherUser, chatQuery, requireContext()) {
+                Toast.makeText(requireContext(), "Error: ${it?.message.toString()}", Toast.LENGTH_SHORT).show()
             }
-            FCMSender.pushNotification(context, otherUser.cloudToken, otherUser.username, msg.text)
+            inputText.text.clear()
             recyclerView.smoothScrollToPosition(adapter.itemCount)
         }
     }

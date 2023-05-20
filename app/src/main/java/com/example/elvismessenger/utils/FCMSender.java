@@ -31,7 +31,7 @@ public class FCMSender {
                 json.put("to", token);
                 JSONObject notification = new JSONObject();
                 notification.put("title", title);
-                notification.put("body", "Test body");
+                notification.put("body", message);
                 JSONObject data = new JSONObject();
                 data.put(NotificationService.ACTION_KEY, NotificationService.ACTION_NOTIFICATION);
                 data.put(NotificationService.MESSAGE_KEY, message);
@@ -45,7 +45,7 @@ public class FCMSender {
                              System.err.println("FCM: " + error.toString());
                         }) {
                     @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
+                    public Map<String, String> getHeaders() {
                         HashMap<String, String> params = new HashMap<>();
                         params.put("Authorization", SERVER_KEY);
                         params.put("Content-Type", "application/json");
