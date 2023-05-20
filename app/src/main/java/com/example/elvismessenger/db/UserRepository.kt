@@ -50,7 +50,6 @@ class UserRepository private constructor() {
 
     fun getUserByUID(uid: String) = FirebaseDatabase.getInstance().getReference("users").child(uid)
 
-
     fun makeActive() : Boolean {
         currentUser?.let {
             it.value?.let { user ->
@@ -115,7 +114,7 @@ class UserRepository private constructor() {
                 cloudToken = token,
             )
 
-        fun updateSharedPreferances(user: User) {
+        fun updateSharedPreferences(user: User) {
             val editor = MainActivity.sp.edit()
             editor?.putString(SettingsFragment.EMAIL, user.email)
             editor?.putString(SettingsFragment.PASSWORD, user.password)

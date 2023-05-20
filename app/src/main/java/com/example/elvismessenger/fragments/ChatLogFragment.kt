@@ -13,13 +13,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.adapters.ChatLogAdapter
-import com.example.elvismessenger.db.ChatRepository
-import com.example.elvismessenger.db.User
-import com.example.elvismessenger.db.UserRepository
+import com.example.elvismessenger.db.*
 import com.example.elvismessenger.utils.LinearLayoutManagerWrapper
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.github.marlonlom.utilities.timeago.TimeAgo
@@ -28,8 +25,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 
 class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
@@ -176,11 +171,11 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
             val msg = ChatMessage(currentUser.uid, otherUser.uid,  inputText.text.toString(), System.currentTimeMillis())
 
             // Для записи этого же сообщения в список последних сообщений всех юзеров
-            val chatItemMsg = ChatListFragment.ChatItem(inputText.text.toString(), System.currentTimeMillis(), otherUser)
+            val chatItemMsg = ChatListFragment.ChatItem(inputText.text.toString(), System.currentTimeMillis(), userToLatestMsgUser(otherUser))
             val latestMsgRef = FirebaseDatabase.getInstance().getReference("/users/${currentUser.uid}/latestMessages/${otherUser.uid}")
             latestMsgRef.setValue(chatItemMsg)
 
-            val chatItemMsgTo = ChatListFragment.ChatItem(inputText.text.toString(), System.currentTimeMillis(), currentUser)
+            val chatItemMsgTo = ChatListFragment.ChatItem(inputText.text.toString(), System.currentTimeMillis(), userToLatestMsgUser(currentUser))
             val latestMsgToRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/latestMessages/${currentUser.uid}")
             latestMsgToRef.setValue(chatItemMsgTo)
 

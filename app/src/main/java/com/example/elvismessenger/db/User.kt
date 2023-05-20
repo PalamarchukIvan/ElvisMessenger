@@ -19,3 +19,8 @@ data class User(
     var latestMessages: HashMap<String, ChatListFragment.ChatItem> = hashMapOf(),
     var cloudToken: String =  ""
 ) : Parcelable
+
+fun userToLatestMsgUser(user: User): User {
+    user.latestMessages.clear()
+    return user
+}

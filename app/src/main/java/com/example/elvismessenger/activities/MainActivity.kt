@@ -123,7 +123,7 @@ class MainActivity : AppCompatActivity() {
         val networkInfo = connectivityManager.activeNetworkInfo
         UserRepository.currentUser?.observe(this) {
             if(networkInfo != null && networkInfo.isConnected) {
-                UserRepository.updateSharedPreferances(it)
+                UserRepository.updateSharedPreferences(it)
                 navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = it.username
                 navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = it.status
                 navigationView.getHeaderView(0).findViewById<ImageView>(R.id.pfp_image_nav_header)
