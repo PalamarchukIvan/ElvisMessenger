@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.db.User
@@ -19,7 +20,8 @@ import kotlin.concurrent.thread
 
 class ChatListAdapter(
     var chatList: MutableList<ChatListFragment.ChatItem>,
-    private val onItemClick: ((User) -> Unit)
+    private val onItemClick: ((User) -> Unit),
+    private val onLongItemClick: ((Boolean) -> Unit)
 ) : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>() {
 
     companion object {
@@ -85,6 +87,10 @@ class ChatListAdapter(
 
         holder.itemView.setOnClickListener {
             onItemClick.invoke(chatList[position].user!!)
+        }
+
+        holder.itemView.setOnLongClickListener {
+            true
         }
     }
 

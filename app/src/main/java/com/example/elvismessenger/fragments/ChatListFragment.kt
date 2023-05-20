@@ -15,6 +15,7 @@ import com.example.elvismessenger.R
 import com.example.elvismessenger.adapters.ChatListAdapter
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -60,11 +61,14 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         // Добавление линии между элементами чата
         recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
-        chatListAdapter = ChatListAdapter(chatList) { anotherUser ->
+        chatListAdapter = ChatListAdapter(chatList, { anotherUser ->
             val args = Bundle()
             args.putParcelable(ChatLogFragment.ANOTHER_USER, anotherUser)
-            Navigation.findNavController(view).navigate(R.id.action_chatListFragment_to_chatLogFragment, args)
-        }
+            Navigation.findNavController(view)
+                .navigate(R.id.action_chatListFragment_to_chatLogFragment, args)
+        }, { show ->
+            showDeleteFab(show)
+        })
 
         progressBar = view.findViewById(R.id.progress_bar_chat_list)
 
@@ -92,6 +96,11 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         }
 
         listenForLatestMessages()
+    }
+
+    private fun showDeleteFab(state: Boolean) {
+        requireView().findViewById<FloatingActionButton>(R.id.delete_chat_btn).visibility =
+            View.VISIBLE
     }
 
     private fun refreshLatestMessagesMap() {
