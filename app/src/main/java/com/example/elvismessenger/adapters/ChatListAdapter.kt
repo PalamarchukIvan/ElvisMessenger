@@ -105,6 +105,13 @@ class ChatListAdapter(
         return chatList.size
     }
 
+    fun uncheckItems() {
+        for (i in chatsSelectedList) {
+            i.value.checkMark.visibility = View.INVISIBLE
+        }
+        chatsSelectedList.clear()
+    }
+
     fun delete() {
         if (chatsSelectedList.size == chatList.size) {
             val query = FirebaseDatabase.getInstance().getReference("/users/${UserRepository.currentUser.value!!.uid}/latestMessages")
@@ -114,7 +121,7 @@ class ChatListAdapter(
             for (i in chatsSelectedList) {
                 val query = FirebaseDatabase.getInstance().getReference("/users/${UserRepository.currentUser.value!!.uid}/latestMessages/${i.key.user!!.uid}")
                 query.removeValue()
-                i.value.checkMark.visibility = View.INVISIBLE
+                uncheckItems()
                 chatList.remove(i.key)
             }
         }

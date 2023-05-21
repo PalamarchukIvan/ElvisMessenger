@@ -5,7 +5,7 @@
     tools:showIn="navigation view">
 
     <item
-        android:id="@+id/findUserFragment"
+        android:id="@+id/find_user_item"
         android:icon="@drawable/ic_person_search"
         android:title="@string/nav_menu_new_friend_title"
         android:visible="false"
