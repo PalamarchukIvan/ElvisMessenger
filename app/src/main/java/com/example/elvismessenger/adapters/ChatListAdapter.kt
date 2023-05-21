@@ -24,8 +24,8 @@ class ChatListAdapter(
     private val onItemClick: ((User) -> Unit),
     private val onLongItemClick: (Int) -> Unit
 ) : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>() {
-
-    private val chatsSelectedList = mutableListOf<ChatListFragment.ChatItem>()
+    var isNotFullyDeleted: Boolean = true
+    private val chatsSelectedList = HashMap<ChatListFragment.ChatItem, ChatListViewHolder>()
 
     companion object {
         private const val EVEN_CHAT = 0
@@ -94,7 +94,7 @@ class ChatListAdapter(
         }
 
         holder.itemView.setOnLongClickListener {
-            chatsSelectedList.add(chatList[position])
+            chatsSelectedList[chatList[position]] = holder
             holder.checkMark.visibility = View.VISIBLE
             onLongItemClick.invoke(View.VISIBLE)
             true
@@ -106,10 +106,17 @@ class ChatListAdapter(
     }
 
     fun delete() {
-        for (i in chatsSelectedList) {
-            val query = FirebaseDatabase.getInstance().getReference("/users/${UserRepository.currentUser.value!!.uid}/latestMessages/${i.user!!.uid}")
+        if (chatsSelectedList.size == chatList.size) {
+            val query = FirebaseDatabase.getInstance().getReference("/users/${UserRepository.currentUser.value!!.uid}/latestMessages")
             query.removeValue()
-            chatList.remove(i)
+            chatList.clear()
+        } else {
+            for (i in chatsSelectedList) {
+                val query = FirebaseDatabase.getInstance().getReference("/users/${UserRepository.currentUser.value!!.uid}/latestMessages/${i.key.user!!.uid}")
+                query.removeValue()
+                i.value.checkMark.visibility = View.INVISIBLE
+                chatList.remove(i.key)
+            }
         }
         chatsSelectedList.clear()
         notifyDataSetChanged()

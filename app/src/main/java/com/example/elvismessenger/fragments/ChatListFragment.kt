@@ -42,7 +42,6 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
     private lateinit var progressBar: ProgressBar
     private lateinit var deleteFAB: FloatingActionButton
 
-    private val latestMessagesMap = HashMap<String, ChatItem>()
     private var chatList: MutableList<ChatItem> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,80 +79,32 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
 
         progressBar = view.findViewById(R.id.progress_bar_chat_list)
 
-        if(chatList.size == 0) {
-            lifecycleScope.launch {
-                progressBar.visibility = View.VISIBLE
-                recyclerView.adapter = chatListAdapter
-                FirebaseDatabase.getInstance()
-                    .getReference("/users/${FirebaseAuth.getInstance().currentUser?.uid}/latestMessages/")
-                    .snapshots.collect {
-                        if(chatList.size == 0) {
-                            for (i in it.children) {
-                                chatList.add(i.getValue(ChatItem::class.java)!!)
-                                chatList.sortByDescending {chatItem ->
-                                    chatItem.time
-                                }
-                                chatListAdapter.notifyDataSetChanged()
-                            }
-                        }
-                        progressBar.visibility = View.INVISIBLE
-                    }
-            }
-        } else {
+        lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
             recyclerView.adapter = chatListAdapter
+            FirebaseDatabase.getInstance()
+                .getReference("/users/${FirebaseAuth.getInstance().currentUser?.uid}/latestMessages/")
+                .snapshots.collect {
+                    chatList.clear()
+                    for (i in it.children) {
+                        chatList.add(i.getValue(ChatItem::class.java)!!)
+                        chatList.sortByDescending { chatItem ->
+                            chatItem.time
+                        }
+                        chatListAdapter.notifyDataSetChanged()
+                    }
+                    progressBar.visibility = View.INVISIBLE
+                }
         }
 
         deleteFAB.setOnClickListener {
             chatListAdapter.delete()
             showDeleteFab(View.INVISIBLE)
         }
-
-        listenForLatestMessages()
     }
 
     private fun showDeleteFab(state: Int) {
         Toast.makeText(requireContext(), "worked", Toast.LENGTH_SHORT).show()
         deleteFAB.visibility = state
-    }
-
-    private fun refreshLatestMessagesMap() {
-        val newChatList = mutableListOf<ChatItem>()
-
-        latestMessagesMap.values.forEach {
-            newChatList.add(it)
-        }
-
-        newChatList.sortByDescending { it.time }
-
-        chatListAdapter.chatList = newChatList
-        chatListAdapter.notifyDataSetChanged()
-    }
-
-    private fun listenForLatestMessages() {
-        val currentUser = UserRepository.currentUser?.value
-        val ref = FirebaseDatabase.getInstance().getReference("/users/${currentUser?.uid}/latestMessages/")
-        ref.addChildEventListener(object : ChildEventListener {
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                latestMessagesMap[snapshot.key!!] = snapshot.getValue<ChatItem>()!!
-                refreshLatestMessagesMap()
-            }
-
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                latestMessagesMap[snapshot.key!!] = snapshot.getValue<ChatItem>()!!
-                refreshLatestMessagesMap()
-            }
-            override fun onChildRemoved(snapshot: DataSnapshot) {
-                latestMessagesMap.remove(snapshot.key)
-//                refreshLatestMessagesMap()
-            }
-
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-
-            }
-        })
     }
 }
