@@ -136,14 +136,16 @@ class WelcomingEditProfileFragment : Fragment(R.layout.fragment_welcoming_edit_p
     }
 
     private fun saveData() {
-        val newUser = UserRepository.currentUser?.value
+        val newUser = UserRepository.currentUser.value
         newUser?.username = editUsername.text.toString()
         newUser?.status = editStatus.text.toString()
         newUser?.about = editAbout.text.toString()
+        newUser?.lastSeen = System.currentTimeMillis()
+        newUser?.isActive = true
 
-        UserRepository.currentUser?.postValue(newUser)
+        UserRepository.currentUser.postValue(newUser)
 
-        UserRepository.currentUser?.value?.apply {
+        UserRepository.currentUser.value?.apply {
             UserRepository.getInstance().createOrUpdateUser(this)
         }
     }

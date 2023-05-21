@@ -27,6 +27,7 @@ import androidx.navigation.ui.*
 import com.example.elvismessenger.R
 import com.example.elvismessenger.databinding.ActivityMainBinding
 import com.example.elvismessenger.db.UserRepository
+import com.example.elvismessenger.fragments.ChatListFragment
 import com.example.elvismessenger.fragments.settings.SettingsFragment
 import com.example.elvismessenger.utils.NotificationService
 import com.example.elvismessenger.utils.UserPersonalSettings
@@ -204,12 +205,8 @@ class MainActivity : AppCompatActivity() {
                 extras?.let {extras ->
                     extras.keySet().firstOrNull {it == NotificationService.ACTION_KEY }?.let {key ->
                         when(extras.getString(key)) {
-                            NotificationService.ACTION_NOTIFICATION -> extras.getString(NotificationService.MESSAGE_KEY)?.let {message ->
-                                Toast.makeText(
-                                    this@MainActivity,
-                                    message,
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                            NotificationService.ACTION_NOTIFICATION -> extras.getString(NotificationService.MESSAGE_KEY)?.let { message ->
+                                //Шторка нотификации если не в чатлисте
                             }
                             else -> {}
                         }

@@ -10,24 +10,27 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 class ChatRepository private constructor(){
-    fun newMessage(msg: ChatLogFragment.ChatMessage) {
-        //Забил болт
-    }
-
     fun getChat(child: String) = FirebaseDatabase.getInstance().getReference("chats").child(child)
 
-    fun getOpenToUserChat() = FirebaseDatabase.getInstance().getReference("/users/${FirebaseAuth.getInstance().currentUser?.uid}/latestMessages/")
+    fun getOpenToUserChat(user: User) = FirebaseDatabase.getInstance().getReference("/users/${user.uid}/latestMessages/")
+    fun getOpenToUserChat(userUID: String, otherUserUID: String) = Firebase.database
+        .getReference("users")
+        .child(userUID)
+        .child("latestMessages")
+        .child(otherUserUID)
 
     fun sendMessage(msg: ChatLogFragment.ChatMessage, currentUser: User, otherUser: User, chatQuery: Query, context: Context, errorHandler: (DatabaseError?) -> Unit) {
         // Для записи этого же сообщения в список последних сообщений всех юзеров
-        val chatItemMsg = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), userToLatestMsgUser(otherUser))
-        val latestMsgRef = FirebaseDatabase.getInstance().getReference("/users/${currentUser.uid}/latestMessages/${otherUser.uid}")
+        val chatItemMsg = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), false, userToLatestMsgUser(otherUser))
+        val latestMsgRef = getOpenToUserChat(currentUser.uid, otherUser.uid)
         latestMsgRef.setValue(chatItemMsg)
 
-        val chatItemMsgTo = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), userToLatestMsgUser(currentUser))
-        val latestMsgToRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/latestMessages/${currentUser.uid}")
+        val chatItemMsgTo = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), true, userToLatestMsgUser(currentUser))
+        val latestMsgToRef = getOpenToUserChat(otherUser.uid, currentUser.uid)
         latestMsgToRef.setValue(chatItemMsgTo)
 
         chatQuery.ref.push().setValue(msg) { error, _ ->
@@ -35,7 +38,7 @@ class ChatRepository private constructor(){
                 errorHandler.invoke(it)
             }
         }
-        FCMSender.pushNotification(context, otherUser.cloudToken, currentUser.username, msg.text)
+        FCMSender.pushNotification(context, otherUser.cloudToken, currentUser.username, msg.text, currentUser.uid)
     }
 
 

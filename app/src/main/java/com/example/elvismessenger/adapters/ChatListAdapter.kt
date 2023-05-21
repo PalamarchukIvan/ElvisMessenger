@@ -5,21 +5,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
-import com.example.elvismessenger.db.User
-import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.fragments.ChatListFragment
 import com.github.marlonlom.utilities.timeago.TimeAgo
-import com.google.firebase.database.ktx.snapshots
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlin.concurrent.thread
+import java.lang.RuntimeException
 
 class ChatListAdapter(
     var chatList: MutableList<ChatListFragment.ChatItem>,
-    private val onItemClick: ((User) -> Unit)
+    private val onItemClick: ((ChatListFragment.ChatItem, Int) -> Unit)
 ) : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>() {
 
     companion object {
@@ -32,8 +28,12 @@ class ChatListAdapter(
         private val name: TextView = itemView.findViewById(R.id.name_text_chat_item)
         private val status: TextView = itemView.findViewById(R.id.status_text_chat_item)
         private val time: TextView = itemView.findViewById(R.id.time_text_chat_item)
+        private val newMessageMark: ImageView = itemView.findViewById(R.id.new_message_notification)
 
         fun bind(chatItem: ChatListFragment.ChatItem) {
+            if(chatItem.isNew) {
+                newMessageMark.isVisible = true
+            }
             if (chatItem.user?.photo != "") {
                 Picasso.get().load(chatItem.user?.photo).into(pfp)
             } else {
@@ -70,13 +70,7 @@ class ChatListAdapter(
                     false
                 )
             )
-            else -> ChatListViewHolder(
-                layoutInflater.inflate(
-                    R.layout.chats_item_even,
-                    parent,
-                    false
-                )
-            )
+            else -> throw RuntimeException("Error with onCreateViewHolder()")
         }
     }
 
@@ -84,7 +78,7 @@ class ChatListAdapter(
         holder.bind(chatList[position])
 
         holder.itemView.setOnClickListener {
-            onItemClick.invoke(chatList[position].user!!)
+            onItemClick.invoke(chatList[position], position)
         }
     }
 

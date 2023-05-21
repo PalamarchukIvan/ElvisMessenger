@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.adapters.ChatListAdapter
+import com.example.elvismessenger.db.ChatRepository
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -31,6 +32,7 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
     data class ChatItem(
         val text: String = "",
         val time: Long = 0,
+        var isNew: Boolean = false,
         val user: User? = null) : Parcelable
 
     private lateinit var chatListAdapter: ChatListAdapter
@@ -60,7 +62,12 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         // Добавление линии между элементами чата
         recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
-        chatListAdapter = ChatListAdapter(chatList) { anotherUser ->
+        chatListAdapter = ChatListAdapter(chatList) { chatItem, position ->
+            chatItem.isNew = false
+            ChatRepository.getInstance().getOpenToUserChat(UserRepository.currentUser.value!!.uid ,chatItem.user!!.uid).setValue(chatItem)
+            chatListAdapter.notifyItemChanged(position)
+
+            val anotherUser = chatItem.user
             val args = Bundle()
             args.putParcelable(ChatLogFragment.ANOTHER_USER, anotherUser)
             Navigation.findNavController(view).navigate(R.id.action_chatListFragment_to_chatLogFragment, args)
