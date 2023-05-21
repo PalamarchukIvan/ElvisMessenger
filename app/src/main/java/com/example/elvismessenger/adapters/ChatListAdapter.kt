@@ -8,15 +8,24 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
+import com.example.elvismessenger.db.User
+import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.fragments.ChatListFragment
 import com.github.marlonlom.utilities.timeago.TimeAgo
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.snapshots
 import com.squareup.picasso.Picasso
-import java.lang.RuntimeException
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlin.concurrent.thread
 
 class ChatListAdapter(
     var chatList: MutableList<ChatListFragment.ChatItem>,
-    private val onItemClick: ((ChatListFragment.ChatItem, Int) -> Unit)
+    private val onItemClick: ((ChatListFragment.ChatItem, Int) -> Unit),
+    private val onLongItemClick: (Int) -> Unit
 ) : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>() {
+
+    private val chatsSelectedList = HashMap<ChatListFragment.ChatItem, ChatListViewHolder>()
 
     companion object {
         private const val EVEN_CHAT = 0
@@ -29,6 +38,7 @@ class ChatListAdapter(
         private val status: TextView = itemView.findViewById(R.id.status_text_chat_item)
         private val time: TextView = itemView.findViewById(R.id.time_text_chat_item)
         private val newMessageMark: ImageView = itemView.findViewById(R.id.new_message_notification)
+        val checkMark: ImageView = itemView.findViewById(R.id.check_mark)
 
         fun bind(chatItem: ChatListFragment.ChatItem) {
             if(chatItem.isNew) {
@@ -70,7 +80,13 @@ class ChatListAdapter(
                     false
                 )
             )
-            else -> throw RuntimeException("Error with onCreateViewHolder()")
+            else -> ChatListViewHolder(
+                layoutInflater.inflate(
+                    R.layout.chats_item_even,
+                    parent,
+                    false
+                )
+            )
         }
     }
 
@@ -80,9 +96,35 @@ class ChatListAdapter(
         holder.itemView.setOnClickListener {
             onItemClick.invoke(chatList[position], position)
         }
+
+        holder.itemView.setOnLongClickListener {
+            chatsSelectedList[chatList[position]] = holder
+            holder.checkMark.visibility = View.VISIBLE
+            onLongItemClick.invoke(View.VISIBLE)
+            true
+        }
     }
 
     override fun getItemCount(): Int {
         return chatList.size
     }
+
+
+    fun delete() {
+        if (chatsSelectedList.size == chatList.size) {
+            val query = FirebaseDatabase.getInstance().getReference("/users/${UserRepository.currentUser.value!!.uid}/latestMessages")
+            query.removeValue()
+            chatList.clear()
+        } else {
+            for (i in chatsSelectedList) {
+                val query = FirebaseDatabase.getInstance().getReference("/users/${UserRepository.currentUser.value!!.uid}/latestMessages/${i.key.user!!.uid}")
+                query.removeValue()
+                i.value.checkMark.visibility = View.INVISIBLE
+                chatList.remove(i.key)
+            }
+        }
+        chatsSelectedList.clear()
+        notifyDataSetChanged()
+    }
+
 }

@@ -5,6 +5,7 @@ import android.os.Parcelable
 import android.view.Menu
 import android.view.View
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
@@ -16,6 +17,7 @@ import com.example.elvismessenger.adapters.ChatListAdapter
 import com.example.elvismessenger.db.ChatRepository
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -37,7 +39,9 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
 
     private lateinit var chatListAdapter: ChatListAdapter
     private lateinit var recyclerView: RecyclerView
+
     private lateinit var progressBar: ProgressBar
+    private lateinit var deleteFAB: FloatingActionButton
 
     private val latestMessagesMap = HashMap<String, ChatItem>()
     private var chatList: MutableList<ChatItem> = mutableListOf()
@@ -59,10 +63,12 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         recyclerView = view.findViewById(R.id.list_recycler_view_chats_list)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
+        deleteFAB = view.findViewById(R.id.delete_latest_chat_btn)
+
         // Добавление линии между элементами чата
         recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
-        chatListAdapter = ChatListAdapter(chatList) { chatItem, position ->
+        chatListAdapter = ChatListAdapter(chatList, { chatItem, position ->
             chatItem.isNew = false
             ChatRepository.getInstance().getOpenToUserChat(UserRepository.currentUser.value!!.uid ,chatItem.user!!.uid).setValue(chatItem)
             chatListAdapter.notifyItemChanged(position)
@@ -71,73 +77,40 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
             val args = Bundle()
             args.putParcelable(ChatLogFragment.ANOTHER_USER, anotherUser)
             Navigation.findNavController(view).navigate(R.id.action_chatListFragment_to_chatLogFragment, args)
-        }
+        },
+            onLongItemClick = { state ->
+                showDeleteFab(state)
+            }
+        )
 
         progressBar = view.findViewById(R.id.progress_bar_chat_list)
 
-        if(chatList.size == 0) {
-            lifecycleScope.launch {
-                progressBar.visibility = View.VISIBLE
-                recyclerView.adapter = chatListAdapter
-                FirebaseDatabase.getInstance()
-                    .getReference("/users/${FirebaseAuth.getInstance().currentUser?.uid}/latestMessages/")
-                    .snapshots.collect {
-                        if(chatList.size == 0) {
-                            for (i in it.children) {
-                                chatList.add(i.getValue(ChatItem::class.java)!!)
-                                chatList.sortByDescending {chatItem ->
-                                    chatItem.time
-                                }
-                                chatListAdapter.notifyDataSetChanged()
-                            }
-                        }
-                        progressBar.visibility = View.INVISIBLE
-                    }
-            }
-        } else {
+        lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
             recyclerView.adapter = chatListAdapter
+            FirebaseDatabase.getInstance()
+                .getReference("/users/${FirebaseAuth.getInstance().currentUser?.uid}/latestMessages/")
+                .snapshots.collect {
+                    chatList.clear()
+                    for (i in it.children) {
+                        chatList.add(i.getValue(ChatItem::class.java)!!)
+                        chatList.sortByDescending { chatItem ->
+                            chatItem.time
+                        }
+                        chatListAdapter.notifyDataSetChanged()
+                    }
+                    progressBar.visibility = View.INVISIBLE
+                }
         }
 
-        listenForLatestMessages()
-    }
-
-    private fun refreshLatestMessagesMap() {
-        val newChatList = mutableListOf<ChatItem>()
-
-        latestMessagesMap.values.forEach {
-            newChatList.add(it)
+        deleteFAB.setOnClickListener {
+            chatListAdapter.delete()
+            showDeleteFab(View.INVISIBLE)
         }
-
-        newChatList.sortByDescending { it.time }
-
-        chatListAdapter.chatList = newChatList
-        chatListAdapter.notifyDataSetChanged()
     }
 
-    private fun listenForLatestMessages() {
-        val currentUser = UserRepository.currentUser?.value
-        val ref = FirebaseDatabase.getInstance().getReference("/users/${currentUser?.uid}/latestMessages/")
-        ref.addChildEventListener(object : ChildEventListener {
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                latestMessagesMap[snapshot.key!!] = snapshot.getValue<ChatItem>()!!
-                refreshLatestMessagesMap()
-            }
-
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                latestMessagesMap[snapshot.key!!] = snapshot.getValue<ChatItem>()!!
-                refreshLatestMessagesMap()
-            }
-            override fun onChildRemoved(snapshot: DataSnapshot) {
-
-            }
-
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-
-            }
-        })
+    private fun showDeleteFab(state: Int) {
+        Toast.makeText(requireContext(), "worked", Toast.LENGTH_SHORT).show()
+        deleteFAB.visibility = state
     }
 }
