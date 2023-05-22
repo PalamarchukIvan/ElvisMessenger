@@ -1,6 +1,9 @@
 package com.example.elvismessenger.utils
 
 import android.content.Intent
+import com.github.javafaker.Bool
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
@@ -13,6 +16,9 @@ class NotificationService : FirebaseMessagingService() {
             i.putExtra(it.key, it.value)
         }
 
+        i.putExtra(BODY_KEY, message.notification!!.body)
+        i.putExtra(TITLE_KEY, message.notification!!.title)
+
         sendBroadcast(i)
     }
 
@@ -21,7 +27,13 @@ class NotificationService : FirebaseMessagingService() {
 
         const val ACTION_KEY = "action"
         const val MESSAGE_KEY = "message"
+        const val BODY_KEY = "body"
+        const val TITLE_KEY = "title"
 
         const val ACTION_NOTIFICATION = "show_notification"
+
+        fun ifToShowNotification(from: String, to: String): Boolean {
+            return FirebaseAuth.getInstance().currentUser!!.uid == from || FirebaseAuth.getInstance().currentUser!!.uid == to
+        }
     }
 }

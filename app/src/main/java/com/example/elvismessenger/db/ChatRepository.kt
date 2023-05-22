@@ -16,7 +16,7 @@ import com.google.firebase.ktx.Firebase
 class ChatRepository private constructor(){
     fun getChat(child: String) = FirebaseDatabase.getInstance().getReference("chats").child(child)
 
-    fun getOpenToUserChat(user: User) = FirebaseDatabase.getInstance().getReference("/users/${user.uid}/latestMessages/")
+    fun getOpenToUserChat(userUID: String) = FirebaseDatabase.getInstance().getReference("/users/${userUID}/latestMessages/")
     fun getOpenToUserChat(userUID: String, otherUserUID: String) = Firebase.database
         .getReference("users")
         .child(userUID)
@@ -38,7 +38,7 @@ class ChatRepository private constructor(){
                 errorHandler.invoke(it)
             }
         }
-        FCMSender.pushNotification(context, otherUser.cloudToken, currentUser.username, msg.text, currentUser.uid)
+        FCMSender.pushNotification(context, otherUser.cloudToken, currentUser.username, msg.text, currentUser.uid, otherUser.uid)
     }
 
 

@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 import kotlin.concurrent.thread
 
 class ChatListAdapter(
-    var chatList: MutableList<ChatListFragment.ChatItem>,
+    private var chatList: MutableList<ChatListFragment.ChatItem>,
     private val onItemClick: ((ChatListFragment.ChatItem, Int) -> Unit),
     private val onLongItemClick: (Int) -> Unit
 ) : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>() {

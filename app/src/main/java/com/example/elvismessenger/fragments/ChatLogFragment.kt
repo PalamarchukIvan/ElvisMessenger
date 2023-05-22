@@ -17,13 +17,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.adapters.ChatLogAdapter
 import com.example.elvismessenger.db.*
-import com.example.elvismessenger.utils.FCMSender
 import com.example.elvismessenger.utils.LinearLayoutManagerWrapper
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
@@ -117,6 +115,20 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
             }
         }
 
+        ChatRepository.getInstance().getOpenToUserChat(currentUser.uid, otherUser.uid).addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.getValue(ChatListFragment.ChatItem::class.java)?.let {
+                    val chatItem = it
+                    chatItem.isNew = false
+                    ChatRepository.getInstance().getOpenToUserChat(UserRepository.currentUser.value!!.uid ,chatItem.user!!.uid).setValue(chatItem)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+
         UserRepository.getInstance().getUserByUID(otherUser.uid).addValueEventListener (object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val user = snapshot.getValue(User::class.java)
@@ -178,4 +190,9 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
             recyclerView.smoothScrollToPosition(adapter.itemCount)
         }
     }
+
+    fun isMessagingTo(to: String, from: String): Boolean {
+        return (to == currentUser.uid && from == otherUser.uid) || (to == otherUser.uid && from == currentUser.uid)
+    }
+
 }

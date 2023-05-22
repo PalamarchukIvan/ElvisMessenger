@@ -1,5 +1,10 @@
 package com.example.elvismessenger.activities
 
+import android.R.attr.text
+import android.annotation.SuppressLint
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -8,7 +13,6 @@ import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
@@ -16,28 +20,25 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.example.elvismessenger.R
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.*
-import com.example.elvismessenger.R
 import com.example.elvismessenger.databinding.ActivityMainBinding
 import com.example.elvismessenger.db.UserRepository
-import com.example.elvismessenger.fragments.ChatListFragment
+import com.example.elvismessenger.fragments.ChatLogFragment
 import com.example.elvismessenger.fragments.settings.SettingsFragment
 import com.example.elvismessenger.utils.NotificationService
 import com.example.elvismessenger.utils.UserPersonalSettings
-import com.firebase.ui.auth.data.model.User
 import com.google.android.material.navigation.NavigationView
-import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.FirebaseMessagingService
 import com.squareup.picasso.Picasso
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
@@ -198,19 +199,47 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setUpBroadcastReceiver() {
-        pushNotificationsBroadcastReceiver = object: BroadcastReceiver(){
+        pushNotificationsBroadcastReceiver = object : BroadcastReceiver() {
+            @SuppressLint("MissingPermission")
             override fun onReceive(context: Context?, intent: Intent?) {
                 val extras = intent?.extras
 
-                extras?.let {extras ->
-                    extras.keySet().firstOrNull {it == NotificationService.ACTION_KEY }?.let {key ->
-                        when(extras.getString(key)) {
-                            NotificationService.ACTION_NOTIFICATION -> extras.getString(NotificationService.MESSAGE_KEY)?.let { message ->
-                                //Шторка нотификации если не в чатлисте
+                extras?.let { extras ->
+                    extras.keySet().firstOrNull { it == NotificationService.ACTION_KEY }
+                        ?.let { key ->
+                            when (extras.getString(key)) {
+                                NotificationService.ACTION_NOTIFICATION -> extras.getString(NotificationService.MESSAGE_KEY)?.let { message ->
+
+                                    val to = message.split("_")[0]
+                                    val from = message.split("_")[1]
+                                    if(NotificationService.ifToShowNotification(from, to)) {
+
+                                        val channel = NotificationChannel("MESSAGE", "Message Notification", NotificationManager.IMPORTANCE_HIGH)
+
+                                        getSystemService(NotificationManager::class.java).createNotificationChannel(channel);
+                                        val notification: Notification.Builder =
+                                            Notification.Builder(context, "MESSAGE")
+                                                .setContentTitle(extras.getString(NotificationService.TITLE_KEY))
+                                                .setContentText(extras.getString(NotificationService.BODY_KEY))
+                                                .setSmallIcon(R.drawable.dornan)
+                                                .setAutoCancel(true);
+
+                                        if (navHostFragment.childFragmentManager.fragments.last() is ChatLogFragment) {
+                                            val chatLogFragment = navHostFragment.childFragmentManager.fragments.last() as ChatLogFragment
+                                            if (!chatLogFragment.isMessagingTo(to = to, from = from)) {
+                                                NotificationManagerCompat.from(context!!).notify(1, notification.build())
+                                            }
+                                        } else {
+                                            NotificationManagerCompat.from(context!!).notify(1, notification.build())
+                                        }
+
+                                    }
+
+                                }
+
+                                else -> {}
                             }
-                            else -> {}
                         }
-                    }
                 }
             }
         }

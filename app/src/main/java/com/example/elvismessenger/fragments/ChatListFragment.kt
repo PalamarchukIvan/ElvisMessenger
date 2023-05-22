@@ -43,7 +43,6 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
     private lateinit var progressBar: ProgressBar
     private lateinit var deleteFAB: FloatingActionButton
 
-    private val latestMessagesMap = HashMap<String, ChatItem>()
     private var chatList: MutableList<ChatItem> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,8 +87,7 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         lifecycleScope.launch {
             progressBar.visibility = View.VISIBLE
             recyclerView.adapter = chatListAdapter
-            FirebaseDatabase.getInstance()
-                .getReference("/users/${FirebaseAuth.getInstance().currentUser?.uid}/latestMessages/")
+            ChatRepository.getInstance().getOpenToUserChat(FirebaseAuth.getInstance().currentUser!!.uid)
                 .snapshots.collect {
                     chatList.clear()
                     for (i in it.children) {
