@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.db.User
@@ -121,7 +122,7 @@ class ChatListAdapter(
             for (i in chatsSelectedList) {
                 val query = FirebaseDatabase.getInstance().getReference("/users/${UserRepository.currentUser.value!!.uid}/latestMessages/${i.key.user!!.uid}")
                 query.removeValue()
-                uncheckItems()
+                i.value.checkMark.visibility = View.INVISIBLE
                 chatList.remove(i.key)
             }
         }
