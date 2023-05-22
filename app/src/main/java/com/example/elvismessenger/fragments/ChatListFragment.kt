@@ -3,12 +3,15 @@ package com.example.elvismessenger.fragments
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -45,6 +48,10 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
 
     private var chatList: MutableList<ChatItem> = mutableListOf()
 
+    private lateinit var navController: NavController
+
+    private lateinit var findUserBtnMenu: MenuItem
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -52,11 +59,14 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        menu.findItem(R.id.findUserFragment).isVisible = true
+        findUserBtnMenu = menu.findItem(R.id.find_user_item)
+        findUserBtnMenu.isVisible = true
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        navController = findNavController()
 
         // Часть кода для работы списка чатов
         recyclerView = view.findViewById(R.id.list_recycler_view_chats_list)
@@ -104,10 +114,28 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         deleteFAB.setOnClickListener {
             chatListAdapter.delete()
             showDeleteFab(View.INVISIBLE)
+            findUserBtnMenu.setIcon(R.drawable.ic_person_search)
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.find_user_item -> {
+                if (deleteFAB.visibility != View.VISIBLE) {
+                    navController.navigate(R.id.action_chatListFragment_to_findUserFragment)
+                } else {
+                    chatListAdapter.uncheckItems()
+                    showDeleteFab(View.INVISIBLE)
+                    findUserBtnMenu.setIcon(R.drawable.ic_person_search)
+                }
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
     private fun showDeleteFab(state: Int) {
+        findUserBtnMenu.setIcon(R.drawable.baseline_cancel_24)
         Toast.makeText(requireContext(), "worked", Toast.LENGTH_SHORT).show()
         deleteFAB.visibility = state
     }

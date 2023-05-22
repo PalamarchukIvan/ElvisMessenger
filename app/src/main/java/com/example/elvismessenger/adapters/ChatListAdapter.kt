@@ -109,6 +109,12 @@ class ChatListAdapter(
         return chatList.size
     }
 
+    fun uncheckItems() {
+        for (i in chatsSelectedList) {
+            i.value.checkMark.visibility = View.INVISIBLE
+        }
+        chatsSelectedList.clear()
+    }
 
     fun delete() {
         if (chatsSelectedList.size == chatList.size) {
