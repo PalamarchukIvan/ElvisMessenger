@@ -2,9 +2,11 @@ package com.example.elvismessenger.fragments
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.MediaStore.Audio.Media
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +24,8 @@ import com.example.elvismessenger.fragments.settings.EditProfileFragment
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 
 class WelcomingEditProfileFragment : Fragment(R.layout.fragment_welcoming_edit_profile) {
 
@@ -109,8 +113,17 @@ class WelcomingEditProfileFragment : Fragment(R.layout.fragment_welcoming_edit_p
 
         if(resultCode == Activity.RESULT_OK) {
             if(requestCode == EditProfileFragment.NEW_PHOTO_REQ_CODE) {
-                userPfp.setImageURI(data?.data)
-                saveImage(data?.data)
+
+                data?.data?.let {
+                    val resultUri: Uri = saveImage(data.data)
+                    userPfp.setImageURI(resultUri)
+                }?: {
+                    Toast.makeText(
+                        requireContext(),
+                        "Something went wrong. Try again",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         }
     }
@@ -127,12 +140,14 @@ class WelcomingEditProfileFragment : Fragment(R.layout.fragment_welcoming_edit_p
         return RegLogActivity.GOOD
     }
 
-    private fun saveImage(imageUri: Uri?) {
+    private fun saveImage(imageUri: Uri?): Uri {
+        var uri: Uri? = null
         imageUri?.apply {
             UserRepository.currentUser?.apply {
-                UserRepository.getInstance().addOrUpdateUserPhoto(imageUri)
+                uri = UserRepository.getInstance().addOrUpdateUserPhoto(imageUri, requireContext())
             }
         }
+        return uri!!
     }
 
     private fun saveData() {

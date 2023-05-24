@@ -1,5 +1,6 @@
 package com.example.elvismessenger.fragments.settings
 
+import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
@@ -37,6 +38,7 @@ class EditProfileFragment : Fragment() {
         const val NEW_PHOTO_REQ_CODE = 123
     }
 
+    @SuppressLint("SuspiciousIndentation")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -122,8 +124,8 @@ class EditProfileFragment : Fragment() {
 
         if(resultCode == RESULT_OK) {
             if(requestCode == NEW_PHOTO_REQ_CODE) {
-                currentPhoto.setImageURI(data?.data)
-                saveImage(data?.data)
+                val resultPhoto = saveImage(data?.data)
+                currentPhoto.setImageURI(resultPhoto)
             }
         }
     }
@@ -169,12 +171,14 @@ class EditProfileFragment : Fragment() {
         editor?.apply()
     }
 
-    private fun saveImage(imageUri: Uri?) {
+    private fun saveImage(imageUri: Uri?): Uri {
+        var uri: Uri? = null
         imageUri?.apply {
             UserRepository.currentUser?.apply {
-                UserRepository.getInstance().addOrUpdateUserPhoto(imageUri)
+                uri = UserRepository.getInstance().addOrUpdateUserPhoto(imageUri, requireContext())
             }
         }
+        return uri!!
     }
 
 }
