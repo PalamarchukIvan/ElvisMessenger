@@ -31,6 +31,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.*
 import com.example.elvismessenger.databinding.ActivityMainBinding
 import com.example.elvismessenger.db.UserRepository
+import com.example.elvismessenger.fragments.ChatListFragment
 import com.example.elvismessenger.fragments.ChatLogFragment
 import com.example.elvismessenger.fragments.settings.SettingsFragment
 import com.example.elvismessenger.utils.NotificationService
@@ -237,6 +238,34 @@ class MainActivity : AppCompatActivity() {
 
                                 }
 
+                                NotificationService.ACTION_IS_WRITING -> extras.getString(NotificationService.MESSAGE_KEY)?. let {message ->
+
+                                    val to = message.split("_")[0]
+                                    val from = message.split("_")[1]
+                                    if(NotificationService.ifToShowNotification(from, to)) {
+                                        val currentFragment = navHostFragment.childFragmentManager.fragments.last()
+                                        if(currentFragment is ChatLogFragment && currentFragment.isMessagingTo(to, from)) {
+                                            currentFragment.makeOtherUserIsWriting()
+                                        } else if(currentFragment is ChatListFragment) {
+                                            currentFragment.makeIsWritingState(to, from)
+                                        }
+                                    }
+
+                                }
+                                NotificationService.ACTION_IS_NOT_WRITING -> extras.getString(NotificationService.MESSAGE_KEY)?. let {message ->
+
+                                    val to = message.split("_")[0]
+                                    val from = message.split("_")[1]
+                                    if(NotificationService.ifToShowNotification(from, to)) {
+                                        val currentFragment = navHostFragment.childFragmentManager.fragments.last()
+                                        if(currentFragment is ChatLogFragment && currentFragment.isMessagingTo(to, from)) {
+                                            currentFragment.makeOtherUserIsNotWriting()
+                                        } else if(currentFragment is ChatListFragment) {
+                                            currentFragment.makeIsNotWritingState(to, from)
+                                        }
+                                    }
+
+                                }
                                 else -> {}
                             }
                         }

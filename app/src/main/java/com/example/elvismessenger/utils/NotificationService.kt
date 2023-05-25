@@ -16,8 +16,8 @@ class NotificationService : FirebaseMessagingService() {
             i.putExtra(it.key, it.value)
         }
 
-        i.putExtra(BODY_KEY, message.notification!!.body)
-        i.putExtra(TITLE_KEY, message.notification!!.title)
+        i.putExtra(BODY_KEY, message.notification?.body)
+        i.putExtra(TITLE_KEY, message.notification?.title)
 
         sendBroadcast(i)
     }
@@ -31,6 +31,8 @@ class NotificationService : FirebaseMessagingService() {
         const val TITLE_KEY = "title"
 
         const val ACTION_NOTIFICATION = "show_notification"
+        const val ACTION_IS_WRITING = "show_is_writing"
+        const val ACTION_IS_NOT_WRITING = "show_is_not_writing"
 
         fun ifToShowNotification(from: String, to: String): Boolean {
             return FirebaseAuth.getInstance().currentUser!!.uid == from || FirebaseAuth.getInstance().currentUser!!.uid == to

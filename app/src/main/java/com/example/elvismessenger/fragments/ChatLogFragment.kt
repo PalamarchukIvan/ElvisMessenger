@@ -1,6 +1,8 @@
 package com.example.elvismessenger.fragments
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,13 +13,16 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.adapters.ChatLogAdapter
 import com.example.elvismessenger.db.*
+import com.example.elvismessenger.utils.FCMSender
 import com.example.elvismessenger.utils.LinearLayoutManagerWrapper
+import com.example.elvismessenger.utils.NotificationService
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.google.firebase.database.DataSnapshot
@@ -179,6 +184,30 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         val sendButton: Button = view.findViewById(R.id.send_button_chat_log)
         val inputText: EditText = view.findViewById(R.id.input_edit_text_chat_log)
 
+        inputText.setOnFocusChangeListener { _, hasFocus ->
+            if(hasFocus) {
+                FCMSender.pushNotification(requireContext(),
+                    otherUser.cloudToken,
+                    from = currentUser.uid,
+                    to = otherUser.uid,
+                    action = NotificationService.ACTION_IS_WRITING)
+            } else {
+                FCMSender.pushNotification(requireContext(),
+                    otherUser.cloudToken,
+                    from = currentUser.uid,
+                    to = otherUser.uid,
+                    action = NotificationService.ACTION_IS_NOT_WRITING)
+            }
+        }
+
+        inputText.addTextChangedListener {
+            if(!it.isNullOrBlank()) {
+                inputText.requestFocus()
+            } else {
+                inputText.clearFocus()
+            }
+        }
+
         sendButton.setOnClickListener {
             // Для отправки сообщения
             val msg = ChatMessage(currentUser.uid, otherUser.uid,  inputText.text.toString(), System.currentTimeMillis())
@@ -195,4 +224,12 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         return (to == currentUser.uid && from == otherUser.uid) || (to == otherUser.uid && from == currentUser.uid)
     }
 
+
+    fun makeOtherUserIsWriting() {
+        anotherUserState.text = "Is writing..."
+    }
+
+    fun makeOtherUserIsNotWriting() {
+        anotherUserState.text = "Online"
+    }
 }

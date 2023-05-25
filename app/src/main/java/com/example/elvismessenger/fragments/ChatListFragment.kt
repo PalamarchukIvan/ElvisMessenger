@@ -35,7 +35,7 @@ import kotlinx.parcelize.Parcelize
 class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
     @Parcelize
     data class ChatItem(
-        val text: String = "",
+        var text: String = "",
         val time: Long = 0,
         var isNew: Boolean = false,
         val user: User? = null) : Parcelable
@@ -47,11 +47,11 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
     private lateinit var deleteFAB: FloatingActionButton
 
     private var chatList: MutableList<ChatItem> = mutableListOf()
+    private var lastMessagesCache: HashMap<String, String> = hashMapOf()
 
     private lateinit var navController: NavController
 
     private lateinit var findUserBtnMenu: MenuItem
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -101,7 +101,11 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
                 .snapshots.collect {
                     chatList.clear()
                     for (i in it.children) {
-                        chatList.add(i.getValue(ChatItem::class.java)!!)
+                        val chatItem  = i.getValue(ChatItem::class.java)!!
+                        chatList.add(chatItem)
+                        lastMessagesCache[chatItem.user?.uid]?.let { _ ->
+                            lastMessagesCache[chatItem.user!!.uid] = chatItem.text
+                        }
                         chatList.sortByDescending { chatItem ->
                             chatItem.time
                         }
@@ -139,4 +143,41 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         Toast.makeText(requireContext(), "worked", Toast.LENGTH_SHORT).show()
         deleteFAB.visibility = state
     }
+
+    fun makeIsWritingState(uid1: String, uid2: String) {
+        var i = 0
+        chatList.forEach {
+            if (it.user!!.uid == uid1) {
+                lastMessagesCache[uid1] = it.text
+                it.text = "Is writing..."
+                chatListAdapter.notifyItemChanged(i)
+                return
+            } else if (it.user!!.uid == uid2) {
+                lastMessagesCache[uid2] = it.text
+                it.text = "Is writing..."
+                chatListAdapter.notifyItemChanged(i)
+                return
+            }
+            i++
+        }
+    }
+
+    fun makeIsNotWritingState(uid1: String, uid2: String) {
+        var i = 0
+        chatList.forEach {
+            if(it.user!!.uid == uid1) {
+                it.text = lastMessagesCache[uid1].toString()
+                lastMessagesCache[uid1] = ""
+                chatListAdapter.notifyItemChanged(i)
+                return
+            } else if(it.user!!.uid == uid2) {
+                it.text = lastMessagesCache[uid2].toString()
+                lastMessagesCache[uid2] = ""
+                chatListAdapter.notifyItemChanged(i)
+                return
+            }
+            i++
+        }
+    }
+
 }

@@ -6,6 +6,7 @@ import android.widget.Toast
 import com.example.elvismessenger.fragments.ChatListFragment
 import com.example.elvismessenger.fragments.ChatLogFragment
 import com.example.elvismessenger.utils.FCMSender
+import com.example.elvismessenger.utils.NotificationService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -38,7 +39,7 @@ class ChatRepository private constructor(){
                 errorHandler.invoke(it)
             }
         }
-        FCMSender.pushNotification(context, otherUser.cloudToken, currentUser.username, msg.text, currentUser.uid, otherUser.uid)
+        FCMSender.pushNotification(context, otherUser.cloudToken, currentUser.username, msg.text, currentUser.uid, otherUser.uid, NotificationService.ACTION_NOTIFICATION)
     }
 
 
