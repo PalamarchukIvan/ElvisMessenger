@@ -54,10 +54,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/delete_msg_btn"
+            android:layout_width="128dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:src="@drawable/baseline_delete_24"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/send_button_chat_log"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:tint="@color/white" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:background="@color/elvis_primary_color">
@@ -66,19 +78,20 @@
             android:id="@+id/return_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
             android:src="@drawable/ic_back"
             android:layout_marginStart="8dp"/>
 
-    <LinearLayout
-        android:id = "@+id/other_user_profile"
-        android:layout_marginLeft="16dp"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+        <LinearLayout
+            android:id="@+id/other_user_profile"
+            android:layout_marginLeft="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@+id/return_btn"
+            android:orientation="horizontal">
 
-
-        <de.hdodenhof.circleimageview.CircleImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/user_photo"
                 android:layout_gravity="center_vertical"
                 android:layout_width="48dp"
@@ -109,6 +122,19 @@
                     android:text="Online"/>
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+
+        <ImageView
+            android:id="@+id/cancel_delete_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/baseline_cancel_24"
+            android:visibility="invisible" />
+
+    </RelativeLayout>
+
+
 
 </FrameLayout>

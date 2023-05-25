@@ -9,6 +9,7 @@ import com.example.elvismessenger.utils.FCMSender
 import com.example.elvismessenger.utils.NotificationService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
 import com.google.firebase.database.ktx.database
@@ -42,6 +43,10 @@ class ChatRepository private constructor(){
         FCMSender.pushNotification(context, otherUser.cloudToken, currentUser.username, msg.text, currentUser.uid, otherUser.uid, NotificationService.ACTION_NOTIFICATION)
     }
 
+    fun deleteMsg(chatId: String, msgId: String) {
+        val query = getChat(chatId).child(msgId)
+        query.removeValue()
+    }
 
     companion object {
         fun getInstance() = ChatRepository()

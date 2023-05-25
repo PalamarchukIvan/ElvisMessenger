@@ -25,6 +25,7 @@ import com.example.elvismessenger.utils.LinearLayoutManagerWrapper
 import com.example.elvismessenger.utils.NotificationService
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.github.marlonlom.utilities.timeago.TimeAgo
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.Query
@@ -52,6 +53,9 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
     private lateinit var anotherUsername: TextView
     private lateinit var anotherUserState: TextView
     private lateinit var returnBtn: ImageView
+
+    private lateinit var deleteFAB: FloatingActionButton
+    private lateinit var cancelDeleteBtn: ImageView
 
     private lateinit var adapter: ChatLogAdapter
 
@@ -84,6 +88,8 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         anotherUserState = view.findViewById(R.id.current_state)
         returnBtn = view.findViewById(R.id.return_btn)
 
+        deleteFAB = view.findViewById(R.id.delete_msg_btn)
+        cancelDeleteBtn = view.findViewById(R.id.cancel_delete_btn)
         returnBtn.setOnClickListener {
             activity?.onBackPressed()
         }
@@ -96,6 +102,22 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
             args.putParcelable("otherUser", otherUser)
             Navigation.findNavController(view).navigate(R.id.action_chatLogFragment_to_otherUserProfile, args)
         }
+
+        // Отмена удаления сообщений
+        cancelDeleteBtn.setOnClickListener {
+            adapter.uncheckItems()
+            cancelDeleteBtn.visibility = View.INVISIBLE
+            showDeleteFab(View.INVISIBLE)
+        }
+
+        // Нажатие на удаление сообщений
+        deleteFAB.setOnClickListener {
+            showDeleteFab(View.INVISIBLE)
+            cancelDeleteBtn.visibility = View.INVISIBLE
+            adapter.delete()
+        }
+
+
 
         arguments?.let {
             it.getParcelable<User>(ANOTHER_USER)?.let { user ->
@@ -174,9 +196,18 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
             .setLifecycleOwner(this)
             .build()
 
-        adapter = ChatLogAdapter(options, otherUser) {
-            Toast.makeText(requireContext(), "You clicked on ${otherUser.username}", Toast.LENGTH_SHORT).show()
-        }
+        adapter = ChatLogAdapter(
+            options,
+            otherUser,
+            {
+                Toast.makeText(
+                    requireContext(),
+                    "You clicked on ${otherUser.username}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            },
+            onLongItemClick = { state -> showDeleteFab(state) })
+
         // Передаем адаптер
         recyclerView.adapter = adapter
 
@@ -231,5 +262,10 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
 
     fun makeOtherUserIsNotWriting() {
         anotherUserState.text = "Online"
+    }
+
+    private fun showDeleteFab(state: Int) {
+        cancelDeleteBtn.visibility = state
+        deleteFAB.visibility = state
     }
 }

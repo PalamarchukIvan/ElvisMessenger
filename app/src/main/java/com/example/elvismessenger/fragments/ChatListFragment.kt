@@ -140,7 +140,6 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
 
     private fun showDeleteFab(state: Int) {
         findUserBtnMenu.setIcon(R.drawable.baseline_cancel_24)
-        Toast.makeText(requireContext(), "worked", Toast.LENGTH_SHORT).show()
         deleteFAB.visibility = state
     }
 
