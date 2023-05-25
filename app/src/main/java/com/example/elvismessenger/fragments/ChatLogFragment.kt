@@ -20,6 +20,7 @@ import com.example.elvismessenger.db.*
 import com.example.elvismessenger.utils.LinearLayoutManagerWrapper
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.github.marlonlom.utilities.timeago.TimeAgo
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.Query
@@ -43,12 +44,15 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
     private lateinit var currentUser: User
     private lateinit var chatQuery: Query
 
+    private lateinit var adapter: ChatLogAdapter
+
     private lateinit var anotherUserPhoto: ImageView
     private lateinit var anotherUsername: TextView
     private lateinit var anotherUserState: TextView
     private lateinit var returnBtn: ImageView
 
-    private lateinit var adapter: ChatLogAdapter
+    private lateinit var deleteFAB: FloatingActionButton
+    private lateinit var cancelDeleteBtn: ImageView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -79,6 +83,9 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         anotherUserState = view.findViewById(R.id.current_state)
         returnBtn = view.findViewById(R.id.return_btn)
 
+        deleteFAB = view.findViewById(R.id.delete_msg_btn)
+        cancelDeleteBtn = view.findViewById(R.id.cancel_delete_btn)
+
         returnBtn.setOnClickListener {
             activity?.onBackPressed()
         }
@@ -91,6 +98,21 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
             args.putParcelable("otherUser", otherUser)
             Navigation.findNavController(view).navigate(R.id.action_chatLogFragment_to_otherUserProfile, args)
         }
+
+        // Отмена удаления сообщений
+        cancelDeleteBtn.setOnClickListener {
+            adapter.uncheckItems()
+            cancelDeleteBtn.visibility = View.INVISIBLE
+            showDeleteFab(View.INVISIBLE)
+        }
+
+        // Нажатие на удаление сообщений
+        deleteFAB.setOnClickListener {
+            showDeleteFab(View.INVISIBLE)
+            cancelDeleteBtn.visibility = View.INVISIBLE
+            adapter.delete()
+        }
+
 
         arguments?.let {
             it.getParcelable<User>(ANOTHER_USER)?.let { user ->
@@ -150,6 +172,7 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         // Часть кода для работы списка чатов
         recyclerView = view.findViewById(R.id.list_recycler_view_chat_log)
         val layoutManager = LinearLayoutManagerWrapper(context)
+
         // Пердаем layout в наш recycleView
         recyclerView.layoutManager = layoutManager
 
@@ -161,7 +184,6 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
             }
-
         })
 
         val options = FirebaseRecyclerOptions.Builder<ChatMessage>()
@@ -169,13 +191,21 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
             .setLifecycleOwner(this)
             .build()
 
-        adapter = ChatLogAdapter(options, otherUser) {
-            Toast.makeText(requireContext(), "You clicked on ${otherUser.username}", Toast.LENGTH_SHORT).show()
-        }
+        adapter = ChatLogAdapter(
+            options,
+            otherUser,
+            {
+                Toast.makeText(
+                    requireContext(),
+                    "You clicked on ${otherUser.username}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            },
+            onLongItemClick = { state -> showDeleteFab(state) })
+
         // Передаем адаптер
         recyclerView.adapter = adapter
 
-        // Для отправки сообщения локально
         val sendButton: Button = view.findViewById(R.id.send_button_chat_log)
         val inputText: EditText = view.findViewById(R.id.input_edit_text_chat_log)
 
@@ -195,4 +225,8 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         return (to == currentUser.uid && from == otherUser.uid) || (to == otherUser.uid && from == currentUser.uid)
     }
 
+    private fun showDeleteFab(state: Int) {
+        cancelDeleteBtn.visibility = state
+        deleteFAB.visibility = state
+    }
 }

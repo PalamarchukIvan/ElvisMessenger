@@ -98,8 +98,8 @@ class ChatListAdapter(
         }
 
         holder.itemView.setOnLongClickListener {
-            chatsSelectedList[chatList[position]] = holder
             holder.checkMark.visibility = View.VISIBLE
+            chatsSelectedList[chatList[position]] = holder
             onLongItemClick.invoke(View.VISIBLE)
             true
         }
