@@ -38,7 +38,11 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         var text: String = "",
         val time: Long = 0,
         var isNew: Boolean = false,
-        val user: User? = null) : Parcelable
+        val user: User? = null,
+        var isGroup: Boolean = false,
+        var groupId: String? = "",
+        var groupPhoto: String? = "",
+        var groupName: String? = "") : Parcelable
 
     private lateinit var chatListAdapter: ChatListAdapter
     private lateinit var recyclerView: RecyclerView
@@ -78,6 +82,10 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
         chatListAdapter = ChatListAdapter(chatList, { chatItem, position ->
+            if(chatItem.isGroup) {
+                Toast.makeText(requireContext(), "it is a group", Toast.LENGTH_SHORT).show()
+                return@ChatListAdapter
+            }
             chatItem.isNew = false
             ChatRepository.getInstance().getOpenToUserChat(UserRepository.currentUser.value!!.uid ,chatItem.user!!.uid).setValue(chatItem)
             chatListAdapter.notifyItemChanged(position)

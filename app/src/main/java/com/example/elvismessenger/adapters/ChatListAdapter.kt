@@ -44,12 +44,14 @@ class ChatListAdapter(
             if(chatItem.isNew) {
                 newMessageMark.isVisible = true
             }
-            if (chatItem.user?.photo != "") {
-                Picasso.get().load(chatItem.user?.photo).into(pfp)
+            if (chatItem.user?.photo != null) {
+                Picasso.get().load(chatItem.user.photo).into(pfp)
+            } else if(chatItem.groupPhoto != "") {
+                Picasso.get().load(chatItem.groupPhoto).into(pfp)
             } else {
                 Picasso.get().load(R.drawable.dornan).into(pfp)
             }
-            name.text = chatItem.user?.username
+            name.text = chatItem.user?.username ?: chatItem.groupName
             status.text = chatItem.text
             time.text = TimeAgo.using(chatItem.time)
         }
@@ -118,12 +120,16 @@ class ChatListAdapter(
 
     fun delete() {
         if (chatsSelectedList.size == chatList.size) {
-            val query = FirebaseDatabase.getInstance().getReference("/users/${UserRepository.currentUser.value!!.uid}/latestMessages")
+            val query = FirebaseDatabase
+                .getInstance()
+                .getReference("/users/${UserRepository.currentUser.value!!.uid}/latestMessages")
             query.removeValue()
             chatList.clear()
         } else {
             for (i in chatsSelectedList) {
-                val query = FirebaseDatabase.getInstance().getReference("/users/${UserRepository.currentUser.value!!.uid}/latestMessages/${i.key.user!!.uid}")
+                val query = FirebaseDatabase
+                    .getInstance()
+                    .getReference("/users/${UserRepository.currentUser.value!!.uid}/latestMessages/${i.key.user?.uid ?: i.key.groupId}")
                 query.removeValue()
                 i.value.checkMark.visibility = View.INVISIBLE
                 chatList.remove(i.key)
