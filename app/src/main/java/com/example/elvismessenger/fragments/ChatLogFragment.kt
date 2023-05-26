@@ -142,7 +142,7 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
                 snapshot.getValue(ChatListFragment.ChatItem::class.java)?.let {
                     val chatItem = it
                     chatItem.isNew = false
-                    ChatRepository.getInstance().getOpenToUserChat(UserRepository.currentUser.value!!.uid ,chatItem.user!!.uid).setValue(chatItem)
+                    ChatRepository.getInstance().getOpenToUserChat(UserRepository.currentUser.value!!.uid ,chatItem.id!!).setValue(chatItem)
                 }
             }
 

@@ -8,16 +8,11 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
-import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.fragments.ChatListFragment
 import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ktx.snapshots
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlin.concurrent.thread
 
 class ChatListAdapter(
     private var chatList: MutableList<ChatListFragment.ChatItem>,
@@ -44,12 +39,12 @@ class ChatListAdapter(
             if(chatItem.isNew) {
                 newMessageMark.isVisible = true
             }
-            if (chatItem.user?.photo != "") {
-                Picasso.get().load(chatItem.user?.photo).into(pfp)
+            if (chatItem.photo != null && chatItem.photo != "") {
+                Picasso.get().load(chatItem.photo).into(pfp)
             } else {
                 Picasso.get().load(R.drawable.dornan).into(pfp)
             }
-            name.text = chatItem.user?.username
+            name.text = chatItem.name
             status.text = chatItem.text
             time.text = TimeAgo.using(chatItem.time)
         }
@@ -118,12 +113,16 @@ class ChatListAdapter(
 
     fun delete() {
         if (chatsSelectedList.size == chatList.size) {
-            val query = FirebaseDatabase.getInstance().getReference("/users/${UserRepository.currentUser.value!!.uid}/latestMessages")
+            val query = FirebaseDatabase
+                .getInstance()
+                .getReference("/users/${UserRepository.currentUser.value!!.uid}/latestMessages")
             query.removeValue()
             chatList.clear()
         } else {
             for (i in chatsSelectedList) {
-                val query = FirebaseDatabase.getInstance().getReference("/users/${UserRepository.currentUser.value!!.uid}/latestMessages/${i.key.user!!.uid}")
+                val query = FirebaseDatabase
+                    .getInstance()
+                    .getReference("/users/${UserRepository.currentUser.value!!.uid}/latestMessages/${i.key.id ?: i.key.id}")
                 query.removeValue()
                 i.value.checkMark.visibility = View.INVISIBLE
                 chatList.remove(i.key)

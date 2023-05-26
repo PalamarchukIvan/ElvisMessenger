@@ -22,13 +22,7 @@ import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.database.ktx.snapshots
-import com.google.firebase.database.ktx.values
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
@@ -38,7 +32,10 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         var text: String = "",
         val time: Long = 0,
         var isNew: Boolean = false,
-        val user: User? = null) : Parcelable
+        var isGroup: Boolean = false,
+        var id: String? = "",
+        var photo: String? = "",
+        var name: String? = "") : Parcelable
 
     private lateinit var chatListAdapter: ChatListAdapter
     private lateinit var recyclerView: RecyclerView
@@ -78,14 +75,20 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
         chatListAdapter = ChatListAdapter(chatList, { chatItem, position ->
-            chatItem.isNew = false
-            ChatRepository.getInstance().getOpenToUserChat(UserRepository.currentUser.value!!.uid ,chatItem.user!!.uid).setValue(chatItem)
-            chatListAdapter.notifyItemChanged(position)
+            if(chatItem.isGroup) {
+                Toast.makeText(requireContext(), "it is a group", Toast.LENGTH_SHORT).show()
+                return@ChatListAdapter
+            }
+            UserRepository.getInstance().getUserByUID(chatItem.id!!).get().addOnSuccessListener {
+                chatItem.isNew = false
+                ChatRepository.getInstance().getOpenToUserChat(UserRepository.currentUser.value!!.uid ,chatItem.id!!).setValue(chatItem)
+                chatListAdapter.notifyItemChanged(position)
 
-            val anotherUser = chatItem.user
-            val args = Bundle()
-            args.putParcelable(ChatLogFragment.ANOTHER_USER, anotherUser)
-            Navigation.findNavController(view).navigate(R.id.action_chatListFragment_to_chatLogFragment, args)
+                val anotherUser = it.getValue(User::class.java)
+                val args = Bundle()
+                args.putParcelable(ChatLogFragment.ANOTHER_USER, anotherUser)
+                Navigation.findNavController(view).navigate(R.id.action_chatListFragment_to_chatLogFragment, args)
+            }
         },
             onLongItemClick = { state ->
                 showDeleteFab(state)
@@ -103,8 +106,8 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
                     for (i in it.children) {
                         val chatItem  = i.getValue(ChatItem::class.java)!!
                         chatList.add(chatItem)
-                        lastMessagesCache[chatItem.user?.uid]?.let { _ ->
-                            lastMessagesCache[chatItem.user!!.uid] = chatItem.text
+                        lastMessagesCache[chatItem.id]?.let { _ ->
+                            lastMessagesCache[chatItem.id!!] = chatItem.text
                         }
                         chatList.sortByDescending { chatItem ->
                             chatItem.time
@@ -146,12 +149,12 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
     fun makeIsWritingState(uid1: String, uid2: String) {
         var i = 0
         chatList.forEach {
-            if (it.user!!.uid == uid1) {
+            if (it.id == uid1) {
                 lastMessagesCache[uid1] = it.text
                 it.text = "Is writing..."
                 chatListAdapter.notifyItemChanged(i)
                 return
-            } else if (it.user!!.uid == uid2) {
+            } else if (it.id == uid2) {
                 lastMessagesCache[uid2] = it.text
                 it.text = "Is writing..."
                 chatListAdapter.notifyItemChanged(i)
@@ -164,12 +167,12 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
     fun makeIsNotWritingState(uid1: String, uid2: String) {
         var i = 0
         chatList.forEach {
-            if(it.user!!.uid == uid1) {
+            if(it.id == uid1) {
                 it.text = lastMessagesCache[uid1].toString()
                 lastMessagesCache[uid1] = ""
                 chatListAdapter.notifyItemChanged(i)
                 return
-            } else if(it.user!!.uid == uid2) {
+            } else if(it.id == uid2) {
                 it.text = lastMessagesCache[uid2].toString()
                 lastMessagesCache[uid2] = ""
                 chatListAdapter.notifyItemChanged(i)

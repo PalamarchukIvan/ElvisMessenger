@@ -27,11 +27,11 @@ class ChatRepository private constructor(){
 
     fun sendMessage(msg: ChatMessage, currentUser: User, otherUser: User, chatQuery: Query, context: Context, errorHandler: (DatabaseError?) -> Unit) {
         // Для записи этого же сообщения в список последних сообщений всех юзеров
-        val chatItemMsg = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), false, userToLatestMsgUser(otherUser))
+        val chatItemMsg = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), false, id = otherUser.uid, name = otherUser.username, photo = otherUser.photo)
         val latestMsgRef = getOpenToUserChat(currentUser.uid, otherUser.uid)
         latestMsgRef.setValue(chatItemMsg)
 
-        val chatItemMsgTo = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), true, userToLatestMsgUser(currentUser))
+        val chatItemMsgTo = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), true, id = currentUser.uid, name = currentUser.username, photo = currentUser.photo)
         val latestMsgToRef = getOpenToUserChat(otherUser.uid, currentUser.uid)
         latestMsgToRef.setValue(chatItemMsgTo)
 
