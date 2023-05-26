@@ -32,6 +32,7 @@ class OtherUserProfile : Fragment(R.layout.fragment_other_user_profile) {
         super.onViewCreated(view, savedInstanceState)
 
         val deleteChatBtn: ImageView = view.findViewById(R.id.delete_chat_history_btn)
+        val addUserToGroup: ImageView = view.findViewById(R.id.add_to_group_btn)
 
         val otherUserProfilePicture: ImageView = view.findViewById(R.id.user_pfp_image)
         val otherUserName: TextView = view.findViewById(R.id.other_username)
@@ -67,6 +68,10 @@ class OtherUserProfile : Fragment(R.layout.fragment_other_user_profile) {
                     chatQuery.removeValue()
                 }
                 .show()
+        }
+
+        addUserToGroup.setOnClickListener {
+
         }
 
         UserRepository.getInstance().getUserByUID(otherUser.uid).addValueEventListener (object :

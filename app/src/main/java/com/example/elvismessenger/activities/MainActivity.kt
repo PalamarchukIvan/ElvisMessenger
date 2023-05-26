@@ -103,6 +103,9 @@ class MainActivity : AppCompatActivity() {
                 R.id.settingsFragment -> {
                     navController.navigate(it.itemId)
                 }
+                R.id.createGroupFragment -> {
+                    navController.navigate(it.itemId)
+                }
                 else -> Toast.makeText(this, "In progress", Toast.LENGTH_SHORT).show()
             }
             drawerLayout.closeDrawer(GravityCompat.START)

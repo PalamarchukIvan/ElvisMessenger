@@ -10,7 +10,7 @@
                 android:title="@string/drawer_menu_settings_title"
                 android:icon="@drawable/ic_settings"/>
             <item
-                android:id="@+id/contactsFragment"
+                android:id="@+id/createGroupFragment"
                 android:title="@string/create_group_chat"
                 android:icon="@drawable/ic_contacts" />
         </menu>

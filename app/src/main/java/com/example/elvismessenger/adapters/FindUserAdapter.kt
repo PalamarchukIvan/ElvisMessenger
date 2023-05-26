@@ -12,14 +12,14 @@ import com.example.elvismessenger.db.User
 
 import com.squareup.picasso.Picasso
 
-class FindUserAdapter(
+open class FindUserAdapter(
     var userToShowList: MutableList<User>,
-    private val onItemClick: ((User) -> Unit)
+    private val onItemClick: ((User) -> Unit)?
 ) : RecyclerView.Adapter<FindUserAdapter.FindUserViewHolder>() {
 
     companion object {
-        private const val EVEN_USER = 0
-        private const val ODD_USER = 1
+        internal const val EVEN_USER = 0
+        internal const val ODD_USER = 1
     }
 
     class FindUserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -67,7 +67,7 @@ class FindUserAdapter(
 
         // Тут обработка клика
         holder.itemView.setOnClickListener {
-            onItemClick.invoke(userToShowList[holder.absoluteAdapterPosition])
+            onItemClick?.invoke(userToShowList[holder.absoluteAdapterPosition])
         }
     }
 
