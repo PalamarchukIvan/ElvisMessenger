@@ -49,14 +49,21 @@ class ChatLogAdapter(
         var chatMessage: ConstraintLayout = itemView.findViewById(R.id.chat_message)
         private var  message: TextView? = null
         private val  time: TextView = itemView.findViewById(R.id.time_message)
+        private val img: ImageView = itemView.findViewById(R.id.image_msg)
 
         fun bind(msg: ChatMessage) {
             val currentUser = FirebaseAuth.getInstance().currentUser!!
-            if(currentUser.uid == msg.currentUserUID) {
+
+            if (msg.img != "") {
+                Picasso.get().load(msg.img).into(img)
+            }
+
+            if (currentUser.uid == msg.currentUserUID) {
                 initForSender(msg)
             } else {
                 initForReceiver(msg)
             }
+
             time.text = TimeAgo.using(msg.time)
         }
 

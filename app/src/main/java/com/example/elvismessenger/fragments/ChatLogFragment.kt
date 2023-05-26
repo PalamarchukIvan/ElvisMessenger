@@ -1,6 +1,10 @@
 package com.example.elvismessenger.fragments
 
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -20,9 +24,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.adapters.ChatLogAdapter
 import com.example.elvismessenger.db.*
+import com.example.elvismessenger.fragments.settings.EditProfileFragment
 import com.example.elvismessenger.utils.FCMSender
 import com.example.elvismessenger.utils.LinearLayoutManagerWrapper
 import com.example.elvismessenger.utils.NotificationService
+import com.example.elvismessenger.utils.StorageUtil
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -31,11 +37,13 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
+import java.io.ByteArrayOutputStream
 
 class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
 
     companion object {
         const val ANOTHER_USER = "another_user"
+        const val RC_SELECT_IMG = 101
     }
 
     private lateinit var recyclerView: RecyclerView
@@ -50,6 +58,7 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
     private lateinit var returnBtn: ImageView
 
     private lateinit var deleteFAB: FloatingActionButton
+    private lateinit var sendImageBtn: FloatingActionButton
     private lateinit var cancelDeleteBtn: ImageView
 
     private lateinit var adapter: ChatLogAdapter
@@ -84,7 +93,9 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         returnBtn = view.findViewById(R.id.return_btn)
 
         deleteFAB = view.findViewById(R.id.delete_msg_btn)
+        sendImageBtn = view.findViewById(R.id.send_image_btn)
         cancelDeleteBtn = view.findViewById(R.id.cancel_delete_btn)
+
         returnBtn.setOnClickListener {
             activity?.onBackPressed()
         }
@@ -236,13 +247,47 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
 
         sendButton.setOnClickListener {
             // Для отправки сообщения
-            val msg = ChatMessage(currentUser.uid, otherUser.uid,  inputText.text.toString(), System.currentTimeMillis())
+            val msg = ChatMessage(currentUser.uid, otherUser.uid,  inputText.text.toString(), img="", System.currentTimeMillis())
 
             ChatRepository.getInstance().sendMessage(msg, currentUser, otherUser, chatQuery, requireContext()) {
                 Toast.makeText(requireContext(), "Error: ${it?.message.toString()}", Toast.LENGTH_SHORT).show()
             }
+
             inputText.text.clear()
             recyclerView.smoothScrollToPosition(adapter.itemCount)
+        }
+
+        sendImageBtn.setOnClickListener {
+//            val iGallery = Intent(Intent.ACTION_PICK)
+//            iGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+//            startActivityForResult(iGallery, RC_SELECT_IMG)
+            val intent = Intent().apply {
+                type = "image/*"
+                action = Intent.ACTION_GET_CONTENT
+                putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/jpeg", "image/png"))
+            }
+
+            startActivityForResult(Intent.createChooser(intent, "Select image"), RC_SELECT_IMG)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RC_SELECT_IMG && requestCode == Activity.RESULT_OK && data != null
+            && data.data != null) {
+            val selectedImagePath = data.data
+
+            val selectedImageBmp = MediaStore.Images.Media.getBitmap(context?.contentResolver, selectedImagePath)
+            val outputStream = ByteArrayOutputStream()
+            selectedImageBmp.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
+            val selectedImageBytes = outputStream.toByteArray()
+
+            StorageUtil().uploadMsgImg(selectedImageBytes) {imagePath ->
+                val imgMsg = ChatMessage(currentUser.uid, otherUser.uid,  "", img=imagePath, System.currentTimeMillis())
+                ChatRepository.getInstance().sendMessage(imgMsg, currentUser, otherUser, chatQuery, requireContext()) {
+                    Toast.makeText(requireContext(), "Error: ${it?.message.toString()}", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 

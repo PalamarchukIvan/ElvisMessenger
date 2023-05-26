@@ -7,4 +7,5 @@ import kotlinx.parcelize.Parcelize
 data class ChatMessage(val currentUserUID: String = "",
                        val otherUserUID: String = "",
                        val text: String = "",
+                       val img: String= "",
                        val time: Long = 0) : Parcelable
