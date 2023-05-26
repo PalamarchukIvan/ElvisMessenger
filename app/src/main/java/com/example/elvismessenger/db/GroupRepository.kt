@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
-import android.provider.Settings.Global
 import android.util.Log
 import com.example.elvismessenger.fragments.ChatListFragment
 import com.google.firebase.database.DatabaseReference
@@ -46,9 +45,9 @@ object GroupRepository {
                         time = System.currentTimeMillis(),
                         isNew = true,
                         isGroup = true,
-                        groupId = groupReference.key,
-                        groupPhoto = savedGroup?.groupPhoto,
-                        groupName = groupName
+                        id = groupReference.key,
+                        photo = savedGroup?.groupPhoto,
+                        name = groupName
                     ))
                 }
             }
