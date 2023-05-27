@@ -43,8 +43,10 @@ class ChatLogAdapter(
 
     class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         companion object {
-            const val ME = 1
+            const val ME = 0
+            const val ME_IMG = 1
             const val ANOTHER = 2
+            const val ANOTHER_IMG = 3
         }
 
         var chatMessage: ConstraintLayout = itemView.findViewById(R.id.chat_message)
@@ -132,7 +134,7 @@ class ChatLogAdapter(
     }
 
     fun delete() {
-        // TODO доделать удаление сообщений
+        // TODO доделать удаление сообщений чтобы изменялось значение в лейтест месседжах
         val currentUser = FirebaseAuth.getInstance().currentUser!!
         val query = ChatRepository.getInstance()
             .getChat(ChatRepository.getChatID(currentUser.uid, otherUser.uid))
@@ -147,8 +149,8 @@ class ChatLogAdapter(
                 ChatRepository.getInstance().deleteMsg(ChatRepository.getChatID(currentUser.uid, otherUser.uid), msgId.toString()) {
                     notifyDataSetChanged()
                 }
-                notifyItemChanged(i.key)
             }
+
             messagesSelectedList.clear()
         }
     }
