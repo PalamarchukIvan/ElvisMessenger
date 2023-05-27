@@ -25,7 +25,7 @@ class ChatRepository private constructor(){
         .child("latestMessages")
         .child(otherUserUID)
 
-    fun sendMessage(msg: ChatLogFragment.ChatMessage, currentUser: User, otherUser: User, chatQuery: Query, context: Context, errorHandler: (DatabaseError?) -> Unit) {
+    fun sendMessage(msg: ChatMessage, currentUser: User, otherUser: User, chatQuery: Query, context: Context, errorHandler: (DatabaseError?) -> Unit) {
         // Для записи этого же сообщения в список последних сообщений всех юзеров
         val chatItemMsg = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), false, id = otherUser.uid, name = otherUser.username, photo = otherUser.photo)
         val latestMsgRef = getOpenToUserChat(currentUser.uid, otherUser.uid)
@@ -49,7 +49,8 @@ class ChatRepository private constructor(){
     }
 
     companion object {
-        fun getInstance() = ChatRepository()
+        private val instance = ChatRepository()
+        fun getInstance() = instance
 
         fun getChatID(currentUserUID: String, otherUserUID: String) : String {
             return if(currentUserUID.compareTo(otherUserUID) > 1) {

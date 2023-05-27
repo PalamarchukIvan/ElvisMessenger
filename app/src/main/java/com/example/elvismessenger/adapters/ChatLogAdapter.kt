@@ -12,11 +12,14 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
+import com.example.elvismessenger.db.ChatMessage
 import com.example.elvismessenger.db.ChatRepository
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.fragments.ChatListFragment
 import com.example.elvismessenger.fragments.ChatLogFragment
+import com.example.elvismessenger.utils.SelectionManager.Companion.SELECT
+import com.example.elvismessenger.utils.SelectionManager.Companion.UNSELECT_EVEN
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.github.marlonlom.utilities.timeago.TimeAgo
@@ -29,18 +32,13 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class ChatLogAdapter(
-    private val options: FirebaseRecyclerOptions<ChatLogFragment.ChatMessage>,
+    private val options: FirebaseRecyclerOptions<ChatMessage>,
     private val otherUser: User,
-    private val onItemClick: ((ChatLogFragment.ChatMessage) -> Unit),
+    private val onItemClick: ((ChatMessage) -> Unit),
     private val onLongItemClick: (Int) -> Unit
-) : FirebaseRecyclerAdapter<ChatLogFragment.ChatMessage, ChatLogAdapter.ChatViewHolder>(options) {
+) : FirebaseRecyclerAdapter<ChatMessage, ChatLogAdapter.ChatViewHolder>(options) {
 
-    private val messagesSelectedList = HashMap<ChatLogFragment.ChatMessage, ChatViewHolder>()
-
-    companion object {
-        const val SELECT = "#50FFFFFF"
-        const val UNSELECT = "#00FFFFFF"
-    }
+    private val messagesSelectedList = HashMap<ChatMessage, ChatViewHolder>()
 
     class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         companion object {
@@ -52,7 +50,7 @@ class ChatLogAdapter(
         private var  message: TextView? = null
         private val  time: TextView = itemView.findViewById(R.id.time_message)
 
-        fun bind(msg: ChatLogFragment.ChatMessage) {
+        fun bind(msg: ChatMessage) {
             val currentUser = FirebaseAuth.getInstance().currentUser!!
             if(currentUser.uid == msg.currentUserUID) {
                 initForSender(msg)
@@ -62,12 +60,12 @@ class ChatLogAdapter(
             time.text = TimeAgo.using(msg.time)
         }
 
-        private fun initForReceiver(msg: ChatLogFragment.ChatMessage) {
+        private fun initForReceiver(msg: ChatMessage) {
             message = itemView.findViewById(R.id.message_text)
             message?.text = msg.text
         }
 
-        private fun initForSender(msg: ChatLogFragment.ChatMessage) {
+        private fun initForSender(msg: ChatMessage) {
             message = itemView.findViewById(R.id.message_text)
             message?.text = msg.text
         }
@@ -94,7 +92,7 @@ class ChatLogAdapter(
         }
     }
 
-    override fun onBindViewHolder(holder: ChatViewHolder, position: Int, model: ChatLogFragment.ChatMessage) {
+    override fun onBindViewHolder(holder: ChatViewHolder, position: Int, model: ChatMessage) {
         holder.bind(model)
 
         holder.itemView.setOnClickListener {
@@ -111,7 +109,7 @@ class ChatLogAdapter(
 
     fun uncheckItems() {
         for (i in messagesSelectedList) {
-            i.value.chatMessage.setBackgroundColor(Color.parseColor(UNSELECT))
+            i.value.chatMessage.setBackgroundColor(Color.parseColor(UNSELECT_EVEN))
         }
         messagesSelectedList.clear()
     }
@@ -128,7 +126,7 @@ class ChatLogAdapter(
             GlobalScope.launch {
                 query.snapshots.collect {
                     it.children.forEach {
-                        val msg = it.getValue(ChatLogFragment.ChatMessage::class.java)
+                        val msg = it.getValue(ChatMessage::class.java)
                         if (messagesSelectedList[msg] != null) {
                             ChatRepository.getInstance().deleteMsg(ChatRepository.getChatID(currentUser.uid, otherUser.uid), it.key!!)
                         }

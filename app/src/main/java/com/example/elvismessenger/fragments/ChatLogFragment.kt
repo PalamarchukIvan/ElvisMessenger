@@ -34,11 +34,6 @@ import com.squareup.picasso.Picasso
 
 class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
 
-    data class ChatMessage(val currentUserUID: String = "",
-                           val otherUserUID: String = "",
-                           val text: String = "",
-                           val time: Long = 0)
-
     companion object {
         const val ANOTHER_USER = "another_user"
     }
