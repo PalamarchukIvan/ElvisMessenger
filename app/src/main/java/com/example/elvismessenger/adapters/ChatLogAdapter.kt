@@ -108,9 +108,17 @@ class ChatLogAdapter(
         }
 
         holder.itemView.setOnLongClickListener {
-            holder.chatMessage.setBackgroundColor(Color.parseColor(SELECT))
-            messagesSelectedList[position] = holder
-            onLongItemClick.invoke(View.VISIBLE)
+            if (position in messagesSelectedList.keys) {
+                holder.chatMessage.setBackgroundColor(Color.parseColor(UNSELECT_EVEN))
+                messagesSelectedList.remove(position)
+                if (messagesSelectedList.size == 0) {
+                    onLongItemClick.invoke(View.INVISIBLE)
+                }
+            } else {
+                holder.chatMessage.setBackgroundColor(Color.parseColor(SELECT))
+                messagesSelectedList[position] = holder
+                onLongItemClick.invoke(View.VISIBLE)
+            }
             true
         }
     }
@@ -131,29 +139,17 @@ class ChatLogAdapter(
 
         if (messagesSelectedList.size == options.snapshots.size) {
             query.removeValue()
-
             uncheckItems()
         } else {
             for (i in messagesSelectedList) {
-                val msgId = options.snapshots.getSnapshot(i.key).key
                 i.value.chatMessage.setBackgroundColor(Color.parseColor(UNSELECT_EVEN))
-                ChatRepository.getInstance().deleteMsg(ChatRepository.getChatID(currentUser.uid, otherUser.uid), msgId.toString())
+                val msgId = options.snapshots.getSnapshot(i.key).key
+                ChatRepository.getInstance().deleteMsg(ChatRepository.getChatID(currentUser.uid, otherUser.uid), msgId.toString()) {
+                    notifyDataSetChanged()
+                }
+                notifyItemChanged(i.key)
             }
             messagesSelectedList.clear()
-            notifyDataSetChanged()
-//            GlobalScope.launch {
-//                query.snapshots.collect {
-//                    it.children.forEach {
-//                        val msg = it.getValue(ChatMessage::class.java)
-//                        if (messagesSelectedList[msg] != null) {
-//                            ChatRepository.getInstance().deleteMsg(ChatRepository.getChatID(currentUser.uid, otherUser.uid), it.key!!)
-//                        }
-//                    }
-//                }
-//                messagesSelectedList.clear()
-//                Log.d("TEST", messagesSelectedList.toString())
-//                Log.d("TEST", options.snapshots[options.snapshots.size - 1].text)
-//            }
         }
     }
 }

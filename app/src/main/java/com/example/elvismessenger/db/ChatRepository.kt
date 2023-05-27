@@ -3,10 +3,12 @@ package com.example.elvismessenger.db
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import com.example.elvismessenger.adapters.ChatLogAdapter
 import com.example.elvismessenger.fragments.ChatListFragment
 import com.example.elvismessenger.fragments.ChatLogFragment
 import com.example.elvismessenger.utils.FCMSender
 import com.example.elvismessenger.utils.NotificationService
+import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -44,9 +46,11 @@ class ChatRepository private constructor(){
         FCMSender.pushNotification(context, otherUser.cloudToken, currentUser.username, msg.text, currentUser.uid, otherUser.uid, NotificationService.ACTION_NOTIFICATION)
     }
 
-    fun deleteMsg(chatId: String, msgId: String) {
+    fun deleteMsg(chatId: String, msgId: String, onSuccess: () -> Unit) {
         val query = getChat(chatId).child(msgId)
-        query.removeValue()
+        query.removeValue().addOnSuccessListener {
+            onSuccess.invoke()
+        }
     }
 
     companion object {
