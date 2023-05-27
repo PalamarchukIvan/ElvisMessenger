@@ -40,6 +40,7 @@ class ChatRepository private constructor(){
                 errorHandler.invoke(it)
             }
         }
+
         FCMSender.pushNotification(context, otherUser.cloudToken, currentUser.username, msg.text, currentUser.uid, otherUser.uid, NotificationService.ACTION_NOTIFICATION)
     }
 

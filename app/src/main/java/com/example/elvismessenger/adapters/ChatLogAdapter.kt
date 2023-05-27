@@ -1,6 +1,7 @@
 package com.example.elvismessenger.adapters
 
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,7 +39,7 @@ class ChatLogAdapter(
     private val onLongItemClick: (Int) -> Unit
 ) : FirebaseRecyclerAdapter<ChatMessage, ChatLogAdapter.ChatViewHolder>(options) {
 
-    private val messagesSelectedList = HashMap<ChatMessage, ChatViewHolder>()
+    private val messagesSelectedList = HashMap<Int, ChatViewHolder>()
 
     class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         companion object {
@@ -108,7 +109,7 @@ class ChatLogAdapter(
 
         holder.itemView.setOnLongClickListener {
             holder.chatMessage.setBackgroundColor(Color.parseColor(SELECT))
-            messagesSelectedList[options.snapshots[position]] = holder
+            messagesSelectedList[position] = holder
             onLongItemClick.invoke(View.VISIBLE)
             true
         }
@@ -118,6 +119,7 @@ class ChatLogAdapter(
         for (i in messagesSelectedList) {
             i.value.chatMessage.setBackgroundColor(Color.parseColor(UNSELECT_EVEN))
         }
+
         messagesSelectedList.clear()
     }
 
@@ -126,22 +128,32 @@ class ChatLogAdapter(
         val currentUser = FirebaseAuth.getInstance().currentUser!!
         val query = ChatRepository.getInstance()
             .getChat(ChatRepository.getChatID(currentUser.uid, otherUser.uid))
+
         if (messagesSelectedList.size == options.snapshots.size) {
             query.removeValue()
-            messagesSelectedList.clear()
-        } else {
-            GlobalScope.launch {
-                query.snapshots.collect {
-                    it.children.forEach {
-                        val msg = it.getValue(ChatMessage::class.java)
-                        if (messagesSelectedList[msg] != null) {
-                            ChatRepository.getInstance().deleteMsg(ChatRepository.getChatID(currentUser.uid, otherUser.uid), it.key!!)
-                        }
-                    }
-                }
 
-                messagesSelectedList.clear()
+            uncheckItems()
+        } else {
+            for (i in messagesSelectedList) {
+                val msgId = options.snapshots.getSnapshot(i.key).key
+                i.value.chatMessage.setBackgroundColor(Color.parseColor(UNSELECT_EVEN))
+                ChatRepository.getInstance().deleteMsg(ChatRepository.getChatID(currentUser.uid, otherUser.uid), msgId.toString())
             }
+            messagesSelectedList.clear()
+            notifyDataSetChanged()
+//            GlobalScope.launch {
+//                query.snapshots.collect {
+//                    it.children.forEach {
+//                        val msg = it.getValue(ChatMessage::class.java)
+//                        if (messagesSelectedList[msg] != null) {
+//                            ChatRepository.getInstance().deleteMsg(ChatRepository.getChatID(currentUser.uid, otherUser.uid), it.key!!)
+//                        }
+//                    }
+//                }
+//                messagesSelectedList.clear()
+//                Log.d("TEST", messagesSelectedList.toString())
+//                Log.d("TEST", options.snapshots[options.snapshots.size - 1].text)
+//            }
         }
     }
 }

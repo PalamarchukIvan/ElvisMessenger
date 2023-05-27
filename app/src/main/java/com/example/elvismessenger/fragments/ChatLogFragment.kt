@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
-import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
@@ -258,34 +258,30 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         }
 
         sendImageBtn.setOnClickListener {
-//            val iGallery = Intent(Intent.ACTION_PICK)
-//            iGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-//            startActivityForResult(iGallery, RC_SELECT_IMG)
-            val intent = Intent().apply {
-                type = "image/*"
-                action = Intent.ACTION_GET_CONTENT
-                putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/jpeg", "image/png"))
-            }
-
-            startActivityForResult(Intent.createChooser(intent, "Select image"), RC_SELECT_IMG)
+            val iGallery = Intent(Intent.ACTION_PICK)
+            iGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            startActivityForResult(iGallery, RC_SELECT_IMG)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RC_SELECT_IMG && requestCode == Activity.RESULT_OK && data != null
-            && data.data != null) {
-            val selectedImagePath = data.data
 
-            val selectedImageBmp = MediaStore.Images.Media.getBitmap(context?.contentResolver, selectedImagePath)
-            val outputStream = ByteArrayOutputStream()
-            selectedImageBmp.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
-            val selectedImageBytes = outputStream.toByteArray()
+        if(resultCode == Activity.RESULT_OK) {
+            if(requestCode == RC_SELECT_IMG) {
+                val selectedImagePath = data?.data
 
-            StorageUtil().uploadMsgImg(selectedImageBytes) {imagePath ->
-                val imgMsg = ChatMessage(currentUser.uid, otherUser.uid,  "", img=imagePath, System.currentTimeMillis())
-                ChatRepository.getInstance().sendMessage(imgMsg, currentUser, otherUser, chatQuery, requireContext()) {
-                    Toast.makeText(requireContext(), "Error: ${it?.message.toString()}", Toast.LENGTH_SHORT).show()
+                val selectedImageBmp = MediaStore.Images.Media.getBitmap(context?.contentResolver, selectedImagePath)
+                val outputStream = ByteArrayOutputStream()
+                selectedImageBmp.compress(Bitmap.CompressFormat.JPEG, 25, outputStream)
+                val selectedImageBytes = outputStream.toByteArray()
+
+                StorageUtil().uploadMsgImg(selectedImageBytes) {imagePath ->
+                    val msg = ChatMessage(currentUser.uid, otherUser.uid,  "", img=imagePath, System.currentTimeMillis())
+
+                    ChatRepository.getInstance().sendMessage(msg, currentUser, otherUser, chatQuery, requireContext()) {
+                        Toast.makeText(requireContext(), "Error: ${it?.message.toString()}", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
