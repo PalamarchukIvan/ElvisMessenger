@@ -60,9 +60,14 @@ object GroupRepository {
 
     }
 
+    fun updateGroup(newGroup: Group) {
+        getGroupById(newGroup.id).setValue(newGroup)
+    }
+
     fun getGroupById(id: String) = FirebaseDatabase.getInstance().getReference("groups").child(id)
 
     fun getGroupMessages(id: String) = getGroupById(id).child("messages")
+    fun getGroupUsers(id: String) = getGroupById(id).child("userList")
 
     fun sendMessage(msg: ChatMessage, currentUser: User, group: Group, chatQuery: Query, context: Context, errorHandler: (DatabaseError?) -> Unit) {
 

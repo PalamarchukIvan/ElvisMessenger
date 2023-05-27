@@ -6,7 +6,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -118,9 +117,8 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
                     for (i in it.children) {
                         val chatItem  = i.getValue(ChatItem::class.java)!!
                         chatList.add(chatItem)
-                        lastMessagesCache[chatItem.id]?.let { _ ->
-                            lastMessagesCache[chatItem.id!!] = chatItem.text
-                        }
+                        lastMessagesCache[chatItem.id!!] = chatItem.text
+
                         chatList.sortByDescending { chatItem ->
                             chatItem.time
                         }
@@ -158,7 +156,7 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         deleteFAB.visibility = state
     }
 
-    fun makeIsWritingState(uid1: String, uid2: String) {
+    fun makeChatUserIsWritingState(uid1: String, uid2: String) {
         var i = 0
         chatList.forEach {
             if (it.id == uid1) {
@@ -176,7 +174,7 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         }
     }
 
-    fun makeIsNotWritingState(uid1: String, uid2: String) {
+    fun makeChatUserIsNotWritingState(uid1: String, uid2: String) {
         var i = 0
         chatList.forEach {
             if(it.id == uid1) {
@@ -191,6 +189,79 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
                 return
             }
             i++
+        }
+    }
+
+    fun addUserWhoWritesInGroup(uid: String, groupId: String) {
+
+        UserRepository.getInstance().getUserByUID(uid).get().addOnSuccessListener {userDb ->
+            GroupRepository.getGroupById(groupId).get().addOnSuccessListener {groupDb ->
+                val userWhoIsWriting = userDb.getValue(User::class.java)!!
+                val groupWhereUserWrites = groupDb.getValue(Group::class.java)!!
+
+                var index = 0
+                var item = ChatItem()
+                    chatList.forEach {
+                    if(it.id == groupWhereUserWrites.id) {
+                        item = it
+                        return@forEach
+                    }
+                    index++
+                }
+
+                if(lastMessagesCache[groupId] == null || lastMessagesCache[groupId] == "") {
+                    lastMessagesCache[groupId] = item.text
+                    item.text = userWhoIsWriting.username + " is writing..."
+                } else {
+                    if(groupWhereUserWrites.whoAreWriting.size <= 3) {
+                        val newText: String = groupWhereUserWrites.whoAreWriting.reduce { s1, s2 ->
+                            "$s1, $s2"
+                        } + " are writing..."
+                        item.text = newText
+                    } else {
+                        item.text = groupWhereUserWrites.whoAreWriting.subList(0, 3)
+                            .reduce { s1, s2 -> "$s1, $s2" } + "(+${groupWhereUserWrites.whoAreWriting.size - 3}) are writing"//первый, второй, третий (+1) is writing...
+                    }
+                }
+                chatListAdapter.notifyItemChanged(index-1)
+
+            }
+        }
+
+    }
+
+    fun removeUserWhoWritesInGroup(uid: String, groupId: String) {
+
+        UserRepository.getInstance().getUserByUID(uid).get().addOnSuccessListener {userDb ->
+            GroupRepository.getGroupById(groupId).get().addOnSuccessListener {groupDb ->
+                val userWhoIsWriting = userDb.getValue(User::class.java)!!
+                val groupWhereUserWrites = groupDb.getValue(Group::class.java)!!
+
+                val item = chatList.find {
+                    it.id == groupWhereUserWrites.id
+                }
+                item?.text.let {
+
+                    val parts = item?.text?.split(", ")?.toMutableList()
+
+                    if(parts?.contains(userWhoIsWriting.username) == true && parts.size > 1) {
+                        groupWhereUserWrites.whoAreWriting.removeIf {
+                            parts.contains(it)
+                        }
+                        if(groupWhereUserWrites.whoAreWriting.isNotEmpty())
+                            parts.replaceAll {
+                                if(it == userWhoIsWriting.username) {
+                                    groupWhereUserWrites.whoAreWriting.first()
+                                } else {
+                                    it
+                                }
+                            }
+                    } else if (parts!!.size <= 1 ) {
+                        item.text = lastMessagesCache[groupId].toString()
+                        lastMessagesCache[groupId] = ""
+                    }
+                }
+            }
         }
     }
 

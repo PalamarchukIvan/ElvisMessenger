@@ -10,4 +10,5 @@ data class Group(
     var groupName: String? = "",
     var groupPhoto: String = "",
     var messages: HashMap<String, ChatMessage> = hashMapOf(),
+    var whoAreWriting: MutableList<String> = mutableListOf(),
     var userList: List<String> = mutableListOf()) : Parcelable

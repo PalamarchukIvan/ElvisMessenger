@@ -15,7 +15,16 @@ object FCMSender {
     private const val SERVER_KEY =
         "key=AAAAKoR96eA:APA91bFKGpgizQe5SWg9tYwSdAUTXvj22bfscAhLGR0PxQ0KOXJhkOZ0QostGq7gIu0vIsuv5uyseRSHyzC7_2znAL7UqRqTbHvpjT64EmnMW7AnbCka350x_e8HtQwZKOOMX3JzdkN2"
 
-    fun pushNotification(context: Context?, token: String?, title: String? = "", message: String? = "", from: String, to: String, action: String) {
+    fun pushNotification(
+        context: Context?,
+        token: String?,
+        title: String? = "",
+        message: String? = "",
+        from: String = "",
+        to: String = "",
+        action: String,
+        data_: String = ""
+    ) {
         val policy = ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
         val queue = Volley.newRequestQueue(context)
@@ -27,7 +36,11 @@ object FCMSender {
             notification.put("body", message)
             val data = JSONObject()
             data.put(NotificationService.ACTION_KEY, action)
-            val dataMessage = from + "_" + to
+            val dataMessage = if(data_ == "") {
+                from + "_" + to
+            } else {
+                data_
+            }
             data.put(NotificationService.MESSAGE_KEY, dataMessage)
             if(title != "" && message != ""){
                 json.put("notification", notification)

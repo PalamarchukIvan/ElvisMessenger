@@ -20,7 +20,9 @@ import com.example.elvismessenger.db.Group
 import com.example.elvismessenger.db.GroupRepository
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
+import com.example.elvismessenger.utils.FCMSender
 import com.example.elvismessenger.utils.LinearLayoutManagerWrapper
+import com.example.elvismessenger.utils.NotificationService
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.DataSnapshot
@@ -39,6 +41,8 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
 
     private lateinit var currentGroup: Group
     private lateinit var currentUser: User
+    private val userList: MutableList<User> = mutableListOf()
+
     private lateinit var groupQuery: Query
 
     private lateinit var groupPhoto: ImageView
@@ -121,6 +125,14 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
             }
         }
 
+        GroupRepository.getGroupUsers(currentGroup.id).get().addOnSuccessListener {
+            for (i in it.children) {
+                UserRepository.getInstance().getUserByUID(i.getValue(String::class.java)!!).get().addOnSuccessListener {
+                    userList.add(it.getValue(User::class.java)!!)
+                }
+            }
+        }
+
         groupState.text = "${currentGroup.userList.size} users"
 
         groupQuery = GroupRepository.getGroupMessages(currentGroup.id)
@@ -166,21 +178,30 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
         val sendButton: Button = view.findViewById(R.id.send_button_group_log)
         val inputText: EditText = view.findViewById(R.id.input_edit_text_group_log)
 
+        // TODO: Cделать нотификация, что кто-то пишет
         inputText.setOnFocusChangeListener { _, hasFocus ->
             if(hasFocus) {
-                // TODO: Cделать нотификация, что кто-то пишет
-//                FCMSender.pushNotification(requireContext(),
-//                    currentUser.cloudToken,
-//                    from = currentUser.uid,
-//                    to = currentUser.uid,
-//                    action = NotificationService.ACTION_IS_WRITING)
+                currentGroup.whoAreWriting.add(currentUser.username)
+                for (user in userList) {
+                    FCMSender.pushNotification(
+                        requireContext(),
+                        user.cloudToken,
+                        data_ = currentUser.uid + "_" + currentGroup.id + "_" + user.uid,
+                        action = NotificationService.ACTION_IS_WRITING_GROUP
+                    )
+                }
             } else {
-//                FCMSender.pushNotification(requireContext(),
-//                    currentUser.cloudToken,
-//                    from = currentUser.uid,
-//                    to = currentUser.uid,
-//                    action = NotificationService.ACTION_IS_NOT_WRITING)
+                currentGroup.whoAreWriting.remove(currentUser.username)
+                for (user in userList) {
+                    FCMSender.pushNotification(
+                        requireContext(),
+                        user.cloudToken,
+                        data_ = currentUser.uid + "_" + currentGroup.id + "_" + user.uid,
+                        action = NotificationService.ACTION_IS_NOT_WRITING_GROUP
+                    )
+                }
             }
+            GroupRepository.updateGroup(currentGroup)
         }
 
         inputText.addTextChangedListener {
@@ -210,5 +231,21 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
     private fun showDeleteFab(state: Int) {
         cancelDeleteBtn.visibility = state
         deleteFAB.visibility = state
+    }
+
+    fun isMessagingTo(uid: String): Boolean {
+        return currentGroup.userList.contains(uid) && uid != currentUser.uid
+    }
+
+    fun makeUserIsWriting(uid: String) {
+        UserRepository.getInstance().getUserByUID(uid).get().addOnSuccessListener { userDb ->
+
+        }
+    }
+
+    fun makeUserIsNotWriting(uid: String) {
+        UserRepository.getInstance().getUserByUID(uid).get().addOnSuccessListener { userDb ->
+
+        }
     }
 }

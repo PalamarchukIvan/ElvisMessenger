@@ -1,6 +1,5 @@
 package com.example.elvismessenger.activities
 
-import android.R.attr.text
 import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
@@ -33,6 +32,7 @@ import com.example.elvismessenger.databinding.ActivityMainBinding
 import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.fragments.ChatListFragment
 import com.example.elvismessenger.fragments.ChatLogFragment
+import com.example.elvismessenger.fragments.GroupLogFragment
 import com.example.elvismessenger.fragments.settings.SettingsFragment
 import com.example.elvismessenger.utils.NotificationService
 import com.example.elvismessenger.utils.UserPersonalSettings
@@ -250,7 +250,7 @@ class MainActivity : AppCompatActivity() {
                                         if(currentFragment is ChatLogFragment && currentFragment.isMessagingTo(to, from)) {
                                             currentFragment.makeOtherUserIsWriting()
                                         } else if(currentFragment is ChatListFragment) {
-                                            currentFragment.makeIsWritingState(to, from)
+                                            currentFragment.makeChatUserIsWritingState(to, from)
                                         }
                                     }
 
@@ -264,10 +264,40 @@ class MainActivity : AppCompatActivity() {
                                         if(currentFragment is ChatLogFragment && currentFragment.isMessagingTo(to, from)) {
                                             currentFragment.makeOtherUserIsNotWriting()
                                         } else if(currentFragment is ChatListFragment) {
-                                            currentFragment.makeIsNotWritingState(to, from)
+                                            currentFragment.makeChatUserIsNotWritingState(to, from)
                                         }
                                     }
 
+                                }
+
+                                NotificationService.ACTION_IS_WRITING_GROUP -> extras.getString(NotificationService.MESSAGE_KEY)?. let { message ->
+
+                                    val from = message.split("_")[0]
+                                    val group = message.split("_")[1]
+                                    val to = message.split("_")[2]
+                                    if(NotificationService.ifToShowNotification(from, to)) {
+                                        val currentFragment = navHostFragment.childFragmentManager.fragments.last()
+                                        if(currentFragment is GroupLogFragment && currentFragment.isMessagingTo(to)) {
+                                            currentFragment.makeUserIsWriting(from)
+                                        } else if (currentFragment is ChatListFragment) {
+                                            currentFragment.addUserWhoWritesInGroup(from, group)
+                                        }
+                                    }
+                                }
+
+                                NotificationService.ACTION_IS_NOT_WRITING_GROUP -> extras.getString(NotificationService.MESSAGE_KEY)?. let { message ->
+
+                                    val from = message.split("_")[0]
+                                    val group = message.split("_")[1]
+                                    val to = message.split("_")[2]
+                                    if(NotificationService.ifToShowNotification(from, to)) {
+                                        val currentFragment = navHostFragment.childFragmentManager.fragments.last()
+                                        if(currentFragment is GroupLogFragment && currentFragment.isMessagingTo(to)) {
+                                            currentFragment.makeUserIsNotWriting(from)
+                                        } else if (currentFragment is ChatListFragment) {
+                                            currentFragment.removeUserWhoWritesInGroup(from, group)
+                                        }
+                                    }
                                 }
                                 else -> {}
                             }
