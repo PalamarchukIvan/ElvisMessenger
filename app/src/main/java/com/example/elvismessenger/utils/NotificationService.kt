@@ -35,7 +35,7 @@ class NotificationService : FirebaseMessagingService() {
         const val ACTION_IS_NOT_WRITING = "show_is_not_writing"
 
         fun ifToShowNotification(from: String, to: String): Boolean {
-            return FirebaseAuth.getInstance().currentUser!!.uid == from || FirebaseAuth.getInstance().currentUser!!.uid == to
+            return FirebaseAuth.getInstance().currentUser?.uid == from || FirebaseAuth.getInstance().currentUser?.uid == to
         }
     }
 }

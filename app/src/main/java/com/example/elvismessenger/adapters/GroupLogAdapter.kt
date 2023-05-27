@@ -10,11 +10,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.db.ChatMessage
 import com.example.elvismessenger.db.Group
+import com.example.elvismessenger.db.User
+import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.utils.SelectionManager
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.google.firebase.auth.FirebaseAuth
+import com.squareup.picasso.Picasso
+import de.hdodenhof.circleimageview.CircleImageView
 
 class GroupLogAdapter(
     private val options: FirebaseRecyclerOptions<ChatMessage>,
@@ -33,6 +37,8 @@ class GroupLogAdapter(
         var chatMessage: ConstraintLayout = itemView.findViewById(R.id.chat_message)
         private var  message: TextView? = null
         private val  time: TextView = itemView.findViewById(R.id.time_message)
+        private var msgPhoto: CircleImageView? = null
+        private var msgUsername: TextView? = null
 
         fun bind(msg: ChatMessage) {
             val currentUser = FirebaseAuth.getInstance().currentUser!!
@@ -47,6 +53,18 @@ class GroupLogAdapter(
         private fun initForReceiver(msg: ChatMessage) {
             message = itemView.findViewById(R.id.message_text)
             message?.text = msg.text
+            msgPhoto = itemView.findViewById(R.id.group_other_user_photo)
+            msgUsername = itemView.findViewById(R.id.group_other_username)
+            UserRepository.getInstance().getUserByUID(msg.currentUserUID).get().addOnSuccessListener {userDb ->
+                val sender: User = userDb.getValue(User::class.java)!!
+                sender.photo.let {
+                    Picasso
+                        .get()
+                        .load(it)
+                        .into(msgPhoto)
+                }
+                msgUsername!!.text = sender.username
+            }
         }
 
         private fun initForSender(msg: ChatMessage) {
@@ -57,11 +75,11 @@ class GroupLogAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
         val holder = when(viewType) {
-            ChatLogAdapter.ChatViewHolder.ME -> GroupViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.chat_item, parent, false)
+            GroupViewHolder.ANOTHER -> GroupViewHolder(
+                LayoutInflater.from(parent.context).inflate(R.layout.chat_group_item, parent, false),
             )
-            ChatLogAdapter.ChatViewHolder.ANOTHER -> GroupViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.chat_me_item, parent, false)
+            GroupViewHolder.ME -> GroupViewHolder(
+                LayoutInflater.from(parent.context).inflate(R.layout.chat_me_item, parent, false),
             )
 
             else -> null
@@ -71,7 +89,11 @@ class GroupLogAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return GroupViewHolder.ME
+        return  if(snapshots[position].currentUserUID == UserRepository.currentUser.value!!.uid) {
+            GroupViewHolder.ME
+        } else {
+            GroupViewHolder.ANOTHER
+        }
     }
 
     override fun onBindViewHolder(holder: GroupViewHolder, position: Int, model: ChatMessage) {
