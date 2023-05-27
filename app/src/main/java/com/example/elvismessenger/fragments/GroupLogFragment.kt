@@ -181,7 +181,7 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
         // TODO: Cделать нотификация, что кто-то пишет
         inputText.setOnFocusChangeListener { _, hasFocus ->
             if(hasFocus) {
-                currentGroup.whoAreWriting.add(currentUser.username)
+                GroupRepository.updateWhoIsWriting(true, currentUser.username, currentGroup)
                 for (user in userList) {
                     FCMSender.pushNotification(
                         requireContext(),
@@ -191,7 +191,7 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
                     )
                 }
             } else {
-                currentGroup.whoAreWriting.remove(currentUser.username)
+                GroupRepository.updateWhoIsWriting(false, currentUser.username, currentGroup)
                 for (user in userList) {
                     FCMSender.pushNotification(
                         requireContext(),
@@ -201,7 +201,6 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
                     )
                 }
             }
-            GroupRepository.updateGroup(currentGroup)
         }
 
         inputText.addTextChangedListener {

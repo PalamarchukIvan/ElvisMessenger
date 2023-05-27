@@ -64,6 +64,16 @@ object GroupRepository {
         getGroupById(newGroup.id).setValue(newGroup)
     }
 
+    fun updateWhoIsWriting(add: Boolean, username: String, group: Group) {
+        if(add) {
+            group.whoAreWriting.add(username)
+            getGroupById(group.id).child("whoAreWriting").setValue(username)
+        } else {
+            group.whoAreWriting.remove(username)
+            getGroupById(group.id).child("whoAreWriting").child(username).removeValue()
+        }
+    }
+
     fun getGroupById(id: String) = FirebaseDatabase.getInstance().getReference("groups").child(id)
 
     fun getGroupMessages(id: String) = getGroupById(id).child("messages")
@@ -93,7 +103,6 @@ object GroupRepository {
                     }
                 }
             }
-
         }
 
         chatQuery.ref.push().setValue(msg) { error, _ ->
