@@ -1,15 +1,10 @@
 package com.example.elvismessenger.db
 
 import android.content.Context
-import android.util.Log
-import android.widget.Toast
 import com.example.elvismessenger.fragments.ChatListFragment
-import com.example.elvismessenger.fragments.ChatLogFragment
 import com.example.elvismessenger.utils.FCMSender
 import com.example.elvismessenger.utils.NotificationService
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
 import com.google.firebase.database.ktx.database

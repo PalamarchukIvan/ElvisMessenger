@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.adapters.ChatListAdapter
 import com.example.elvismessenger.db.ChatRepository
+import com.example.elvismessenger.db.Group
+import com.example.elvismessenger.db.GroupRepository
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -75,19 +77,29 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
         chatListAdapter = ChatListAdapter(chatList, { chatItem, position ->
-            if(chatItem.isGroup) {
-                Toast.makeText(requireContext(), "it is a group", Toast.LENGTH_SHORT).show()
-                return@ChatListAdapter
-            }
-            UserRepository.getInstance().getUserByUID(chatItem.id!!).get().addOnSuccessListener {
-                chatItem.isNew = false
-                ChatRepository.getInstance().getOpenToUserChat(UserRepository.currentUser.value!!.uid ,chatItem.id!!).setValue(chatItem)
-                chatListAdapter.notifyItemChanged(position)
+            val args = Bundle()
 
-                val anotherUser = it.getValue(User::class.java)
-                val args = Bundle()
-                args.putParcelable(ChatLogFragment.ANOTHER_USER, anotherUser)
-                Navigation.findNavController(view).navigate(R.id.action_chatListFragment_to_chatLogFragment, args)
+            chatItem.isNew = false
+            ChatRepository.getInstance().getOpenToUserChat(
+                UserRepository.currentUser.value!!.uid,
+                chatItem.id!!
+            ).setValue(chatItem)
+            chatListAdapter.notifyItemChanged(position)
+
+            if(chatItem.isGroup) {
+                GroupRepository.getGroupById(chatItem.id!!).get()
+                    .addOnSuccessListener {
+                        val group = it.getValue(Group::class.java)
+                        args.putParcelable(GroupLogFragment.ANOTHER_GROUP, group)
+                        Navigation.findNavController(view).navigate(R.id.action_chatListFragment_to_groupLogFragment, args)
+                }
+            } else {
+                UserRepository.getInstance().getUserByUID(chatItem.id!!).get()
+                    .addOnSuccessListener {
+                        val anotherUser = it.getValue(User::class.java)
+                        args.putParcelable(ChatLogFragment.ANOTHER_USER, anotherUser)
+                        Navigation.findNavController(view).navigate(R.id.action_chatListFragment_to_chatLogFragment, args)
+                    }
             }
         },
             onLongItemClick = { state ->

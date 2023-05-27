@@ -6,11 +6,16 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import com.example.elvismessenger.fragments.ChatListFragment
+import com.example.elvismessenger.utils.FCMSender
+import com.example.elvismessenger.utils.NotificationService
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
 import com.google.firebase.database.ktx.snapshots
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import kotlin.streams.toList
@@ -28,7 +33,7 @@ object GroupRepository {
             addOrUpdatePhoto(
                 fileInBytes,
                 groupReference.key!!,
-                Group(groupName, userList = userList.stream()
+                Group(groupReference.key!!, groupName, userList = userList.stream()
                     .map {
                         it.uid
                     }.toList()),
@@ -53,6 +58,44 @@ object GroupRepository {
             }
         }
 
+    }
+
+    fun getGroupById(id: String) = FirebaseDatabase.getInstance().getReference("groups").child(id)
+
+    fun getGroupMessages(id: String) = getGroupById(id).child("messages")
+
+    fun sendMessage(msg: ChatMessage, currentUser: User, group: Group, chatQuery: Query, context: Context, errorHandler: (DatabaseError?) -> Unit) {
+
+        // Для записи этого же сообщения в список последних сообщений всех юзеров
+        for (uid in group.userList) {
+            val chatItemMsg = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), false, id = group.id, name = group.groupName, photo = group.groupPhoto, isGroup = true)
+            val latestMsgRef = ChatRepository.getInstance().getOpenToUserChat(uid, group.id)
+            latestMsgRef.setValue(chatItemMsg)
+            if(currentUser.uid != uid) {
+                GlobalScope.launch {
+                    UserRepository.getInstance().getUserByUID(uid).snapshots.collect {
+                        val otherUser = it.getValue(User::class.java)
+                        FCMSender.pushNotification(
+                            context,
+                            otherUser!!.cloudToken,
+                            currentUser.username,
+                            msg.text,
+                            currentUser.uid,
+                            otherUser.uid,
+                            NotificationService.ACTION_NOTIFICATION
+                        )
+
+                    }
+                }
+            }
+
+        }
+
+        chatQuery.ref.push().setValue(msg) { error, _ ->
+            error?.let {
+                errorHandler.invoke(it)
+            }
+        }
     }
 
     fun addOrUpdatePhoto(fileInBytes: ByteArray, groupId: String, group: Group, groupReference: DatabaseReference) {

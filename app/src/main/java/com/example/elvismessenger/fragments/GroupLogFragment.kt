@@ -7,22 +7,21 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
-import com.example.elvismessenger.adapters.ChatLogAdapter
-import com.example.elvismessenger.db.*
-import com.example.elvismessenger.utils.FCMSender
+import com.example.elvismessenger.adapters.GroupLogAdapter
+import com.example.elvismessenger.db.ChatMessage
+import com.example.elvismessenger.db.Group
+import com.example.elvismessenger.db.GroupRepository
+import com.example.elvismessenger.db.User
+import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.utils.LinearLayoutManagerWrapper
-import com.example.elvismessenger.utils.NotificationService
 import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -30,27 +29,27 @@ import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
 
-class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
-
+class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
     companion object {
-        const val ANOTHER_USER = "another_user"
+        const val ANOTHER_GROUP = "another_group"
     }
+
 
     private lateinit var recyclerView: RecyclerView
 
-    private lateinit var otherUser: User
+    private lateinit var currentGroup: Group
     private lateinit var currentUser: User
-    private lateinit var chatQuery: Query
+    private lateinit var groupQuery: Query
 
-    private lateinit var anotherUserPhoto: ImageView
-    private lateinit var anotherUsername: TextView
-    private lateinit var anotherUserState: TextView
+    private lateinit var groupPhoto: ImageView
+    private lateinit var groupName: TextView
+    private lateinit var groupState: TextView
     private lateinit var returnBtn: ImageView
 
     private lateinit var deleteFAB: FloatingActionButton
     private lateinit var cancelDeleteBtn: ImageView
 
-    private lateinit var adapter: ChatLogAdapter
+    private lateinit var adapter: GroupLogAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -76,9 +75,9 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        anotherUserPhoto = view.findViewById(R.id.user_photo)
-        anotherUsername = view.findViewById(R.id.username)
-        anotherUserState = view.findViewById(R.id.current_state)
+        groupPhoto = view.findViewById(R.id.user_photo)
+        groupName = view.findViewById(R.id.username)
+        groupState = view.findViewById(R.id.current_state)
         returnBtn = view.findViewById(R.id.return_btn)
 
         deleteFAB = view.findViewById(R.id.delete_msg_btn)
@@ -87,18 +86,8 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
             activity?.onBackPressed()
         }
 
-        // Клик на профиль другого юзера
-        val otherUserProfile = view.findViewById<LinearLayout>(R.id.other_user_profile)
-
-        otherUserProfile.setOnClickListener {
-            val args = Bundle()
-            args.putParcelable("otherUser", otherUser)
-            Navigation.findNavController(view).navigate(R.id.action_chatLogFragment_to_otherUserProfile, args)
-        }
-
         // Отмена удаления сообщений
         cancelDeleteBtn.setOnClickListener {
-            adapter.uncheckItems()
             cancelDeleteBtn.visibility = View.INVISIBLE
             showDeleteFab(View.INVISIBLE)
         }
@@ -107,81 +96,64 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         deleteFAB.setOnClickListener {
             showDeleteFab(View.INVISIBLE)
             cancelDeleteBtn.visibility = View.INVISIBLE
-            adapter.delete()
         }
 
-
-
         arguments?.let {
-            it.getParcelable<User>(ANOTHER_USER)?.let { user ->
-                otherUser = user
+            it.getParcelable<Group>(ANOTHER_GROUP)?.let { group_ ->
+                currentGroup = group_
 
-                if (user.photo != "") {
-                    anotherUserPhoto.let { photo ->
+                if (currentGroup.groupPhoto != "") {
+                    groupPhoto.let { photo ->
                         Picasso.get()
-                            .load(user.photo)
+                            .load(currentGroup.groupPhoto)
                             .into(photo)
                     }
                 } else {
-                    Picasso.get().load(R.drawable.dornan).into(anotherUserPhoto)
+                    Picasso.get().load(R.drawable.dornan).into(groupPhoto)
                 }
-                anotherUsername.text = user.username
+                groupName.text = currentGroup.groupName
             }
         }
 
-        UserRepository.currentUser?.let {
+        UserRepository.currentUser.let {
             it.value?.let { user ->
                 currentUser = user
             }
         }
 
-        UserRepository.getInstance().getUserByUID(otherUser.uid).addValueEventListener (object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val user = snapshot.getValue(User::class.java)
+        groupState.text = "${currentGroup.userList.size} users"
 
-                anotherUserState.text = if (user!!.isActive) {
-                    "Online"
-                } else {
-                    "Last seen ${TimeAgo.using(user.lastSeen)}"
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-        })
-
-        chatQuery = ChatRepository.getInstance().getChat(ChatRepository.getChatID(currentUser.uid, otherUser.uid))
+        groupQuery = GroupRepository.getGroupMessages(currentGroup.id)
 
         // Часть кода для работы списка чатов
-        recyclerView = view.findViewById(R.id.list_recycler_view_chat_log)
+        recyclerView = view.findViewById(R.id.list_recycler_view_group_log)
         val layoutManager = LinearLayoutManagerWrapper(context)
         // Пердаем layout в наш recycleView
         recyclerView.layoutManager = layoutManager
 
-        chatQuery.addValueEventListener(object : ValueEventListener {
+        groupQuery.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 recyclerView.smoothScrollToPosition((snapshot.childrenCount).toInt())
             }
 
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
+
             }
 
         })
 
         val options = FirebaseRecyclerOptions.Builder<ChatMessage>()
-            .setQuery(chatQuery, ChatMessage::class.java)
+            .setQuery(groupQuery, ChatMessage::class.java)
             .setLifecycleOwner(this)
             .build()
 
-        adapter = ChatLogAdapter(
+        adapter = GroupLogAdapter(
             options,
-            otherUser,
+            currentGroup,
             {
                 Toast.makeText(
                     requireContext(),
-                    "You clicked on ${otherUser.username}",
+                    "You clicked on ${currentGroup.groupName}",
                     Toast.LENGTH_SHORT
                 ).show()
             },
@@ -191,22 +163,23 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         recyclerView.adapter = adapter
 
         // Для отправки сообщения локально
-        val sendButton: Button = view.findViewById(R.id.send_button_chat_log)
-        val inputText: EditText = view.findViewById(R.id.input_edit_text_chat_log)
+        val sendButton: Button = view.findViewById(R.id.send_button_group_log)
+        val inputText: EditText = view.findViewById(R.id.input_edit_text_group_log)
 
         inputText.setOnFocusChangeListener { _, hasFocus ->
             if(hasFocus) {
-                FCMSender.pushNotification(requireContext(),
-                    otherUser.cloudToken,
-                    from = currentUser.uid,
-                    to = otherUser.uid,
-                    action = NotificationService.ACTION_IS_WRITING)
+                // TODO: Cделать нотификация, что кто-то пишет
+//                FCMSender.pushNotification(requireContext(),
+//                    currentUser.cloudToken,
+//                    from = currentUser.uid,
+//                    to = currentUser.uid,
+//                    action = NotificationService.ACTION_IS_WRITING)
             } else {
-                FCMSender.pushNotification(requireContext(),
-                    otherUser.cloudToken,
-                    from = currentUser.uid,
-                    to = otherUser.uid,
-                    action = NotificationService.ACTION_IS_NOT_WRITING)
+//                FCMSender.pushNotification(requireContext(),
+//                    currentUser.cloudToken,
+//                    from = currentUser.uid,
+//                    to = currentUser.uid,
+//                    action = NotificationService.ACTION_IS_NOT_WRITING)
             }
         }
 
@@ -225,26 +198,13 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
                 inputText.text.toString(),
                 System.currentTimeMillis()
             )
-
-            ChatRepository.getInstance().sendMessage(msg, currentUser, otherUser, chatQuery, requireContext()) {
-                Toast.makeText(requireContext(), "Error: ${it?.message.toString()}", Toast.LENGTH_SHORT).show()
+            GroupRepository.sendMessage(msg, currentUser, currentGroup, groupQuery, requireContext()) {
+                Toast.makeText(requireContext(), "Что-то пошло не так, ибо я даун ${it.toString()}", Toast.LENGTH_SHORT).show()
             }
+
             inputText.text.clear()
             recyclerView.smoothScrollToPosition(adapter.itemCount)
         }
-    }
-
-    fun isMessagingTo(to: String, from: String): Boolean {
-        return (to == currentUser.uid && from == otherUser.uid) || (to == otherUser.uid && from == currentUser.uid)
-    }
-
-
-    fun makeOtherUserIsWriting() {
-        anotherUserState.text = "Is writing..."
-    }
-
-    fun makeOtherUserIsNotWriting() {
-        anotherUserState.text = "Online"
     }
 
     private fun showDeleteFab(state: Int) {
