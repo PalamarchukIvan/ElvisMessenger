@@ -23,6 +23,9 @@ import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.snapshots
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -36,7 +39,18 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         var isGroup: Boolean = false,
         var id: String? = "",
         var photo: String? = "",
-        var name: String? = "") : Parcelable
+        var name: String? = "") : Parcelable {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as ChatItem
+
+            if (id != other.id) return false
+
+            return true
+        }
+    }
 
     private lateinit var chatListAdapter: ChatListAdapter
     private lateinit var recyclerView: RecyclerView
@@ -118,20 +132,65 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
                         val chatItem  = i.getValue(ChatItem::class.java)!!
                         chatList.add(chatItem)
                         lastMessagesCache[chatItem.id!!] = chatItem.text
-
-                        chatList.sortByDescending { chatItem ->
-                            chatItem.time
+                        subscribeForGroupsWhoWritesChanges(chatItem) { chatItem_ ->
+                            chatList.find {item ->
+                                item.id == chatItem.id
+                            }?.text = chatItem_.text
+                            chatList.sortByDescending { chatItem ->
+                                chatItem.time
+                            }
+                            chatListAdapter.notifyDataSetChanged()
                         }
-                        chatListAdapter.notifyDataSetChanged()
                     }
                     progressBar.visibility = View.INVISIBLE
                 }
         }
-
         deleteFAB.setOnClickListener {
             chatListAdapter.delete()
             showDeleteFab(View.INVISIBLE)
             findUserBtnMenu.setIcon(R.drawable.ic_person_search)
+        }
+    }
+
+    fun subscribeForGroupsWhoWritesChanges(group_: ChatItem, onSuccess: (ChatItem) -> Unit) {
+        if(!group_.isGroup) {
+            onSuccess.invoke(group_)
+            return
+        }
+        GroupRepository.getGroupWhoAreWriting(group_.id!!).addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val group = group_.copy()
+                val filteredUserList = mutableListOf<String>() //Список тех, кто пишет не считая нас
+                for (i in snapshot.children) {
+                    val username = i.getValue(String::class.java)!!
+                    if(username != UserRepository.currentUser.value!!.username) { // на всякий случай
+                        filteredUserList.add(username)
+                    }
+                }
+
+                if(filteredUserList.size != 0) {
+                    group.text = getWhoIsWritingText(filteredUserList)
+                } else {
+                    if(lastMessagesCache[group.id]!!.isNotBlank()) {
+                        group.text = lastMessagesCache[group.id]!!
+                    }
+                }
+                onSuccess.invoke(group)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+    }
+
+    private fun getWhoIsWritingText(filteredList: MutableList<String>) : String {
+
+        if(filteredList.size == 1){
+            return "${filteredList[0]} is writing"
+        } else {
+            return "$filteredList are writing"
         }
     }
 
@@ -179,12 +238,10 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         chatList.forEach {
             if(it.id == uid1) {
                 it.text = lastMessagesCache[uid1].toString()
-                lastMessagesCache[uid1] = ""
                 chatListAdapter.notifyItemChanged(i)
                 return
             } else if(it.id == uid2) {
                 it.text = lastMessagesCache[uid2].toString()
-                lastMessagesCache[uid2] = ""
                 chatListAdapter.notifyItemChanged(i)
                 return
             }

@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        UserRepository.currentUser?.observe(this) {
+        UserRepository.currentUser.observe(this) {
             val user = UserPersonalSettings.livaDataInstance.value
             user?.status = it.status
             user?.about = it.about
