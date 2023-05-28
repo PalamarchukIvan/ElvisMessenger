@@ -55,7 +55,7 @@ class OtherUserProfile : Fragment(R.layout.fragment_other_user_profile) {
                 .setNegativeButton("no", null)
                 .setPositiveButton("yes") { _, _ ->
                     val banRef = FirebaseDatabase.getInstance().getReference("/users/${currentUser!!.uid}/bannedUsers")
-                    banRef.child(otherUser.uid).setValue(true)
+                    banRef.child(otherUser.uid).setValue(otherUser)
                 }
                 .show()
         }
