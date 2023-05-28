@@ -7,14 +7,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
-import com.example.elvismessenger.db.ChatMessage
 import com.example.elvismessenger.db.User
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.squareup.picasso.Picasso
 
 class BannedUsersAdapter (
-    private val options: FirebaseRecyclerOptions<User>,
+    options: FirebaseRecyclerOptions<User>,
 ) : FirebaseRecyclerAdapter<User, BannedUsersAdapter.BannedUsersViewHolder>(options) {
 
     class BannedUsersViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

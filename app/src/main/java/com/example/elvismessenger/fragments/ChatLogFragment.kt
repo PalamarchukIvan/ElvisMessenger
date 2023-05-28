@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,10 +33,7 @@ import com.example.elvismessenger.utils.StorageUtil
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.Query
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
 import java.io.ByteArrayOutputStream
 
@@ -246,21 +244,36 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         }
 
         sendButton.setOnClickListener {
-            // Для отправки сообщения
-            val msg = ChatMessage(currentUser.uid, otherUser.uid,  inputText.text.toString(), img="", System.currentTimeMillis())
+            if (!isUserBanned(currentUser, otherUser)) {
+                // Для отправки сообщения
+                val msg = ChatMessage(
+                    currentUser.uid,
+                    otherUser.uid,
+                    inputText.text.toString(),
+                    img = "",
+                    System.currentTimeMillis()
+                )
 
-            ChatRepository.getInstance().sendMessage(msg, currentUser, otherUser, chatQuery, requireContext()) {
-                Toast.makeText(requireContext(), "Error: ${it?.message.toString()}", Toast.LENGTH_SHORT).show()
+                ChatRepository.getInstance()
+                    .sendMessage(msg, currentUser, otherUser, chatQuery, requireContext()) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Error: ${it?.message.toString()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                inputText.text.clear()
+                recyclerView.smoothScrollToPosition(adapter.itemCount)
             }
-
-            inputText.text.clear()
-            recyclerView.smoothScrollToPosition(adapter.itemCount)
         }
 
         sendImageBtn.setOnClickListener {
-            val iGallery = Intent(Intent.ACTION_PICK)
-            iGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            startActivityForResult(iGallery, RC_SELECT_IMG)
+            if (!isUserBanned(currentUser, otherUser)) {
+                val iGallery = Intent(Intent.ACTION_PICK)
+                iGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                startActivityForResult(iGallery, RC_SELECT_IMG)
+            }
         }
     }
 
@@ -289,6 +302,31 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
 
     fun isMessagingTo(to: String, from: String): Boolean {
         return (to == currentUser.uid && from == otherUser.uid) || (to == otherUser.uid && from == currentUser.uid)
+    }
+
+    private fun isUserBanned(currentUser: User, otherUser: User): Boolean {
+        // TODO доделать проверку забанен ли юзкр
+        val otherUserBannedListRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/bannedUsers")
+        var isCurrentUserBanned = false
+
+        otherUserBannedListRef.get().addOnSuccessListener { snapshot ->
+            for (i in snapshot.children) {
+                if (currentUser.uid == i.key) {
+                    isCurrentUserBanned = true
+                    break
+                }
+            }
+
+            if (isCurrentUserBanned) {
+                // User is banned, perform any necessary actions
+                Toast.makeText(requireContext(), "This user banned you", Toast.LENGTH_SHORT).show()
+            }
+        }.addOnFailureListener { exception ->
+            // Handle any potential errors
+            Log.d("tag", "Error retrieving banned user list: ${exception.message}")
+        }
+
+        return isCurrentUserBanned
     }
 
 

@@ -12,14 +12,10 @@
         android:background="@color/elvis_main_color">
 
         <ImageView
-            android:id="@+id/reg_logo_img"
-            android:layout_marginTop="40dp"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginBottom="16dp"
-            android:foregroundGravity="center_vertical"
-            android:src="@drawable/logo_big"
-            app:layout_constraintBottom_toTopOf="@+id/username_text_reg"
+            android:id="@+id/elvis_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/elvis_logo"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -29,7 +25,6 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginStart="40dp"
-            android:layout_marginTop="32dp"
             android:layout_marginEnd="40dp"
             android:background="@drawable/reg_log_edit_text"
             android:drawableStart="@drawable/ic_custom_username"
@@ -43,7 +38,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/reg_logo_img" />
+            app:layout_constraintTop_toBottomOf="@+id/elvis_logo" />
 
         <EditText
             android:id="@+id/email_text_reg"
