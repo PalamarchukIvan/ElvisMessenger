@@ -275,6 +275,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
         //Это значит, что наш бродкаст ресивер тригерится на все акшены с ключем INTENT_FINTER
         val intentFilter = IntentFilter()
         intentFilter.addAction(NotificationService.INTENT_FILTER)

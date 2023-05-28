@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.elvismessenger.R
 import com.example.elvismessenger.db.ChatRepository
@@ -32,6 +33,7 @@ class OtherUserProfile : Fragment(R.layout.fragment_other_user_profile) {
         super.onViewCreated(view, savedInstanceState)
 
         val deleteChatBtn: ImageView = view.findViewById(R.id.delete_chat_history_btn)
+        val banUserBtn: ImageView = view.findViewById(R.id.ban_btn)
         val addUserToGroup: ImageView = view.findViewById(R.id.add_to_group_btn)
 
         val otherUserProfilePicture: ImageView = view.findViewById(R.id.user_pfp_image)
@@ -45,6 +47,18 @@ class OtherUserProfile : Fragment(R.layout.fragment_other_user_profile) {
         otherUserAbout.text = otherUser.about
 
         val currentUser = UserRepository.currentUser.value
+
+        banUserBtn.setOnClickListener {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Ban")
+                .setMessage("Are you sure that you want to ban user ${otherUser.username}?")
+                .setNegativeButton("no", null)
+                .setPositiveButton("yes") { _, _ ->
+                    val banRef = FirebaseDatabase.getInstance().getReference("/users/${currentUser!!.uid}/bannedUsers")
+                    banRef.child(otherUser.uid).setValue(true)
+                }
+                .show()
+        }
 
         deleteChatBtn.setOnClickListener {
             AlertDialog.Builder(requireContext())

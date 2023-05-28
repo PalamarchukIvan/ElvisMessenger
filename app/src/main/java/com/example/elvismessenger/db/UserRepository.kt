@@ -121,7 +121,7 @@ class UserRepository private constructor() {
                 email = user.email ?: "no email",
                 password = uPassword,
                 phoneNumber = user.phoneNumber ?: "no phone number",
-                cloudToken = token,
+                cloudToken = token
             )
 
         fun updateSharedPreferences(user: User) {
@@ -137,7 +137,5 @@ class UserRepository private constructor() {
 
             SettingsFragment.loadData()
         }
-
     }
-
 }
