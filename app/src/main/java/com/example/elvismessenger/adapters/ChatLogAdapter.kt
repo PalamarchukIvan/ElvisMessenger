@@ -44,9 +44,7 @@ class ChatLogAdapter(
     class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         companion object {
             const val ME = 0
-            const val ME_IMG = 1
-            const val ANOTHER = 2
-            const val ANOTHER_IMG = 3
+            const val ANOTHER = 1
         }
 
         var chatMessage: ConstraintLayout = itemView.findViewById(R.id.chat_message)
@@ -57,8 +55,10 @@ class ChatLogAdapter(
         fun bind(msg: ChatMessage) {
             val currentUser = FirebaseAuth.getInstance().currentUser!!
 
-            if (msg.img != "") {
-                Picasso.get().load(msg.img).into(img)
+            if (msg.img.isNotEmpty()) {
+                Picasso.get().load(msg.img).placeholder(R.drawable.baseline_image_24).into(img)
+            } else {
+                img.setImageDrawable(null)
             }
 
             if (currentUser.uid == msg.currentUserUID) {
@@ -140,8 +140,13 @@ class ChatLogAdapter(
             .getChat(ChatRepository.getChatID(currentUser.uid, otherUser.uid))
 
         if (messagesSelectedList.size == options.snapshots.size) {
-            query.removeValue()
-            uncheckItems()
+            query.removeValue().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    uncheckItems()
+                } else {
+                    // TODO выкинуть тост
+                }
+            }
         } else {
             for (i in messagesSelectedList) {
                 i.value.chatMessage.setBackgroundColor(Color.parseColor(UNSELECT_EVEN))
