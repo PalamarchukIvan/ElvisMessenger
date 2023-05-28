@@ -16,6 +16,7 @@ import com.google.firebase.database.ktx.snapshots
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import kotlin.streams.toList
@@ -65,12 +66,14 @@ object GroupRepository {
     }
 
     fun updateWhoIsWriting(add: Boolean, username: String, group: Group) {
-        if(add) {
-            group.whoAreWriting.add(username)
-            getGroupById(group.id).child("whoAreWriting").setValue(username)
-        } else {
-            group.whoAreWriting.remove(username)
-            getGroupById(group.id).child("whoAreWriting").child(username).removeValue()
+        getGroupById(group.id).get().addOnSuccessListener {
+            val actualGroup = it.getValue(Group::class.java)!!
+            if(add) {
+                actualGroup.whoAreWriting.add(username)
+            } else {
+                actualGroup.whoAreWriting.remove(username)
+            }
+            getGroupById(group.id).child("whoAreWriting").setValue(actualGroup.whoAreWriting)
         }
     }
 

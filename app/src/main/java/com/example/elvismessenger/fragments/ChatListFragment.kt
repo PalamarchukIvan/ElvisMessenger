@@ -223,7 +223,7 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
                             .reduce { s1, s2 -> "$s1, $s2" } + "(+${groupWhereUserWrites.whoAreWriting.size - 3}) are writing"//первый, второй, третий (+1) is writing...
                     }
                 }
-                chatListAdapter.notifyItemChanged(index-1)
+                chatListAdapter.notifyItemChanged(index)
 
             }
         }

@@ -58,10 +58,18 @@ class GroupLogAdapter(
             UserRepository.getInstance().getUserByUID(msg.currentUserUID).get().addOnSuccessListener {userDb ->
                 val sender: User = userDb.getValue(User::class.java)!!
                 sender.photo.let {
-                    Picasso
-                        .get()
-                        .load(it)
-                        .into(msgPhoto)
+                    if(it.isNotEmpty()) {
+                        Picasso
+                            .get()
+                            .load(it)
+                            .placeholder(R.drawable.dornan)
+                            .into(msgPhoto)
+                    } else {
+                        Picasso
+                            .get()
+                            .load(R.drawable.dornan)
+                            .into(msgPhoto)
+                    }
                 }
                 msgUsername!!.text = sender.username
             }
