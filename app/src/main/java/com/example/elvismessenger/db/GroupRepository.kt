@@ -73,9 +73,22 @@ object GroupRepository {
             } else {
                 actualGroup.whoAreWriting.remove(username)
             }
-            getGroupById(group.id).child("whoAreWriting").setValue(actualGroup.whoAreWriting)
+            if(add) {
+                getGroupById(group.id).child("whoAreWriting").get().addOnSuccessListener {
+                    for(i in it.children) {//Второй уровень защиты
+                        if(i.getValue(String::class.java)!! == username){
+                            return@addOnSuccessListener
+                        }
+                    }
+                    getGroupById(group.id).child("whoAreWriting").setValue(actualGroup.whoAreWriting)
+                }
+            } else {
+                getGroupById(group.id).child("whoAreWriting").setValue(actualGroup.whoAreWriting)
+            }
         }
     }
+
+    fun getGroupWhoAreWriting(id: String) = getGroupById(id).child("whoAreWriting")
 
     fun getGroupById(id: String) = FirebaseDatabase.getInstance().getReference("groups").child(id)
 

@@ -30,6 +30,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
+import kotlin.streams.toList
 
 class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
     companion object {
@@ -143,6 +144,8 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
         // Пердаем layout в наш recycleView
         recyclerView.layoutManager = layoutManager
 
+        subscribeForNewUsersWhoAreWriting()
+
         groupQuery.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 recyclerView.smoothScrollToPosition((snapshot.childrenCount).toInt())
@@ -179,35 +182,15 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
         val inputText: EditText = view.findViewById(R.id.input_edit_text_group_log)
 
         // TODO: Cделать нотификация, что кто-то пишет
-        inputText.setOnFocusChangeListener { _, hasFocus ->
-            if(hasFocus) {
-                GroupRepository.updateWhoIsWriting(true, currentUser.username, currentGroup)
-                for (user in userList) {
-                    FCMSender.pushNotification(
-                        requireContext(),
-                        user.cloudToken,
-                        data_ = currentUser.uid + "_" + currentGroup.id + "_" + user.uid,
-                        action = NotificationService.ACTION_IS_WRITING_GROUP
-                    )
-                }
-            } else {
-                GroupRepository.updateWhoIsWriting(false, currentUser.username, currentGroup)
-                for (user in userList) {
-                    FCMSender.pushNotification(
-                        requireContext(),
-                        user.cloudToken,
-                        data_ = currentUser.uid + "_" + currentGroup.id + "_" + user.uid,
-                        action = NotificationService.ACTION_IS_NOT_WRITING_GROUP
-                    )
-                }
-            }
-        }
-
         inputText.addTextChangedListener {
             if(!it.isNullOrBlank()) {
+                if(!currentGroup.whoAreWriting.contains(currentUser.username)) {
+                    GroupRepository.updateWhoIsWriting(true, currentUser.username, currentGroup)
+                }
                 inputText.requestFocus()
             } else {
                 inputText.clearFocus()
+                GroupRepository.updateWhoIsWriting(false, currentUser.username, currentGroup)
             }
         }
 
@@ -219,11 +202,42 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
                 System.currentTimeMillis()
             )
             GroupRepository.sendMessage(msg, currentUser, currentGroup, groupQuery, requireContext()) {
-                Toast.makeText(requireContext(), "Что-то пошло не так, ибо я даун ${it.toString()}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Что-то пошло не так ${it.toString()}", Toast.LENGTH_SHORT).show()
             }
 
             inputText.text.clear()
             recyclerView.smoothScrollToPosition(adapter.itemCount)
+        }
+    }
+
+    private fun subscribeForNewUsersWhoAreWriting() {
+        GroupRepository.getGroupWhoAreWriting(currentGroup.id)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    currentGroup.whoAreWriting.clear()
+                    for (i in snapshot.children) {
+                        currentGroup.whoAreWriting.add(i.getValue(String::class.java)!!)
+                    }
+                    showUsersWhoAreWriting()
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+
+            })
+    }
+
+    private fun showUsersWhoAreWriting() {
+        val filteredList = currentGroup.whoAreWriting.stream().filter {
+            it != currentUser.username
+        }.toList()
+        if(filteredList.isEmpty()) {
+            groupState.text = "${currentGroup.userList.size} users"
+        } else if(filteredList.size == 1){
+            groupState.text = "${filteredList[0]} is writing"
+        } else {
+            groupState.text = "$filteredList are writing"
         }
     }
 
@@ -232,19 +246,13 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
         deleteFAB.visibility = state
     }
 
-    fun isMessagingTo(uid: String): Boolean {
-        return currentGroup.userList.contains(uid) && uid != currentUser.uid
+    override fun onPause() {
+        super.onPause()
+        GroupRepository.updateWhoIsWriting(false, currentUser.username, currentGroup)
     }
 
-    fun makeUserIsWriting(uid: String) {
-        UserRepository.getInstance().getUserByUID(uid).get().addOnSuccessListener { userDb ->
-
-        }
-    }
-
-    fun makeUserIsNotWriting(uid: String) {
-        UserRepository.getInstance().getUserByUID(uid).get().addOnSuccessListener { userDb ->
-
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        GroupRepository.updateWhoIsWriting(false, currentUser.username, currentGroup)
     }
 }

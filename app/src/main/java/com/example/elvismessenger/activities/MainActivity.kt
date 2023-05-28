@@ -269,36 +269,6 @@ class MainActivity : AppCompatActivity() {
                                     }
 
                                 }
-
-                                NotificationService.ACTION_IS_WRITING_GROUP -> extras.getString(NotificationService.MESSAGE_KEY)?. let { message ->
-
-                                    val from = message.split("_")[0]
-                                    val group = message.split("_")[1]
-                                    val to = message.split("_")[2]
-                                    if(NotificationService.ifToShowNotification(from, to)) {
-                                        val currentFragment = navHostFragment.childFragmentManager.fragments.last()
-                                        if(currentFragment is GroupLogFragment && currentFragment.isMessagingTo(to)) {
-                                            currentFragment.makeUserIsWriting(from)
-                                        } else if (currentFragment is ChatListFragment) {
-                                            currentFragment.addUserWhoWritesInGroup(from, group)
-                                        }
-                                    }
-                                }
-
-                                NotificationService.ACTION_IS_NOT_WRITING_GROUP -> extras.getString(NotificationService.MESSAGE_KEY)?. let { message ->
-
-                                    val from = message.split("_")[0]
-                                    val group = message.split("_")[1]
-                                    val to = message.split("_")[2]
-                                    if(NotificationService.ifToShowNotification(from, to)) {
-                                        val currentFragment = navHostFragment.childFragmentManager.fragments.last()
-                                        if(currentFragment is GroupLogFragment && currentFragment.isMessagingTo(to)) {
-                                            currentFragment.makeUserIsNotWriting(from)
-                                        } else if (currentFragment is ChatListFragment) {
-                                            currentFragment.removeUserWhoWritesInGroup(from, group)
-                                        }
-                                    }
-                                }
                                 else -> {}
                             }
                         }
