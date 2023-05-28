@@ -140,13 +140,7 @@ class ChatLogAdapter(
             .getChat(ChatRepository.getChatID(currentUser.uid, otherUser.uid))
 
         if (messagesSelectedList.size == options.snapshots.size) {
-            query.removeValue().addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    uncheckItems()
-                } else {
-                    // TODO выкинуть тост
-                }
-            }
+            query.removeValue()
         } else {
             for (i in messagesSelectedList) {
                 i.value.chatMessage.setBackgroundColor(Color.parseColor(UNSELECT_EVEN))
@@ -155,8 +149,22 @@ class ChatLogAdapter(
                     notifyDataSetChanged()
                 }
             }
-
-            messagesSelectedList.clear()
         }
+
+        // TODO доделать удаление, чтобы в лейтест меседжах отображалось последнее сообщение
+        val latestMsgPosition = options.snapshots.indexOfLast { it.text.isNotEmpty() }
+        val latestMsgText = if (latestMsgPosition > 0) {
+            options.snapshots[latestMsgPosition].text
+        } else {
+            ""
+        }
+
+        val latestMsgRef = FirebaseDatabase.getInstance().getReference("/users/${currentUser.uid}/latestMessages/${otherUser.uid}/text")
+        latestMsgRef.setValue(latestMsgText)
+
+        val latestMsgToRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/latestMessages/${currentUser.uid}/text")
+        latestMsgToRef.setValue(latestMsgText)
+
+        uncheckItems()
     }
 }
