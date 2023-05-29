@@ -50,6 +50,9 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
 
             return true
         }
+
+        fun copy() : ChatItem = ChatItem(text, time, isNew, isGroup, id, photo, name)
+
     }
 
     private lateinit var chatListAdapter: ChatListAdapter
@@ -157,7 +160,7 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
             onSuccess.invoke(group_)
             return
         }
-        GroupRepository.getGroupWhoAreWriting(group_.id!!).addValueEventListener(object : ValueEventListener{
+        GroupRepository.getGroupWhoAreWriting(group_.id!!).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val group = group_.copy()
                 val filteredUserList = mutableListOf<String>() //Список тех, кто пишет не считая нас
@@ -181,8 +184,26 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
             override fun onCancelled(error: DatabaseError) {
 
             }
-
         })
+//        GroupRepository.getGroupWhoAreWriting(group_.id!!).get().addOnSuccessListener { snapshot ->
+//            val group = group_.copy()
+//                val filteredUserList = mutableListOf<String>() //Список тех, кто пишет не считая нас
+//                for (i in snapshot.children) {
+//                    val username = i.getValue(String::class.java)!!
+//                    if(username != UserRepository.currentUser.value!!.username) { // на всякий случай
+//                        filteredUserList.add(username)
+//                    }
+//                }
+//
+//                if(filteredUserList.size != 0) {
+//                    group.text = getWhoIsWritingText(filteredUserList)
+//                } else {
+//                    if(lastMessagesCache[group.id]!!.isNotBlank()) {
+//                        group.text = lastMessagesCache[group.id]!!
+//                    }
+//                }
+//                onSuccess.invoke(group)
+//        }
     }
 
     private fun getWhoIsWritingText(filteredList: MutableList<String>) : String {

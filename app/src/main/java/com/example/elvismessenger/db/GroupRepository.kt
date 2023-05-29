@@ -48,15 +48,19 @@ object GroupRepository {
                 val savedGroup = it.getValue(Group::class.java)
                 for(user in userList) {
                     val newLatestMessageReference = ChatRepository.getInstance().getOpenToUserChat(user.uid).child(groupReference.key!!)
-                    newLatestMessageReference.setValue(ChatListFragment.ChatItem(
-                        text = "",
-                        time = System.currentTimeMillis(),
-                        isNew = true,
-                        isGroup = true,
-                        id = groupReference.key,
-                        photo = savedGroup?.groupPhoto,
-                        name = groupName
-                    ))
+                    newLatestMessageReference.get().addOnSuccessListener {
+                        if(it.getValue(Group::class.java) == null) {
+                            newLatestMessageReference.setValue(ChatListFragment.ChatItem(
+                                text = "",
+                                time = System.currentTimeMillis(),
+                                isNew = true,
+                                isGroup = true,
+                                id = groupReference.key,
+                                photo = savedGroup?.groupPhoto,
+                                name = groupName
+                            ))
+                        }
+                    }
                 }
             }
         }
@@ -103,19 +107,20 @@ object GroupRepository {
         for (uid in group.userList) {
             val chatItemMsg = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), false, id = group.id, name = group.groupName, photo = group.groupPhoto, isGroup = true)
             val latestMsgRef = ChatRepository.getInstance().getOpenToUserChat(uid, group.id)
-            latestMsgRef.setValue(chatItemMsg)
-            if(currentUser.uid != uid) {
-                UserRepository.getInstance().getUserByUID(uid).get().addOnSuccessListener {
-                    val otherUser = it.getValue(User::class.java)
-                    FCMSender.pushNotification(
-                        context = context,
-                        token = otherUser!!.cloudToken,
-                        title = currentUser.username,
-                        message = msg.text,
-                        from = group.id,
-                        to = otherUser.uid,
-                        action = NotificationService.ACTION_NOTIFICATION
-                    )
+            latestMsgRef.setValue(chatItemMsg).addOnSuccessListener {
+                if(currentUser.uid != uid) {
+                    UserRepository.getInstance().getUserByUID(uid).get().addOnSuccessListener {
+                        val otherUser = it.getValue(User::class.java)
+                        FCMSender.pushNotification(
+                            context = context,
+                            token = otherUser!!.cloudToken,
+                            title = currentUser.username,
+                            message = msg.text,
+                            from = group.id,
+                            to = otherUser.uid,
+                            action = NotificationService.ACTION_NOTIFICATION
+                        )
+                    }
                 }
             }
         }

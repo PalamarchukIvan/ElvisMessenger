@@ -249,8 +249,8 @@ class MainActivity : AppCompatActivity() {
 
                                 NotificationService.ACTION_IS_WRITING -> extras.getString(NotificationService.MESSAGE_KEY)?. let {message ->
 
-                                    val to = message.split("_")[0]
-                                    val from = message.split("_")[1]
+                                    val to = message.split("_&&&_")[0]
+                                    val from = message.split("_&&&_")[1]
                                     if(NotificationService.ifToShowNotification(from, to)) {
                                         val currentFragment = navHostFragment.childFragmentManager.fragments.last()
                                         if(currentFragment is ChatLogFragment && currentFragment.isMessagingTo(to, from)) {
