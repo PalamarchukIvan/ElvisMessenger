@@ -107,13 +107,13 @@ object GroupRepository {
                     UserRepository.getInstance().getUserByUID(uid).snapshots.collect {
                         val otherUser = it.getValue(User::class.java)
                         FCMSender.pushNotification(
-                            context,
-                            otherUser!!.cloudToken,
-                            currentUser.username,
-                            msg.text,
-                            currentUser.uid,
-                            otherUser.uid,
-                            NotificationService.ACTION_NOTIFICATION
+                            context = context,
+                            token = otherUser!!.cloudToken,
+                            title = currentUser.username,
+                            message = msg.text,
+                            from = group.id,
+                            to = otherUser.uid,
+                            action = NotificationService.ACTION_NOTIFICATION
                         )
 
                     }

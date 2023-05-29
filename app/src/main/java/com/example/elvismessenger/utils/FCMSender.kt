@@ -37,7 +37,7 @@ object FCMSender {
             val data = JSONObject()
             data.put(NotificationService.ACTION_KEY, action)
             val dataMessage = if(data_ == "") {
-                from + "_" + to
+                from + "_&&&_" + to
             } else {
                 data_
             }

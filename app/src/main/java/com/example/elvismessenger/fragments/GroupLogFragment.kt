@@ -255,4 +255,9 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
         super.onDestroy()
         GroupRepository.updateWhoIsWriting(false, currentUser.username, currentGroup)
     }
+
+    fun isMessagingTo(to: String, from: String): Boolean {
+        return (to == currentUser.uid && from == currentGroup.id) || (to == currentGroup.id && from == currentUser.uid)
+    }
+
 }

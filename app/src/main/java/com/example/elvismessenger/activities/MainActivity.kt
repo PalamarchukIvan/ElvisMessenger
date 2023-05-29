@@ -214,8 +214,8 @@ class MainActivity : AppCompatActivity() {
                             when (extras.getString(key)) {
                                 NotificationService.ACTION_NOTIFICATION -> extras.getString(NotificationService.MESSAGE_KEY)?.let { message ->
 
-                                    val to = message.split("_")[0]
-                                    val from = message.split("_")[1]
+                                    val to = message.split("_&&&_")[0]
+                                    val from = message.split("_&&&_")[1]
                                     if(NotificationService.ifToShowNotification(from, to)) {
 
                                         val channel = NotificationChannel("MESSAGE", "Message Notification", NotificationManager.IMPORTANCE_HIGH)
@@ -233,7 +233,13 @@ class MainActivity : AppCompatActivity() {
                                             if (!chatLogFragment.isMessagingTo(to = to, from = from)) {
                                                 NotificationManagerCompat.from(context!!).notify(1, notification.build())
                                             }
-                                        } else {
+                                        } else if(navHostFragment.childFragmentManager.fragments.last() is GroupLogFragment) {
+                                            val groupLogFragment = navHostFragment.childFragmentManager.fragments.last() as GroupLogFragment
+                                            if(!groupLogFragment.isMessagingTo(to, from)) {
+                                                NotificationManagerCompat.from(context!!).notify(1, notification.build())
+                                            }
+                                        }
+                                        else {
                                             NotificationManagerCompat.from(context!!).notify(1, notification.build())
                                         }
 
