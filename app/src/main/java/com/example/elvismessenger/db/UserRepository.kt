@@ -86,6 +86,7 @@ class UserRepository private constructor() {
         var currentUser: MutableLiveData<User> = MutableLiveData()
             private set
         private var instance = UserRepository()
+
         fun initCurrentUser() {
             FirebaseAuth.getInstance().currentUser?.also {
                 getInstance().getUserByUID(it.uid).get().addOnSuccessListener { userDB ->
@@ -120,7 +121,7 @@ class UserRepository private constructor() {
                 email = user.email ?: "no email",
                 password = uPassword,
                 phoneNumber = user.phoneNumber ?: "no phone number",
-                cloudToken = token,
+                cloudToken = token
             )
 
         fun updateSharedPreferences(user: User) {
@@ -136,7 +137,5 @@ class UserRepository private constructor() {
 
             SettingsFragment.loadData()
         }
-
     }
-
 }

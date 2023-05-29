@@ -37,12 +37,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private lateinit var logEmail: EditText
     private lateinit var logPassword: EditText
-    private lateinit var logo: ImageView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        logo = view.findViewById(R.id.login_logo_img)
 
         val loginButton: Button = view.findViewById(R.id.login_button_login)
         val noAccountTextLogin: TextView = view.findViewById(R.id.no_account_text_login)
@@ -52,7 +49,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         val googleSignInButton: SignInButton = view.findViewById(R.id.google_sign_in_button)
 
-        setUpLayout()
+//        setUpLayout()
 
         // Sign in через гугл
         auth = Firebase.auth
@@ -171,17 +168,17 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         return RegLogActivity.GOOD
     }
 
-    private fun setUpLayout() {
-        val displayWidth = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            requireContext().display!!.width
-        } else {
-            1500
-        }
-
-        logo.layoutParams.width = displayWidth - 80
-        logo.layoutParams.height = displayWidth * 6 / 14 - 30
-        Log.d("height1: ", logo.layoutParams.height.toString())
-        Log.d("width: : ", logo.layoutParams.width.toString())
-    }
+//    private fun setUpLayout() {
+//        val displayWidth = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//            requireContext().display!!.width
+//        } else {
+//            1500
+//        }
+//
+//        logo.layoutParams.width = displayWidth - 80
+//        logo.layoutParams.height = displayWidth * 6 / 14 - 30
+//        Log.d("height1: ", logo.layoutParams.height.toString())
+//        Log.d("width: : ", logo.layoutParams.width.toString())
+//    }
 
 }

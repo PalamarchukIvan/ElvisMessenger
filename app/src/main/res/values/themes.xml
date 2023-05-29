@@ -23,4 +23,36 @@
         <item name="android:minWidth">24dp</item>
         <item name="android:minHeight">24dp</item>
     </style>
+
+    <style name="roundedImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+
+    <style name="CustomCardViewStyleMsgMe" parent="@style/Widget.MaterialComponents.CardView">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay_card_custom_corners_msg_me</item>
+    </style>
+
+
+    <style name="ShapeAppearanceOverlay_card_custom_corners_msg_me" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">12dp</item>
+        <item name="cornerSizeTopLeft">12dp</item>
+        <item name="cornerSizeBottomLeft">12dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
+    <style name="CustomCardViewStyleMsgOther" parent="@style/Widget.MaterialComponents.CardView">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay_card_custom_corners_msg_other</item>
+    </style>
+
+
+    <style name="ShapeAppearanceOverlay_card_custom_corners_msg_other" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">12dp</item>
+        <item name="cornerSizeTopLeft">12dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">12dp</item>
+    </style>
+
 </resources>

@@ -17,6 +17,7 @@ data class User(
     var isActive: Boolean = false,
     var lastSeen: Long = 0,
     var latestMessages: HashMap<String, ChatListFragment.ChatItem> = hashMapOf(),
+    var bannedUsers: HashMap<String, User> = hashMapOf(),
     var cloudToken: String =  ""
 ) : Parcelable
 

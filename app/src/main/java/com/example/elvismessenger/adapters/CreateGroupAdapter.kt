@@ -1,9 +1,6 @@
 package com.example.elvismessenger.adapters
 
 import android.graphics.Color
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import com.example.elvismessenger.R
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.utils.SelectionManager
 
@@ -11,7 +8,6 @@ class CreateGroupAdapter(
     userToShowList: MutableList<User>,
     private val addUserToGroup: ((User) -> Boolean)
 ) : FindUserAdapter(userToShowList, null) {
-
     override fun onBindViewHolder(holder: FindUserViewHolder, position: Int) {
         holder.bind(userToShowList[position])
 

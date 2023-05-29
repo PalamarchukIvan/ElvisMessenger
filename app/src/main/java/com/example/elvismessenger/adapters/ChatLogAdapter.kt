@@ -1,6 +1,7 @@
 package com.example.elvismessenger.adapters
 
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,25 +39,34 @@ class ChatLogAdapter(
     private val onLongItemClick: (Int) -> Unit
 ) : FirebaseRecyclerAdapter<ChatMessage, ChatLogAdapter.ChatViewHolder>(options) {
 
-    private val messagesSelectedList = HashMap<ChatMessage, ChatViewHolder>()
+    private val messagesSelectedList = HashMap<Int, ChatViewHolder>()
 
     class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         companion object {
-            const val ME = 1
-            const val ANOTHER = 2
+            const val ME = 0
+            const val ANOTHER = 1
         }
 
         var chatMessage: ConstraintLayout = itemView.findViewById(R.id.chat_message)
         private var  message: TextView? = null
         private val  time: TextView = itemView.findViewById(R.id.time_message)
+        private val img: ImageView = itemView.findViewById(R.id.image_msg)
 
         fun bind(msg: ChatMessage) {
             val currentUser = FirebaseAuth.getInstance().currentUser!!
-            if(currentUser.uid == msg.currentUserUID) {
+
+            if (msg.img.isNotEmpty()) {
+                Picasso.get().load(msg.img).placeholder(R.drawable.baseline_image_24).into(img)
+            } else {
+                img.setImageDrawable(null)
+            }
+
+            if (currentUser.uid == msg.currentUserUID) {
                 initForSender(msg)
             } else {
                 initForReceiver(msg)
             }
+
             time.text = TimeAgo.using(msg.time)
         }
 
@@ -100,9 +110,17 @@ class ChatLogAdapter(
         }
 
         holder.itemView.setOnLongClickListener {
-            holder.chatMessage.setBackgroundColor(Color.parseColor(SELECT))
-            messagesSelectedList[options.snapshots[position]] = holder
-            onLongItemClick.invoke(View.VISIBLE)
+            if (position in messagesSelectedList.keys) {
+                holder.chatMessage.setBackgroundColor(Color.parseColor(UNSELECT_EVEN))
+                messagesSelectedList.remove(position)
+                if (messagesSelectedList.size == 0) {
+                    onLongItemClick.invoke(View.INVISIBLE)
+                }
+            } else {
+                holder.chatMessage.setBackgroundColor(Color.parseColor(SELECT))
+                messagesSelectedList[position] = holder
+                onLongItemClick.invoke(View.VISIBLE)
+            }
             true
         }
     }
@@ -111,30 +129,37 @@ class ChatLogAdapter(
         for (i in messagesSelectedList) {
             i.value.chatMessage.setBackgroundColor(Color.parseColor(UNSELECT_EVEN))
         }
+
         messagesSelectedList.clear()
     }
 
     fun delete() {
-        // TODO доделать удаление сообщений
+        // TODO доделать удаление сообщений чтобы изменялось значение в лейтест месседжах
         val currentUser = FirebaseAuth.getInstance().currentUser!!
         val query = ChatRepository.getInstance()
             .getChat(ChatRepository.getChatID(currentUser.uid, otherUser.uid))
+
         if (messagesSelectedList.size == options.snapshots.size) {
             query.removeValue()
-            messagesSelectedList.clear()
         } else {
-            GlobalScope.launch {
-                query.snapshots.collect {
-                    it.children.forEach {
-                        val msg = it.getValue(ChatMessage::class.java)
-                        if (messagesSelectedList[msg] != null) {
-                            ChatRepository.getInstance().deleteMsg(ChatRepository.getChatID(currentUser.uid, otherUser.uid), it.key!!)
-                        }
-                    }
+            for (i in messagesSelectedList) {
+                i.value.chatMessage.setBackgroundColor(Color.parseColor(UNSELECT_EVEN))
+                val msgId = options.snapshots.getSnapshot(i.key).key
+                ChatRepository.getInstance().deleteMsg(ChatRepository.getChatID(currentUser.uid, otherUser.uid), msgId.toString()) {
+                    notifyDataSetChanged()
                 }
-
-                messagesSelectedList.clear()
             }
         }
+
+        if (messagesSelectedList.containsKey(options.snapshots.count() - 1)) {
+            val latestMsgRef = FirebaseDatabase.getInstance().getReference("/users/${currentUser.uid}/latestMessages/${otherUser.uid}/text")
+            latestMsgRef.setValue("[Deleted]")
+
+            val latestMsgToRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/latestMessages/${currentUser.uid}/text")
+            latestMsgToRef.setValue("[Deleted]")
+        }
+
+
+        uncheckItems()
     }
 }

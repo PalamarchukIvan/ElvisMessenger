@@ -1,6 +1,12 @@
 package com.example.elvismessenger.fragments
 
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,14 +32,17 @@ import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
+import java.io.ByteArrayOutputStream
 
 class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
 
     companion object {
         const val ANOTHER_USER = "another_user"
+        const val RC_SELECT_IMG = 101
     }
 
     private lateinit var recyclerView: RecyclerView
@@ -48,6 +57,7 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
     private lateinit var returnBtn: ImageView
 
     private lateinit var deleteFAB: FloatingActionButton
+    private lateinit var sendImageBtn: FloatingActionButton
     private lateinit var cancelDeleteBtn: ImageView
 
     private lateinit var adapter: ChatLogAdapter
@@ -82,6 +92,7 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         returnBtn = view.findViewById(R.id.return_btn)
 
         deleteFAB = view.findViewById(R.id.delete_msg_btn)
+        sendImageBtn = view.findViewById(R.id.send_image_btn)
         cancelDeleteBtn = view.findViewById(R.id.cancel_delete_btn)
         returnBtn.setOnClickListener {
             activity?.onBackPressed()
@@ -134,6 +145,20 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
                 currentUser = user
             }
         }
+
+        ChatRepository.getInstance().getOpenToUserChat(currentUser.uid, otherUser.uid).addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.getValue(ChatListFragment.ChatItem::class.java)?.let {
+                    val chatItem = it
+                    chatItem.isNew = false
+                    ChatRepository.getInstance().getOpenToUserChat(UserRepository.currentUser.value!!.uid ,chatItem.id!!).setValue(chatItem)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
 
         UserRepository.getInstance().getUserByUID(otherUser.uid).addValueEventListener (object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -219,18 +244,41 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         }
 
         sendButton.setOnClickListener {
-            // Для отправки сообщения
-            val msg = ChatMessage(
-                currentUser.uid,
-                inputText.text.toString(),
-                System.currentTimeMillis()
-            )
+            isUserBanned(currentUser, otherUser) { isBanned ->
+                if (!isBanned) {
+                    // Для отправки сообщения
+                    val msg = ChatMessage(
+                        currentUser.uid,
+                        inputText.text.toString(),
+                        img = "",
+                        System.currentTimeMillis()
+                    )
 
-            ChatRepository.getInstance().sendMessage(msg, currentUser, otherUser, chatQuery, requireContext()) {
-                Toast.makeText(requireContext(), "Error: ${it?.message.toString()}", Toast.LENGTH_SHORT).show()
+                    ChatRepository.getInstance()
+                        .sendMessage(msg, currentUser, otherUser, chatQuery, requireContext()) {
+                            Toast.makeText(
+                                requireContext(),
+                                "Error: ${it?.message.toString()}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                    inputText.text.clear()
+                    recyclerView.smoothScrollToPosition(adapter.itemCount)
+                } else {
+                    Toast.makeText(requireContext(), "ТЫ ЗАБАНЕН ДОЛБАЕБ", Toast.LENGTH_SHORT).show()
+                }
             }
-            inputText.text.clear()
-            recyclerView.smoothScrollToPosition(adapter.itemCount)
+        }
+
+        sendImageBtn.setOnClickListener {
+            isUserBanned(currentUser, otherUser) { isBanned ->
+                if (!isBanned) {
+                    val iGallery = Intent(Intent.ACTION_PICK)
+                    iGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                    startActivityForResult(iGallery, RC_SELECT_IMG)
+                }
+            }
         }
     }
 
@@ -238,6 +286,53 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         return (to == currentUser.uid && from == otherUser.uid) || (to == otherUser.uid && from == currentUser.uid)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if(resultCode == Activity.RESULT_OK) {
+            if(requestCode == RC_SELECT_IMG) {
+                val selectedImagePath = data?.data
+
+                val selectedImageBmp = MediaStore.Images.Media.getBitmap(context?.contentResolver, selectedImagePath)
+                val outputStream = ByteArrayOutputStream()
+                selectedImageBmp.compress(Bitmap.CompressFormat.JPEG, 25, outputStream)
+                val selectedImageBytes = outputStream.toByteArray()
+
+                requireActivity().runOnUiThread {
+                    StorageUtil().uploadMsgImg(selectedImageBytes) {imagePath ->
+                        val msg = ChatMessage(currentUser.uid, otherUser.uid,  "", img=imagePath, System.currentTimeMillis())
+
+                        ChatRepository.getInstance().sendMessage(msg, currentUser, otherUser, chatQuery, requireContext()) {
+                            Toast.makeText(requireContext(), "Error: ${it?.message.toString()}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        recyclerView.recycledViewPool.clear()
+        recyclerView.scrollToPosition(adapter.itemCount)
+        adapter.notifyDataSetChanged()
+        adapter.startListening()
+    }
+
+    private fun isUserBanned(currentUser: User, otherUser: User, onSuccess: (Boolean) -> Unit) {
+        // TODO доделать проверку забанен ли юзкр
+        val otherUserBannedListRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/bannedUsers")
+
+        otherUserBannedListRef.get().addOnSuccessListener { snapshot ->
+            for (i in snapshot.children) {
+                if (currentUser.uid == i.key) {
+                    onSuccess(true)
+                    return@addOnSuccessListener
+                }
+            }
+            onSuccess(false)
+        }
+    }
 
     fun makeOtherUserIsWriting() {
         anotherUserState.text = "Is writing..."
