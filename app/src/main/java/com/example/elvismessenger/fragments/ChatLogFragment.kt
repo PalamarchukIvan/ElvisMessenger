@@ -27,6 +27,7 @@ import com.example.elvismessenger.db.*
 import com.example.elvismessenger.utils.FCMSender
 import com.example.elvismessenger.utils.LinearLayoutManagerWrapper
 import com.example.elvismessenger.utils.NotificationService
+import com.example.elvismessenger.utils.StorageUtil
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -299,8 +300,8 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
                 val selectedImageBytes = outputStream.toByteArray()
 
                 requireActivity().runOnUiThread {
-                    StorageUtil().uploadMsgImg(selectedImageBytes) {imagePath ->
-                        val msg = ChatMessage(currentUser.uid, otherUser.uid,  "", img=imagePath, System.currentTimeMillis())
+                    StorageUtil().uploadMsgImg(selectedImageBytes) { imagePath ->
+                        val msg = ChatMessage(currentUser.uid, otherUser.uid,  img=imagePath, System.currentTimeMillis())
 
                         ChatRepository.getInstance().sendMessage(msg, currentUser, otherUser, chatQuery, requireContext()) {
                             Toast.makeText(requireContext(), "Error: ${it?.message.toString()}", Toast.LENGTH_SHORT).show()

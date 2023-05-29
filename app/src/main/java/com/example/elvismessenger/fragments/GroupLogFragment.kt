@@ -202,6 +202,7 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
             val msg = ChatMessage(
                 currentUser.uid,
                 inputText.text.toString(),
+                "",
                 System.currentTimeMillis()
             )
             GroupRepository.sendMessage(msg, currentUser, currentGroup, groupQuery, requireContext()) {
