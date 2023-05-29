@@ -1,6 +1,10 @@
 package com.example.elvismessenger.fragments
 
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.adapters.GroupLogAdapter
 import com.example.elvismessenger.db.ChatMessage
+import com.example.elvismessenger.db.ChatRepository
 import com.example.elvismessenger.db.Group
 import com.example.elvismessenger.db.GroupRepository
 import com.example.elvismessenger.db.User
@@ -23,6 +28,7 @@ import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.utils.FCMSender
 import com.example.elvismessenger.utils.LinearLayoutManagerWrapper
 import com.example.elvismessenger.utils.NotificationService
+import com.example.elvismessenger.utils.StorageUtil
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.DataSnapshot
@@ -30,6 +36,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
+import java.io.ByteArrayOutputStream
 import kotlin.streams.toList
 
 class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
@@ -52,6 +59,7 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
     private lateinit var returnBtn: ImageView
 
     private lateinit var deleteFAB: FloatingActionButton
+    private lateinit var sendImageBtn: FloatingActionButton
     private lateinit var cancelDeleteBtn: ImageView
 
     private lateinit var adapter: GroupLogAdapter
@@ -86,6 +94,7 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
         returnBtn = view.findViewById(R.id.return_btn)
 
         deleteFAB = view.findViewById(R.id.delete_msg_btn)
+        sendImageBtn = view.findViewById(R.id.send_image_btn)
         cancelDeleteBtn = view.findViewById(R.id.cancel_delete_btn)
         returnBtn.setOnClickListener {
             activity?.onBackPressed()
@@ -101,6 +110,7 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
         deleteFAB.setOnClickListener {
             showDeleteFab(View.INVISIBLE)
             cancelDeleteBtn.visibility = View.INVISIBLE
+            adapter.delete()
         }
 
         arguments?.let {
@@ -212,6 +222,35 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
             inputText.text.clear()
             recyclerView.smoothScrollToPosition(adapter.itemCount)
         }
+
+        sendImageBtn.setOnClickListener {
+            val iGallery = Intent(Intent.ACTION_PICK)
+            iGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            startActivityForResult(iGallery, ChatLogFragment.RC_SELECT_IMG)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if(resultCode == Activity.RESULT_OK) {
+            if(requestCode == ChatLogFragment.RC_SELECT_IMG) {
+                val selectedImagePath = data?.data
+
+                val selectedImageBmp = MediaStore.Images.Media.getBitmap(context?.contentResolver, selectedImagePath)
+                val outputStream = ByteArrayOutputStream()
+                selectedImageBmp.compress(Bitmap.CompressFormat.JPEG, 25, outputStream)
+                val selectedImageBytes = outputStream.toByteArray()
+
+                StorageUtil().uploadMsgImg(selectedImageBytes) { imagePath ->
+                    val msg = ChatMessage(currentUser.uid,  img=imagePath, time = System.currentTimeMillis())
+
+                    GroupRepository.sendMessage(msg, currentUser, currentGroup, groupQuery, requireContext()) {
+                        Toast.makeText(requireContext(), "Error: ${it?.message.toString()}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
     }
 
     private fun subscribeForNewUsersWhoAreWriting() {
@@ -230,6 +269,14 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
                 }
 
             })
+    }
+
+    override fun onStart() {
+        super.onStart()
+        recyclerView.recycledViewPool.clear()
+        recyclerView.scrollToPosition(adapter.itemCount)
+        adapter.notifyDataSetChanged()
+        adapter.startListening()
     }
 
     private fun showUsersWhoAreWriting() {

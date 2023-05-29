@@ -101,12 +101,19 @@ object GroupRepository {
     fun getGroupMessages(id: String) = getGroupById(id).child("messages")
     fun getGroupUsers(id: String) = getGroupById(id).child("userList")
 
+    fun deleteMessage(groupId: String, msgId: String, onSuccess: () -> Unit) {
+        getGroupMessages(groupId).child(msgId).removeValue().addOnSuccessListener {
+            onSuccess.invoke()
+        }
+    }
+
     fun sendMessage(msg: ChatMessage, currentUser: User, group: Group, chatQuery: Query, context: Context, errorHandler: (DatabaseError?) -> Unit) {
 
         // Для записи этого же сообщения в список последних сообщений всех юзеров
         for (uid in group.userList) {
             val chatItemMsg = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), false, id = group.id, name = group.groupName, photo = group.groupPhoto, isGroup = true)
             val latestMsgRef = ChatRepository.getInstance().getOpenToUserChat(uid, group.id)
+            if (msg.img.isNotEmpty()) chatItemMsg.text = "Photo"
             latestMsgRef.setValue(chatItemMsg).addOnSuccessListener {
                 if(currentUser.uid != uid) {
                     UserRepository.getInstance().getUserByUID(uid).get().addOnSuccessListener {

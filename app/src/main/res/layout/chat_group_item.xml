@@ -40,6 +40,20 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <com.google.android.material.imageview.ShapeableImageView
+                app:shapeAppearanceOverlay="@style/roundedImageView"
+                android:id="@+id/image_msg"
+                android:layout_width="wrap_content"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:maxWidth="250dp"
+                android:visibility="gone"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginEnd="8dp"
+                android:paddingLeft="8dp"
+                android:paddingTop="8dp" />
+
             <TextView
                 android:id="@+id/group_other_username"
                 android:layout_width="wrap_content"

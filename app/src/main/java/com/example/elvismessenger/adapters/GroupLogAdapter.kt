@@ -4,12 +4,15 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.db.ChatMessage
+import com.example.elvismessenger.db.ChatRepository
 import com.example.elvismessenger.db.Group
+import com.example.elvismessenger.db.GroupRepository
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.utils.SelectionManager
@@ -17,6 +20,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -27,6 +31,7 @@ class GroupLogAdapter(
     private val onLongItemClick: (Int) -> Unit
 ) : FirebaseRecyclerAdapter<ChatMessage, GroupLogAdapter.GroupViewHolder>(options)  {
 
+    private val messagesSelectedList = HashMap<Int, GroupViewHolder>()
 
     class GroupViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         companion object {
@@ -39,9 +44,16 @@ class GroupLogAdapter(
         private val  time: TextView = itemView.findViewById(R.id.time_message)
         private var msgPhoto: CircleImageView? = null
         private var msgUsername: TextView? = null
+        private val img: ImageView = itemView.findViewById(R.id.image_msg)
 
         fun bind(msg: ChatMessage) {
             val currentUser = FirebaseAuth.getInstance().currentUser!!
+
+            if (msg.img.isNotEmpty()) {
+                Picasso.get().load(msg.img).placeholder(R.drawable.baseline_image_24).into(img)
+                img.visibility = View.VISIBLE
+            }
+
             if(currentUser.uid == msg.currentUserUID) {
                 initForSender(msg)
             } else {
@@ -112,9 +124,52 @@ class GroupLogAdapter(
         }
 
         holder.itemView.setOnLongClickListener {
-            holder.chatMessage.setBackgroundColor(Color.parseColor(SelectionManager.SELECT))
-            onLongItemClick.invoke(View.VISIBLE)
+            if (position in messagesSelectedList.keys) {
+                holder.chatMessage.setBackgroundColor(Color.parseColor(SelectionManager.UNSELECT_EVEN))
+                messagesSelectedList.remove(position)
+                if (messagesSelectedList.size == 0) {
+                    onLongItemClick.invoke(View.INVISIBLE)
+                }
+            } else {
+                holder.chatMessage.setBackgroundColor(Color.parseColor(SelectionManager.SELECT))
+                messagesSelectedList[position] = holder
+                onLongItemClick.invoke(View.VISIBLE)
+            }
             true
         }
+    }
+
+    fun delete() {
+        // TODO доделать удаление сообщений чтобы изменялось значение в лейтест месседжах
+        val currentUser = FirebaseAuth.getInstance().currentUser!!
+        val query = ChatRepository.getInstance()
+            .getChat(ChatRepository.getChatID(currentUser.uid, currentGroup.id))
+
+        if (messagesSelectedList.size == options.snapshots.size) {
+            query.removeValue()
+        } else {
+            for (i in messagesSelectedList) {
+                i.value.chatMessage.setBackgroundColor(Color.parseColor(SelectionManager.UNSELECT_EVEN))
+                val msgId = options.snapshots.getSnapshot(i.key).key
+                GroupRepository.deleteMessage(currentGroup.id, msgId.toString()) {
+                    notifyDataSetChanged()
+                }
+            }
+        }
+
+        if (messagesSelectedList.containsKey(options.snapshots.count() - 1)) {
+            for (uid in currentGroup.userList) {
+                val latestMsgRef = FirebaseDatabase.getInstance().getReference("/users/$uid/latestMessages/${currentGroup.id}/text")
+                latestMsgRef.setValue("[Deleted]")
+            }
+        }
+        uncheckItems()
+    }
+
+    fun uncheckItems() {
+        for (i in messagesSelectedList) {
+            i.value.chatMessage.setBackgroundColor(Color.parseColor(SelectionManager.UNSELECT_EVEN))
+        }
+        messagesSelectedList.clear()
     }
 }

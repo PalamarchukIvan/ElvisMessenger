@@ -122,8 +122,6 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
             adapter.delete()
         }
 
-
-
         arguments?.let {
             it.getParcelable<User>(ANOTHER_USER)?.let { user ->
                 otherUser = user
@@ -141,25 +139,11 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
             }
         }
 
-        UserRepository.currentUser?.let {
+        UserRepository.currentUser.let {
             it.value?.let { user ->
                 currentUser = user
             }
         }
-
-        ChatRepository.getInstance().getOpenToUserChat(currentUser.uid, otherUser.uid).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                snapshot.getValue(ChatListFragment.ChatItem::class.java)?.let {
-                    val chatItem = it
-                    chatItem.isNew = false
-                    ChatRepository.getInstance().getOpenToUserChat(UserRepository.currentUser.value!!.uid ,chatItem.id!!).setValue(chatItem)
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-        })
 
         UserRepository.getInstance().getUserByUID(otherUser.uid).addValueEventListener (object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
