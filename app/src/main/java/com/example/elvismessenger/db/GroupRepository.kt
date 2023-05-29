@@ -24,6 +24,11 @@ import kotlin.streams.toList
 object GroupRepository {
     fun createGroup(userList: MutableList<User>, groupName: String?, groupPhoto: Uri?, context: Context?) {
         val groupReference = FirebaseDatabase.getInstance().getReference("groups").push()
+        val group = Group(groupReference.key!!, groupName, userList = userList.stream()
+            .map {
+                it.uid
+            }.toList())
+        groupReference.setValue(group)
         if(groupPhoto != null) {
             //Сжатие
             val bmp = MediaStore.Images.Media.getBitmap(context?.contentResolver, groupPhoto);
@@ -34,10 +39,7 @@ object GroupRepository {
             addOrUpdatePhoto(
                 fileInBytes,
                 groupReference.key!!,
-                Group(groupReference.key!!, groupName, userList = userList.stream()
-                    .map {
-                        it.uid
-                    }.toList()),
+                group,
                 groupReference
             )
         }
