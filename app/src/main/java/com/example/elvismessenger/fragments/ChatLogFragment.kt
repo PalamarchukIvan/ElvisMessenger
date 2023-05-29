@@ -301,7 +301,7 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
 
                 requireActivity().runOnUiThread {
                     StorageUtil().uploadMsgImg(selectedImageBytes) { imagePath ->
-                        val msg = ChatMessage(currentUser.uid, otherUser.uid,  img=imagePath, System.currentTimeMillis())
+                        val msg = ChatMessage(currentUser.uid,  img=imagePath, time = System.currentTimeMillis())
 
                         ChatRepository.getInstance().sendMessage(msg, currentUser, otherUser, chatQuery, requireContext()) {
                             Toast.makeText(requireContext(), "Error: ${it?.message.toString()}", Toast.LENGTH_SHORT).show()

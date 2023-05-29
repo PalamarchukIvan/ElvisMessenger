@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -69,6 +70,16 @@ class CreateGroupFragment : Fragment(R.layout.fragment_create_group) {
             val iGallery = Intent(Intent.ACTION_PICK)
             iGallery.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             startActivityForResult(iGallery, EditProfileFragment.NEW_PHOTO_REQ_CODE)
+        }
+
+        // Для нахождения юзеров локально
+        val inputText: EditText = view.findViewById(R.id.search_user)
+        inputText.addTextChangedListener {
+            val newUserList = userList.filter { user ->
+                user.username.contains(it.toString())
+            }.toMutableList()
+            adapter.userToShowList = newUserList
+            adapter.notifyDataSetChanged()
         }
 
         confirmBtn.setOnClickListener {
