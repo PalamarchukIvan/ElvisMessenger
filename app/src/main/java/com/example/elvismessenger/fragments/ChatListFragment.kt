@@ -185,25 +185,7 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
 
             }
         })
-//        GroupRepository.getGroupWhoAreWriting(group_.id!!).get().addOnSuccessListener { snapshot ->
-//            val group = group_.copy()
-//                val filteredUserList = mutableListOf<String>() //Список тех, кто пишет не считая нас
-//                for (i in snapshot.children) {
-//                    val username = i.getValue(String::class.java)!!
-//                    if(username != UserRepository.currentUser.value!!.username) { // на всякий случай
-//                        filteredUserList.add(username)
-//                    }
-//                }
-//
-//                if(filteredUserList.size != 0) {
-//                    group.text = getWhoIsWritingText(filteredUserList)
-//                } else {
-//                    if(lastMessagesCache[group.id]!!.isNotBlank()) {
-//                        group.text = lastMessagesCache[group.id]!!
-//                    }
-//                }
-//                onSuccess.invoke(group)
-//        }
+
     }
 
     private fun getWhoIsWritingText(filteredList: MutableList<String>) : String {
@@ -211,7 +193,10 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         if(filteredList.size == 1){
             return "${filteredList[0]} is writing"
         } else {
-            return "$filteredList are writing"
+            val s = filteredList.reduce { s1, s2 ->
+                "$s1, $s2"
+            }
+            return "$s are writing"
         }
     }
 

@@ -240,7 +240,10 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
         } else if(filteredList.size == 1){
             groupState.text = "${filteredList[0]} is writing"
         } else {
-            groupState.text = "$filteredList are writing"
+            val s: String = filteredList.reduce { s1, s2 ->
+                "$s1, $s2"
+            }
+            groupState.text = "$s are writing"
         }
     }
 
