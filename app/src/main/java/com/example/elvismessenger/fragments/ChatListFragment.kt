@@ -134,7 +134,7 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
                         lastMessagesCache[chatItem.id!!] = chatItem.text
                         subscribeForGroupsWhoWritesChanges(chatItem) { chatItem_ ->
                             chatList.find {item ->
-                                item.id == chatItem.id
+                                item == chatItem
                             }?.text = chatItem_.text
                             chatList.sortByDescending { chatItem ->
                                 chatItem.time

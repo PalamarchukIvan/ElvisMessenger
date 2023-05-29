@@ -111,10 +111,13 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
                     groupPhoto.let { photo ->
                         Picasso.get()
                             .load(currentGroup.groupPhoto)
+                            .placeholder(R.drawable.dornan)
                             .into(photo)
                     }
                 } else {
-                    Picasso.get().load(R.drawable.dornan).into(groupPhoto)
+                    Picasso.get()
+                        .load(R.drawable.dornan)
+                        .into(groupPhoto)
                 }
                 groupName.text = currentGroup.groupName
             }

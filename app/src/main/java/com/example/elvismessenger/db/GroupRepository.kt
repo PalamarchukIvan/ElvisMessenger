@@ -103,20 +103,17 @@ object GroupRepository {
             val latestMsgRef = ChatRepository.getInstance().getOpenToUserChat(uid, group.id)
             latestMsgRef.setValue(chatItemMsg)
             if(currentUser.uid != uid) {
-                GlobalScope.launch {
-                    UserRepository.getInstance().getUserByUID(uid).snapshots.collect {
-                        val otherUser = it.getValue(User::class.java)
-                        FCMSender.pushNotification(
-                            context = context,
-                            token = otherUser!!.cloudToken,
-                            title = currentUser.username,
-                            message = msg.text,
-                            from = group.id,
-                            to = otherUser.uid,
-                            action = NotificationService.ACTION_NOTIFICATION
-                        )
-
-                    }
+                UserRepository.getInstance().getUserByUID(uid).get().addOnSuccessListener {
+                    val otherUser = it.getValue(User::class.java)
+                    FCMSender.pushNotification(
+                        context = context,
+                        token = otherUser!!.cloudToken,
+                        title = currentUser.username,
+                        message = msg.text,
+                        from = group.id,
+                        to = otherUser.uid,
+                        action = NotificationService.ACTION_NOTIFICATION
+                    )
                 }
             }
         }
