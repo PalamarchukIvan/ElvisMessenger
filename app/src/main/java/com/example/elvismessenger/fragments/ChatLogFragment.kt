@@ -5,29 +5,24 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.adapters.ChatLogAdapter
-import com.example.elvismessenger.db.*
-import com.example.elvismessenger.fragments.settings.EditProfileFragment
+import com.example.elvismessenger.db.ChatMessage
+import com.example.elvismessenger.db.ChatRepository
+import com.example.elvismessenger.db.User
+import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.utils.FCMSender
-import com.example.elvismessenger.utils.LinearLayoutManagerWrapper
 import com.example.elvismessenger.utils.NotificationService
 import com.example.elvismessenger.utils.StorageUtil
 import com.firebase.ui.database.FirebaseRecyclerOptions
@@ -180,7 +175,7 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
 
         // Часть кода для работы списка чатов
         recyclerView = view.findViewById(R.id.list_recycler_view_chat_log)
-        val layoutManager = LinearLayoutManagerWrapper(context)
+        val layoutManager = LinearLayoutManager(context)
         // Пердаем layout в наш recycleView
         recyclerView.layoutManager = layoutManager
 
@@ -244,36 +239,32 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         }
 
         sendButton.setOnClickListener {
-            if (!isUserBanned(currentUser, otherUser)) {
-                // Для отправки сообщения
-                val msg = ChatMessage(
-                    currentUser.uid,
-                    otherUser.uid,
-                    inputText.text.toString(),
-                    img = "",
-                    System.currentTimeMillis()
-                )
+            // Для отправки сообщения
+            val msg = ChatMessage(
+                currentUser.uid,
+                otherUser.uid,
+                inputText.text.toString(),
+                img = "",
+                System.currentTimeMillis()
+            )
 
-                ChatRepository.getInstance()
-                    .sendMessage(msg, currentUser, otherUser, chatQuery, requireContext()) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Error: ${it?.message.toString()}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+            ChatRepository.getInstance()
+                .sendMessage(msg, currentUser, otherUser, chatQuery, requireContext()) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Error: ${it?.message.toString()}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
 
-                inputText.text.clear()
-                recyclerView.smoothScrollToPosition(adapter.itemCount)
-            }
+            inputText.text.clear()
+            recyclerView.smoothScrollToPosition(adapter.itemCount)
         }
 
         sendImageBtn.setOnClickListener {
-            if (!isUserBanned(currentUser, otherUser)) {
-                val iGallery = Intent(Intent.ACTION_PICK)
-                iGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                startActivityForResult(iGallery, RC_SELECT_IMG)
-            }
+            val iGallery = Intent(Intent.ACTION_PICK)
+            iGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            startActivityForResult(iGallery, RC_SELECT_IMG)
         }
     }
 
@@ -289,11 +280,13 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
                 selectedImageBmp.compress(Bitmap.CompressFormat.JPEG, 25, outputStream)
                 val selectedImageBytes = outputStream.toByteArray()
 
-                StorageUtil().uploadMsgImg(selectedImageBytes) {imagePath ->
-                    val msg = ChatMessage(currentUser.uid, otherUser.uid,  "", img=imagePath, System.currentTimeMillis())
+                requireActivity().runOnUiThread {
+                    StorageUtil().uploadMsgImg(selectedImageBytes) {imagePath ->
+                        val msg = ChatMessage(currentUser.uid, otherUser.uid,  "", img=imagePath, System.currentTimeMillis())
 
-                    ChatRepository.getInstance().sendMessage(msg, currentUser, otherUser, chatQuery, requireContext()) {
-                        Toast.makeText(requireContext(), "Error: ${it?.message.toString()}", Toast.LENGTH_SHORT).show()
+                        ChatRepository.getInstance().sendMessage(msg, currentUser, otherUser, chatQuery, requireContext()) {
+                            Toast.makeText(requireContext(), "Error: ${it?.message.toString()}", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
@@ -302,6 +295,14 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
 
     fun isMessagingTo(to: String, from: String): Boolean {
         return (to == currentUser.uid && from == otherUser.uid) || (to == otherUser.uid && from == currentUser.uid)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        recyclerView.recycledViewPool.clear()
+        adapter.notifyDataSetChanged()
+        adapter.startListening()
+        recyclerView.smoothScrollToPosition(adapter.itemCount)
     }
 
     private fun isUserBanned(currentUser: User, otherUser: User): Boolean {

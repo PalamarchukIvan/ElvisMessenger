@@ -31,10 +31,14 @@ class ChatRepository private constructor(){
         // Для записи этого же сообщения в список последних сообщений всех юзеров
         val chatItemMsg = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), false, id = otherUser.uid, name = otherUser.username, photo = otherUser.photo)
         val latestMsgRef = getOpenToUserChat(currentUser.uid, otherUser.uid)
+        if (msg.img.isNotEmpty()) chatItemMsg.text = "Photo"
+
         latestMsgRef.setValue(chatItemMsg)
 
         val chatItemMsgTo = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), true, id = currentUser.uid, name = currentUser.username, photo = currentUser.photo)
         val latestMsgToRef = getOpenToUserChat(otherUser.uid, currentUser.uid)
+        if (msg.img.isNotEmpty()) chatItemMsgTo.text = "Photo"
+
         latestMsgToRef.setValue(chatItemMsgTo)
 
         chatQuery.ref.push().setValue(msg) { error, _ ->
