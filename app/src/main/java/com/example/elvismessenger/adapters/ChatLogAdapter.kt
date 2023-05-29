@@ -151,19 +151,14 @@ class ChatLogAdapter(
             }
         }
 
-        // TODO доделать удаление, чтобы в лейтест меседжах отображалось последнее сообщение
-        val latestMsgPosition = options.snapshots.indexOfLast { it.text.isNotEmpty() }
-        val latestMsgText = if (latestMsgPosition > 0) {
-            options.snapshots[latestMsgPosition].text
-        } else {
-            ""
+        if (messagesSelectedList.containsKey(options.snapshots.count() - 1)) {
+            val latestMsgRef = FirebaseDatabase.getInstance().getReference("/users/${currentUser.uid}/latestMessages/${otherUser.uid}/text")
+            latestMsgRef.setValue("[Deleted]")
+
+            val latestMsgToRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/latestMessages/${currentUser.uid}/text")
+            latestMsgToRef.setValue("[Deleted]")
         }
 
-        val latestMsgRef = FirebaseDatabase.getInstance().getReference("/users/${currentUser.uid}/latestMessages/${otherUser.uid}/text")
-        latestMsgRef.setValue(latestMsgText)
-
-        val latestMsgToRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/latestMessages/${currentUser.uid}/text")
-        latestMsgToRef.setValue(latestMsgText)
 
         uncheckItems()
     }

@@ -239,32 +239,42 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         }
 
         sendButton.setOnClickListener {
-            // Для отправки сообщения
-            val msg = ChatMessage(
-                currentUser.uid,
-                otherUser.uid,
-                inputText.text.toString(),
-                img = "",
-                System.currentTimeMillis()
-            )
+            isUserBanned(currentUser, otherUser) { isBanned ->
+                if (!isBanned) {
+                    // Для отправки сообщения
+                    val msg = ChatMessage(
+                        currentUser.uid,
+                        otherUser.uid,
+                        inputText.text.toString(),
+                        img = "",
+                        System.currentTimeMillis()
+                    )
 
-            ChatRepository.getInstance()
-                .sendMessage(msg, currentUser, otherUser, chatQuery, requireContext()) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Error: ${it?.message.toString()}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    ChatRepository.getInstance()
+                        .sendMessage(msg, currentUser, otherUser, chatQuery, requireContext()) {
+                            Toast.makeText(
+                                requireContext(),
+                                "Error: ${it?.message.toString()}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                    inputText.text.clear()
+                    recyclerView.smoothScrollToPosition(adapter.itemCount)
+                } else {
+                    Toast.makeText(requireContext(), "ТЫ ЗАБАНЕН ДОЛБАЕБ", Toast.LENGTH_SHORT).show()
                 }
-
-            inputText.text.clear()
-            recyclerView.smoothScrollToPosition(adapter.itemCount)
+            }
         }
 
         sendImageBtn.setOnClickListener {
-            val iGallery = Intent(Intent.ACTION_PICK)
-            iGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            startActivityForResult(iGallery, RC_SELECT_IMG)
+            isUserBanned(currentUser, otherUser) { isBanned ->
+                if (!isBanned) {
+                    val iGallery = Intent(Intent.ACTION_PICK)
+                    iGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                    startActivityForResult(iGallery, RC_SELECT_IMG)
+                }
+            }
         }
     }
 
@@ -300,34 +310,24 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
     override fun onStart() {
         super.onStart()
         recyclerView.recycledViewPool.clear()
+        recyclerView.scrollToPosition(adapter.itemCount)
         adapter.notifyDataSetChanged()
         adapter.startListening()
-        recyclerView.smoothScrollToPosition(adapter.itemCount)
     }
 
-    private fun isUserBanned(currentUser: User, otherUser: User): Boolean {
+    private fun isUserBanned(currentUser: User, otherUser: User, onSuccess: (Boolean) -> Unit) {
         // TODO доделать проверку забанен ли юзкр
         val otherUserBannedListRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/bannedUsers")
-        var isCurrentUserBanned = false
 
         otherUserBannedListRef.get().addOnSuccessListener { snapshot ->
             for (i in snapshot.children) {
                 if (currentUser.uid == i.key) {
-                    isCurrentUserBanned = true
-                    break
+                    onSuccess(true)
+                    return@addOnSuccessListener
                 }
             }
-
-            if (isCurrentUserBanned) {
-                // User is banned, perform any necessary actions
-                Toast.makeText(requireContext(), "This user banned you", Toast.LENGTH_SHORT).show()
-            }
-        }.addOnFailureListener { exception ->
-            // Handle any potential errors
-            Log.d("tag", "Error retrieving banned user list: ${exception.message}")
+            onSuccess(false)
         }
-
-        return isCurrentUserBanned
     }
 
 
