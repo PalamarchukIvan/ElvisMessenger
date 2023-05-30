@@ -108,6 +108,7 @@ class ChatListAdapter(
         for (i in chatsSelectedList) {
             i.value.checkMark.visibility = View.INVISIBLE
         }
+
         chatsSelectedList.clear()
     }
 
@@ -124,11 +125,11 @@ class ChatListAdapter(
                     .getInstance()
                     .getReference("/users/${UserRepository.currentUser.value!!.uid}/latestMessages/${i.key.id ?: i.key.id}")
                 query.removeValue()
-                i.value.checkMark.visibility = View.INVISIBLE
                 chatList.remove(i.key)
             }
         }
-        chatsSelectedList.clear()
+
+        uncheckItems()
         notifyDataSetChanged()
     }
 
