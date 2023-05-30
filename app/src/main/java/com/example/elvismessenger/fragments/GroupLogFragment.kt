@@ -39,7 +39,7 @@ import com.squareup.picasso.Picasso
 import java.io.ByteArrayOutputStream
 import kotlin.streams.toList
 
-class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
+class GroupLogFragment: Fragment(R.layout.fragment_chat_log) {
     companion object {
         const val ANOTHER_GROUP = "another_group"
     }
@@ -152,7 +152,7 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
         groupQuery = GroupRepository.getGroupMessages(currentGroup.id)
 
         // Часть кода для работы списка чатов
-        recyclerView = view.findViewById(R.id.list_recycler_view_group_log)
+        recyclerView = view.findViewById(R.id.list_recycler_view_chat_log)
         val layoutManager = LinearLayoutManagerWrapper(context)
         // Пердаем layout в наш recycleView
         recyclerView.layoutManager = layoutManager
@@ -191,8 +191,8 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
         recyclerView.adapter = adapter
 
         // Для отправки сообщения локально
-        val sendButton: Button = view.findViewById(R.id.send_button_group_log)
-        val inputText: EditText = view.findViewById(R.id.input_edit_text_group_log)
+        val sendButton: Button = view.findViewById(R.id.send_button_chat_log)
+        val inputText: EditText = view.findViewById(R.id.input_edit_text_chat_log)
 
         // TODO: Cделать нотификация, что кто-то пишет
         inputText.addTextChangedListener {
