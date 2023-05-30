@@ -55,7 +55,7 @@ class ChatRepository private constructor(){
         fun getInstance() = instance
 
         fun getChatID(currentUserUID: String, otherUserUID: String) : String {
-            return if(currentUserUID.compareTo(otherUserUID) > 1) {
+            return if(currentUserUID > otherUserUID) {
                 "${currentUserUID}_${otherUserUID}"
             } else {
                 "${otherUserUID}_${currentUserUID}"
