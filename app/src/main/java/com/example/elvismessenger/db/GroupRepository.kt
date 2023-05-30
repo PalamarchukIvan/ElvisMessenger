@@ -111,7 +111,7 @@ object GroupRepository {
 
         // Для записи этого же сообщения в список последних сообщений всех юзеров
         for (uid in group.userList) {
-            val chatItemMsg = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), false, id = group.id, name = group.groupName, photo = group.groupPhoto, isGroup = true)
+            val chatItemMsg = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), uid != currentUser.uid, id = group.id, name = group.groupName, photo = group.groupPhoto, isGroup = true)
             val latestMsgRef = ChatRepository.getInstance().getOpenToUserChat(uid, group.id)
             if (msg.img.isNotEmpty()) chatItemMsg.text = "Photo"
             latestMsgRef.setValue(chatItemMsg).addOnSuccessListener {

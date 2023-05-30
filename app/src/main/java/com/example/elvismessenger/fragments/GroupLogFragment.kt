@@ -81,7 +81,7 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
     }
 
     override fun onResume() {
-        recyclerView.smoothScrollToPosition(adapter.itemCount)
+        recyclerView.scrollTo(0, recyclerView.bottom)
         super.onResume()
     }
 
@@ -274,7 +274,7 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
     override fun onStart() {
         super.onStart()
         recyclerView.recycledViewPool.clear()
-        recyclerView.scrollToPosition(adapter.itemCount)
+        recyclerView.scrollTo(0, recyclerView.bottom)
         adapter.notifyDataSetChanged()
         adapter.startListening()
     }
