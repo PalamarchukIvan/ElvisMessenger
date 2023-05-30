@@ -34,7 +34,9 @@
     <TextView
         android:id="@+id/status_text_chat_item"
         android:layout_width="wrap_content"
+        android:maxWidth="256dp"
         android:layout_height="wrap_content"
+        android:maxHeight="16dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
         android:text="TextView"

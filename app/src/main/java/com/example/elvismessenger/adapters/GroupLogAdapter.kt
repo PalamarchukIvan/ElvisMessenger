@@ -51,7 +51,8 @@ class GroupLogAdapter(
 
             if (msg.img.isNotEmpty()) {
                 Picasso.get().load(msg.img).placeholder(R.drawable.baseline_image_24).into(img)
-                img.visibility = View.VISIBLE
+            } else {
+                img.setImageDrawable(null)
             }
 
             if(currentUser.uid == msg.currentUserUID) {

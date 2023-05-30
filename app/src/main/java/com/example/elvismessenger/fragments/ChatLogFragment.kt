@@ -195,7 +195,8 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
                     Toast.LENGTH_SHORT
                 ).show()
             },
-            onLongItemClick = { state -> showDeleteFab(state) })
+            onLongItemClick = { state -> showDeleteFab(state) }
+        )
 
         // Передаем адаптер
         recyclerView.adapter = adapter
@@ -251,7 +252,7 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
                     inputText.text.clear()
                     recyclerView.smoothScrollToPosition(adapter.itemCount)
                 } else {
-                    Toast.makeText(requireContext(), "ТЫ ЗАБАНЕН ДОЛБАЕБ", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "${otherUser.username} banned you", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -262,6 +263,8 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
                     val iGallery = Intent(Intent.ACTION_PICK)
                     iGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                     startActivityForResult(iGallery, RC_SELECT_IMG)
+                } else {
+                    Toast.makeText(requireContext(), "${otherUser.username} banned you", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -305,7 +308,6 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
     }
 
     private fun isUserBanned(currentUser: User, otherUser: User, onSuccess: (Boolean) -> Unit) {
-        // TODO доделать проверку забанен ли юзкр
         val otherUserBannedListRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/bannedUsers")
 
         otherUserBannedListRef.get().addOnSuccessListener { snapshot ->

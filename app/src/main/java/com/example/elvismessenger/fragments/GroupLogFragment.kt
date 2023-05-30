@@ -102,6 +102,7 @@ class GroupLogFragment: Fragment(R.layout.fragment_chat_log) {
 
         // Отмена удаления сообщений
         cancelDeleteBtn.setOnClickListener {
+            adapter.uncheckItems()
             cancelDeleteBtn.visibility = View.INVISIBLE
             showDeleteFab(View.INVISIBLE)
         }
