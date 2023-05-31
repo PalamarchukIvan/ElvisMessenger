@@ -130,9 +130,21 @@
                                 android:text="Leave"/>
                     </LinearLayout>
                 </LinearLayout>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/group_profile_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/confirm"
+                    android:layout_gravity="center_horizontal"
+                    android:paddingHorizontal="60dp"
+                    android:visibility="gone"
+                    android:background="@drawable/round_button_white"
+                    android:layout_marginTop="30dp"/>
             </LinearLayout>
         </RelativeLayout>
     </RelativeLayout>
+
     <LinearLayout
         android:layout_marginTop="32dp"
         android:layout_width="match_parent"

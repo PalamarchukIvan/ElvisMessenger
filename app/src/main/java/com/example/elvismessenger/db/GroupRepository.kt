@@ -12,11 +12,10 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.database.ktx.snapshots
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import kotlin.streams.toList
@@ -38,7 +37,6 @@ object GroupRepository {
 
             addOrUpdatePhoto(
                 fileInBytes,
-                groupReference.key!!,
                 group,
                 groupReference
             )
@@ -67,8 +65,12 @@ object GroupRepository {
 
     }
 
-    fun updateGroup(newGroup: Group) {
-        getGroupById(newGroup.id).setValue(newGroup)
+    fun updateGroupName(id: String, newName: String) {
+        getGroupById(id).get().addOnSuccessListener {
+            val newGroup = it.getValue<Group>()!!
+            newGroup.groupName = newName
+            getGroupById(id).setValue(newGroup)
+        }
     }
 
     fun updateWhoIsWriting(add: Boolean, username: String, group: Group) {
@@ -152,11 +154,11 @@ object GroupRepository {
         }
     }
 
-    fun addOrUpdatePhoto(fileInBytes: ByteArray, groupId: String, group: Group, groupReference: DatabaseReference) {
+    fun addOrUpdatePhoto(fileInBytes: ByteArray, group: Group, groupReference: DatabaseReference, onSuccess: ((Uri) -> Unit)? = null) {
         val photoNodeRef = FirebaseStorage
                                 .getInstance()
                                 .getReference("group_photos")
-                                .child(groupId)
+                                .child(group.id)
 
         Thread {
             photoNodeRef.putBytes(fileInBytes).addOnSuccessListener {
@@ -164,6 +166,7 @@ object GroupRepository {
                     photoNodeRef.downloadUrl.addOnSuccessListener {
                         group.groupPhoto = it.toString()
                         groupReference.setValue(group)
+                        onSuccess?.invoke(it)
                     }.addOnFailureListener {
                         Log.d("Error with photo ", it.message.toString())
                     }

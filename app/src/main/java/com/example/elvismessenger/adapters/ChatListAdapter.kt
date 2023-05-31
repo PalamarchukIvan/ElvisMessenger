@@ -1,5 +1,6 @@
 package com.example.elvismessenger.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,10 +9,15 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
+import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.fragments.ChatListFragment
 import com.github.marlonlom.utilities.timeago.TimeAgo
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
 
 class ChatListAdapter(
@@ -85,7 +91,7 @@ class ChatListAdapter(
         }
     }
 
-    override fun onBindViewHolder(holder: ChatListViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ChatListViewHolder, @SuppressLint("RecyclerView") position: Int) {
         holder.bind(chatList[position])
 
         holder.itemView.setOnClickListener {
