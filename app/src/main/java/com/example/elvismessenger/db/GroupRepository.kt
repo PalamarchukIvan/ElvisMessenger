@@ -103,6 +103,30 @@ object GroupRepository {
     fun getGroupMessages(id: String) = getGroupById(id).child("messages")
     fun getGroupUsers(id: String) = getGroupById(id).child("userList")
 
+    fun addNewUsers(group: Group, userList: ArrayList<String>) {
+
+        for (uid in userList) {
+            val chatItem = ChatListFragment.ChatItem(
+                "You was added",
+                System.currentTimeMillis(),
+                isNew = true,
+                isGroup = true,
+                id = group.id,
+                name = group.groupName,
+                photo = group.groupPhoto
+            )
+            val latestMsgToRef = ChatRepository.getInstance().getOpenToUserChat(uid, group.id)
+            latestMsgToRef.setValue(chatItem)
+        }
+
+        getGroupUsers(group.id).get().addOnSuccessListener {
+            for (i in it.children) {
+                userList.add(i.getValue(String::class.java)!!)
+            }
+            getGroupUsers(group.id).setValue(userList)
+        }
+    }
+
     fun deleteMessage(groupId: String, msgId: String, onSuccess: () -> Unit) {
         getGroupMessages(groupId).child(msgId).removeValue().addOnSuccessListener {
             onSuccess.invoke()

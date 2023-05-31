@@ -1,5 +1,6 @@
 package com.example.elvismessenger.fragments
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
@@ -13,13 +14,16 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.adapters.GroupProfileAdapter
 import com.example.elvismessenger.db.Group
 import com.example.elvismessenger.db.GroupRepository
+import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.fragments.settings.EditProfileFragment
 import com.firebase.ui.database.FirebaseRecyclerOptions
@@ -49,6 +53,7 @@ class GroupProfileFragment : Fragment(R.layout.fragment_group_profile) {
     private var newPhotoBytes: ByteArray? = null
 
 
+    @SuppressLint("NewApi")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -60,6 +65,10 @@ class GroupProfileFragment : Fragment(R.layout.fragment_group_profile) {
         }
 
         initUiElements(view)
+        setFragmentResultListener(ChooseWhoToAddFragment.RESULT_USER_LIST_CODE) { key, bundle ->
+            val newUsers = bundle.getStringArrayList(ChooseWhoToAddFragment.RESULT_USER_LIST)!!
+            GroupRepository.addNewUsers(groupLiveData.value!!, newUsers)
+        }
 
         GroupRepository.getGroupById(groupLiveData.value!!.id)
             .addValueEventListener(object : ValueEventListener {
@@ -116,7 +125,10 @@ class GroupProfileFragment : Fragment(R.layout.fragment_group_profile) {
         }
 
         addToGroup.setOnClickListener {
-
+            val args = Bundle()
+            args.putParcelable(ChooseWhoToAddFragment.USER_WHO_ADD_MEMBERS, UserRepository.currentUser.value)
+            args.putParcelable(ChooseWhoToAddFragment.GROUP_TO_ADD_MEMBERS, groupLiveData.value)
+            Navigation.findNavController(view).navigate(R.id.action_groupProfileFragment_to_chooseWhoToAddFragment, args)
         }
 
         leaveFromGroup.setOnClickListener {

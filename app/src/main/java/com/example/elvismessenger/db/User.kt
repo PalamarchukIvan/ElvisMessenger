@@ -19,7 +19,11 @@ data class User(
     var latestMessages: HashMap<String, ChatListFragment.ChatItem> = hashMapOf(),
     var bannedUsers: HashMap<String, User> = hashMapOf(),
     var cloudToken: String =  ""
-) : Parcelable
+) : Parcelable, Comparable<User> {
+    override fun compareTo(other: User): Int {
+        return hashCode().compareTo(other.hashCode())
+    }
+}
 
 fun userToLatestMsgUser(user: User): User {
     user.latestMessages.clear()

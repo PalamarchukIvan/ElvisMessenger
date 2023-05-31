@@ -165,7 +165,11 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
             override fun onDataChange(snapshot: DataSnapshot) {
                 currentGroup = snapshot.getValue<Group>()!!
                 currentGroup.groupPhoto.let {
-                    Picasso.get().load(it).into(groupPhoto)
+                    if(it.isNotEmpty()) {
+                        Picasso.get().load(it).into(groupPhoto)
+                    } else {
+                        Picasso.get().load(R.drawable.dornan).into(groupPhoto)
+                    }
                 }
                 groupName.text = currentGroup.groupName
                 if(currentGroup.whoAreWriting.size == 0) {

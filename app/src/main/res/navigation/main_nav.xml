@@ -150,5 +150,14 @@
     <fragment
         android:id="@+id/groupProfileFragment"
         android:name="com.example.elvismessenger.fragments.GroupProfileFragment"
-        tools:layout="@layout/fragment_group_profile" />
+        tools:layout="@layout/fragment_group_profile" >
+        <action
+            android:id="@+id/action_groupProfileFragment_to_chooseWhoToAddFragment"
+            app:destination="@id/chooseWhoToAddFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chooseWhoToAddFragment"
+        android:name="com.example.elvismessenger.fragments.ChooseWhoToAddFragment"
+        android:label="Choose users to Add"
+        tools:layout="@layout/fragment_choose_who_to_add" />
 </navigation>
