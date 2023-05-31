@@ -23,7 +23,6 @@ import com.example.elvismessenger.R
 import com.example.elvismessenger.adapters.GroupProfileAdapter
 import com.example.elvismessenger.db.Group
 import com.example.elvismessenger.db.GroupRepository
-import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.fragments.settings.EditProfileFragment
 import com.firebase.ui.database.FirebaseRecyclerOptions
@@ -117,7 +116,7 @@ class GroupProfileFragment : Fragment(R.layout.fragment_group_profile) {
                 } else {
                     Picasso
                         .get()
-                        .load(R.drawable.dornan)
+                        .load(R.drawable.no_pfp)
                         .into(it)
                 }
             }

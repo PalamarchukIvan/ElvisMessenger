@@ -2,7 +2,6 @@ package com.example.elvismessenger.fragments
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -35,7 +34,6 @@ import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
 import com.squareup.picasso.Picasso
-import java.io.ByteArrayOutputStream
 import kotlin.streams.toList
 
 class GroupLogFragment: Fragment(R.layout.fragment_chat_log) {
@@ -87,9 +85,9 @@ class GroupLogFragment: Fragment(R.layout.fragment_chat_log) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        groupPhoto = view.findViewById(R.id.group_photo)
-        groupName = view.findViewById(R.id.group_name)
-        groupState = view.findViewById(R.id.users_count)
+        groupPhoto = view.findViewById(R.id.user_photo)
+        groupName = view.findViewById(R.id.username)
+        groupState = view.findViewById(R.id.current_state)
         returnBtn = view.findViewById(R.id.return_btn)
 
         deleteFAB = view.findViewById(R.id.delete_msg_btn)
@@ -166,7 +164,7 @@ class GroupLogFragment: Fragment(R.layout.fragment_chat_log) {
                     if(it.isNotEmpty()) {
                         Picasso.get().load(it).into(groupPhoto)
                     } else {
-                        Picasso.get().load(R.drawable.dornan).into(groupPhoto)
+                        Picasso.get().load(R.drawable.no_pfp).into(groupPhoto)
                     }
                 }
                 groupName.text = currentGroup.groupName

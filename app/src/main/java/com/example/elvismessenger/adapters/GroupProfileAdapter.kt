@@ -1,14 +1,11 @@
 package com.example.elvismessenger.adapters
 
 import android.view.LayoutInflater
-import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
-import com.example.elvismessenger.db.ChatMessage
-import com.example.elvismessenger.db.Group
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
 import com.firebase.ui.database.FirebaseRecyclerAdapter
@@ -43,7 +40,7 @@ class GroupProfileAdapter(
                 } else {
                     Picasso
                         .get()
-                        .load(R.drawable.dornan)
+                        .load(R.drawable.no_pfp)
                         .into(userPhoto)
                 }
             }
