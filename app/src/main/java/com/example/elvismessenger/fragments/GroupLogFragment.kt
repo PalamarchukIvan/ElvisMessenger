@@ -36,6 +36,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.getValue
 import com.squareup.picasso.Picasso
 import java.io.ByteArrayOutputStream
 import kotlin.streams.toList
@@ -159,6 +160,23 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
         groupState.text = "${currentGroup.userList.size} users"
 
         groupQuery = GroupRepository.getGroupMessages(currentGroup.id)
+
+        GroupRepository.getGroupById(currentGroup.id).addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                currentGroup = snapshot.getValue<Group>()!!
+                currentGroup.groupPhoto.let {
+                    Picasso.get().load(it).into(groupPhoto)
+                }
+                groupName.text = currentGroup.groupName
+                if(currentGroup.whoAreWriting.size == 0) {
+                    groupState.text = "${currentGroup.userList.size} users"
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+            }
+
+        })
 
         // Часть кода для работы списка чатов
         recyclerView = view.findViewById(R.id.list_recycler_view_group_log)
