@@ -25,7 +25,14 @@ data class User(
     }
 }
 
-fun userToLatestMsgUser(user: User): User {
+fun toBannedUser(user: User): User {
+    user.email = ""
+    user.password = ""
+    user.phoneNumber = ""
+    user.about = ""
+    user.lastSeen = 0
     user.latestMessages.clear()
+    user.bannedUsers.clear()
+    user.cloudToken = ""
     return user
 }

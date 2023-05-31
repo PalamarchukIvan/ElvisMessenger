@@ -142,7 +142,7 @@
     <fragment
         android:id="@+id/groupLogFragment"
         android:name="com.example.elvismessenger.fragments.GroupLogFragment"
-        tools:layout="@layout/fragment_group_log" >
+        tools:layout="@layout/fragment_chat_log" >
         <action
             android:id="@+id/action_groupLogFragment_to_groupProfileFragment"
             app:destination="@id/groupProfileFragment" />

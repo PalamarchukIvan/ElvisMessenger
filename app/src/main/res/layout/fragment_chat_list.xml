@@ -39,6 +39,7 @@
                     android:clickable="true"
                     android:src="@drawable/baseline_delete_24"
                     android:visibility="invisible"
+                    app:backgroundTint="@color/elvis_primary_color"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:tint="@color/white" />

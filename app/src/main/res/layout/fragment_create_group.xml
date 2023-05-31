@@ -27,7 +27,7 @@
                 android:id="@+id/selected_group_image"
                 android:layout_width="128dp"
                 android:layout_height="128dp"
-                android:src="@drawable/dornan"/>
+                android:src="@drawable/no_pfp"/>
 
             <ImageView
                 android:id="@+id/change_photo_btn"

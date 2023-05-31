@@ -16,6 +16,7 @@
             android:id="@+id/input_edit_text_chat_log"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:maxHeight="32dp"
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:background="@drawable/reg_log_edit_text"
@@ -77,6 +78,7 @@
             android:clickable="true"
             android:src="@drawable/baseline_delete_24"
             android:visibility="invisible"
+            app:backgroundTint="@color/elvis_primary_color"
             app:layout_constraintBottom_toTopOf="@+id/send_button_chat_log"
             app:layout_constraintEnd_toEndOf="parent"
             app:tint="@color/white" />
@@ -110,7 +112,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:src="@drawable/dornan"/>
+                android:src="@drawable/no_pfp"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"

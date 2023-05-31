@@ -19,7 +19,7 @@
                 android:layout_height="100dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
-                android:src="@drawable/dornan" />
+                android:src="@drawable/no_pfp" />
 
             <TextView
                 android:id="@+id/settings_username"

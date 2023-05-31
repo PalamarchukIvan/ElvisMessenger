@@ -10,7 +10,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.SwitchCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.example.elvismessenger.R
@@ -106,7 +105,7 @@ class SettingsFragment : Fragment() {
                     } else {
                         userPhoto.let { photo ->
                             Picasso.get()
-                                .load(R.drawable.dornan)
+                                .load(R.drawable.no_pfp)
                                 .into(photo)
                         }
                     }
@@ -128,7 +127,7 @@ class SettingsFragment : Fragment() {
                 } else {
                     userPhoto.let { photo ->
                         Picasso.get()
-                            .load(R.drawable.dornan)
+                            .load(R.drawable.no_pfp)
                             .into(photo)
                     }
                 }

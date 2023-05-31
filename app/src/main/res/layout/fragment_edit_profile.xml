@@ -53,7 +53,7 @@
                     android:id="@+id/current_photo_edit_profile"
                     android:layout_width="112dp"
                     android:layout_height="112dp"
-                    android:src="@drawable/dornan" />
+                    android:src="@drawable/no_pfp" />
 
                 <ImageView
                     android:id="@+id/change_photo_btn"
@@ -90,18 +90,8 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="5dp"
                         android:background="@drawable/custom_edit_text"
-                        android:text="user_name"
-                        android:inputType="textShortMessage"
-                        android:textColor="@color/white" />
-
-                    <EditText
-                        android:id="@+id/new_about"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:background="@drawable/custom_edit_text"
-                        android:text="about"
+                        android:hint="New username"
+                        android:textColorHint="@color/elvis_text_color"
                         android:inputType="textShortMessage"
                         android:textColor="@color/white" />
 
@@ -110,16 +100,26 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:layout_marginBottom="10dp"
+                        android:layout_marginBottom="5dp"
                         android:background="@drawable/custom_edit_text"
-                        android:text="satus"
+                        android:hint="New status"
+                        android:textColorHint="@color/elvis_text_color"
                         android:inputType="textShortMessage"
                         android:textColor="@color/white" />
 
+                    <EditText
+                        android:id="@+id/new_about"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/custom_edit_text"
+                        android:textColorHint="@color/elvis_text_color"
+                        android:hint="New about me"
+                        android:inputType="textShortMessage"
+                        android:textColor="@color/white" />
                 </LinearLayout>
-
             </RelativeLayout>
-
         </RelativeLayout>
 
         <androidx.appcompat.widget.AppCompatButton

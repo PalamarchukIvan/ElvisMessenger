@@ -27,7 +27,6 @@ import de.hdodenhof.circleimageview.CircleImageView
 class GroupLogAdapter(
     private val options: FirebaseRecyclerOptions<ChatMessage>,
     private val currentGroup: Group,
-    private val onItemClick: ((ChatMessage) -> Unit),
     private val onLongItemClick: (Int) -> Unit
 ) : FirebaseRecyclerAdapter<ChatMessage, GroupLogAdapter.GroupViewHolder>(options)  {
 
@@ -51,7 +50,8 @@ class GroupLogAdapter(
 
             if (msg.img.isNotEmpty()) {
                 Picasso.get().load(msg.img).placeholder(R.drawable.baseline_image_24).into(img)
-                img.visibility = View.VISIBLE
+            } else {
+                img.setImageDrawable(null)
             }
 
             if(currentUser.uid == msg.currentUserUID) {
@@ -74,12 +74,12 @@ class GroupLogAdapter(
                         Picasso
                             .get()
                             .load(it)
-                            .placeholder(R.drawable.dornan)
+                            .placeholder(R.drawable.no_pfp)
                             .into(msgPhoto)
                     } else {
                         Picasso
                             .get()
-                            .load(R.drawable.dornan)
+                            .load(R.drawable.no_pfp)
                             .into(msgPhoto)
                     }
                 }
@@ -118,10 +118,6 @@ class GroupLogAdapter(
 
     override fun onBindViewHolder(holder: GroupViewHolder, position: Int, model: ChatMessage) {
         holder.bind(model)
-
-        holder.itemView.setOnClickListener {
-            onItemClick.invoke(options.snapshots[position])
-        }
 
         holder.itemView.setOnLongClickListener {
             if (position in messagesSelectedList.keys) {

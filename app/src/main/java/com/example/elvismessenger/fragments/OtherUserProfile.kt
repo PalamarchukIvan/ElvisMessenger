@@ -5,12 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.elvismessenger.R
 import com.example.elvismessenger.db.ChatRepository
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
+import com.example.elvismessenger.db.toBannedUser
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -55,7 +55,7 @@ class OtherUserProfile : Fragment(R.layout.fragment_other_user_profile) {
                 .setNegativeButton("no", null)
                 .setPositiveButton("yes") { _, _ ->
                     val banRef = FirebaseDatabase.getInstance().getReference("/users/${currentUser!!.uid}/bannedUsers")
-                    banRef.child(otherUser.uid).setValue(otherUser)
+                    banRef.child(otherUser.uid).setValue(toBannedUser(otherUser))
                 }
                 .show()
         }
@@ -113,7 +113,7 @@ class OtherUserProfile : Fragment(R.layout.fragment_other_user_profile) {
                 .into(otherUserProfilePicture)
         } else {
             Picasso.get()
-                .load(R.drawable.dornan)
+                .load(R.drawable.no_pfp)
                 .fit()
                 .centerCrop()
                 .into(otherUserProfilePicture)

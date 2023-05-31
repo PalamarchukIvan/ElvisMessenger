@@ -21,14 +21,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.adapters.GroupLogAdapter
 import com.example.elvismessenger.db.ChatMessage
-import com.example.elvismessenger.db.ChatRepository
 import com.example.elvismessenger.db.Group
 import com.example.elvismessenger.db.GroupRepository
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
-import com.example.elvismessenger.utils.FCMSender
 import com.example.elvismessenger.utils.LinearLayoutManagerWrapper
-import com.example.elvismessenger.utils.NotificationService
 import com.example.elvismessenger.utils.StorageUtil
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -41,7 +38,7 @@ import com.squareup.picasso.Picasso
 import java.io.ByteArrayOutputStream
 import kotlin.streams.toList
 
-class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
+class GroupLogFragment: Fragment(R.layout.fragment_chat_log) {
     companion object {
         const val ANOTHER_GROUP = "another_group"
     }
@@ -112,6 +109,7 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
 
         // Отмена удаления сообщений
         cancelDeleteBtn.setOnClickListener {
+            adapter.uncheckItems()
             cancelDeleteBtn.visibility = View.INVISIBLE
             showDeleteFab(View.INVISIBLE)
         }
@@ -131,12 +129,12 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
                     groupPhoto.let { photo ->
                         Picasso.get()
                             .load(currentGroup.groupPhoto)
-                            .placeholder(R.drawable.dornan)
+                            .placeholder(R.drawable.no_pfp)
                             .into(photo)
                     }
                 } else {
                     Picasso.get()
-                        .load(R.drawable.dornan)
+                        .load(R.drawable.no_pfp)
                         .into(groupPhoto)
                 }
                 groupName.text = currentGroup.groupName
@@ -183,7 +181,7 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
         })
 
         // Часть кода для работы списка чатов
-        recyclerView = view.findViewById(R.id.list_recycler_view_group_log)
+        recyclerView = view.findViewById(R.id.list_recycler_view_chat_log)
         val layoutManager = LinearLayoutManagerWrapper(context)
         // Пердаем layout в наш recycleView
         recyclerView.layoutManager = layoutManager
@@ -209,21 +207,14 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
         adapter = GroupLogAdapter(
             options,
             currentGroup,
-            {
-                Toast.makeText(
-                    requireContext(),
-                    "You clicked on ${currentGroup.groupName}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            },
             onLongItemClick = { state -> showDeleteFab(state) })
 
         // Передаем адаптер
         recyclerView.adapter = adapter
 
         // Для отправки сообщения локально
-        val sendButton: Button = view.findViewById(R.id.send_button_group_log)
-        val inputText: EditText = view.findViewById(R.id.input_edit_text_group_log)
+        val sendButton: Button = view.findViewById(R.id.send_button_chat_log)
+        val inputText: EditText = view.findViewById(R.id.input_edit_text_chat_log)
 
         // TODO: Cделать нотификация, что кто-то пишет
         inputText.addTextChangedListener {
@@ -239,24 +230,36 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
         }
 
         sendButton.setOnClickListener {
-            // Для отправки сообщения
-            val msg = ChatMessage(
-                currentUser.uid,
-                inputText.text.toString(),
-                "",
-                System.currentTimeMillis()
-            )
-            GroupRepository.sendMessage(msg, currentUser, currentGroup, groupQuery, requireContext()) {
-                Toast.makeText(requireContext(), "Что-то пошло не так ${it.toString()}", Toast.LENGTH_SHORT).show()
-            }
+            if (inputText.text.isNotEmpty()) {
+                // Для отправки сообщения
+                val msg = ChatMessage(
+                    currentUser.uid,
+                    inputText.text.toString(),
+                    "",
+                    System.currentTimeMillis()
+                )
+                GroupRepository.sendMessage(
+                    msg,
+                    currentUser,
+                    currentGroup,
+                    groupQuery,
+                    requireContext()
+                ) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Something went wrong ${it.toString()}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
 
-            inputText.text.clear()
-            recyclerView.smoothScrollToPosition(adapter.itemCount)
+                inputText.text.clear()
+                recyclerView.smoothScrollToPosition(adapter.itemCount)
+            }
         }
 
         sendImageBtn.setOnClickListener {
             val iGallery = Intent(Intent.ACTION_PICK)
-            iGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            iGallery.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             startActivityForResult(iGallery, ChatLogFragment.RC_SELECT_IMG)
         }
     }
@@ -269,16 +272,32 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
                 val selectedImagePath = data?.data
 
                 val selectedImageBmp = MediaStore.Images.Media.getBitmap(context?.contentResolver, selectedImagePath)
-                val outputStream = ByteArrayOutputStream()
-                selectedImageBmp.compress(Bitmap.CompressFormat.JPEG, 25, outputStream)
-                val selectedImageBytes = outputStream.toByteArray()
+                val compressedImg = StorageUtil.compressImg(selectedImageBmp)
 
-                StorageUtil().uploadMsgImg(selectedImageBytes) { imagePath ->
-                    val msg = ChatMessage(currentUser.uid,  img=imagePath, time = System.currentTimeMillis())
+                if (compressedImg != null) {
+                    StorageUtil.uploadMsgImg(compressedImg) { imagePath ->
+                        val msg = ChatMessage(
+                            currentUser.uid,
+                            img = imagePath,
+                            time = System.currentTimeMillis()
+                        )
 
-                    GroupRepository.sendMessage(msg, currentUser, currentGroup, groupQuery, requireContext()) {
-                        Toast.makeText(requireContext(), "Error: ${it?.message.toString()}", Toast.LENGTH_SHORT).show()
+                        GroupRepository.sendMessage(
+                            msg,
+                            currentUser,
+                            currentGroup,
+                            groupQuery,
+                            requireContext()
+                        ) {
+                            Toast.makeText(
+                                requireContext(),
+                                "Error: ${it?.message.toString()}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
+                } else {
+                    Toast.makeText(requireContext(), "Size of the image should be less than 8 mb", Toast.LENGTH_SHORT).show()
                 }
             }
         }

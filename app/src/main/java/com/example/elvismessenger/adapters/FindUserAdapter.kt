@@ -1,6 +1,5 @@
 package com.example.elvismessenger.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,7 +37,7 @@ open class FindUserAdapter(
                         .into(pfp)
                 } else {
                     Picasso.get()
-                        .load(R.drawable.dornan)
+                        .load(R.drawable.no_pfp)
                         .into(pfp)
                 }
             }

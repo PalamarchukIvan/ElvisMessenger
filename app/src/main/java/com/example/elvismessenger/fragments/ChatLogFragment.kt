@@ -5,8 +5,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -133,7 +131,7 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
                             .into(photo)
                     }
                 } else {
-                    Picasso.get().load(R.drawable.dornan).into(anotherUserPhoto)
+                    Picasso.get().load(R.drawable.no_pfp).into(anotherUserPhoto)
                 }
                 anotherUsername.text = user.username
             }
@@ -188,14 +186,8 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         adapter = ChatLogAdapter(
             options,
             otherUser,
-            {
-                Toast.makeText(
-                    requireContext(),
-                    "You clicked on ${otherUser.username}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            },
-            onLongItemClick = { state -> showDeleteFab(state) })
+            onLongItemClick = { state -> showDeleteFab(state) }
+        )
 
         // Передаем адаптер
         recyclerView.adapter = adapter
@@ -230,28 +222,34 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
 
         sendButton.setOnClickListener {
             isUserBanned(currentUser, otherUser) { isBanned ->
-                if (!isBanned) {
-                    // Для отправки сообщения
-                    val msg = ChatMessage(
-                        currentUser.uid,
-                        inputText.text.toString(),
-                        img = "",
-                        System.currentTimeMillis()
-                    )
+                if (inputText.text.isNotEmpty()) {
+                    if (!isBanned) {
+                        // Для отправки сообщения
+                        val msg = ChatMessage(
+                            currentUser.uid,
+                            inputText.text.toString(),
+                            img = "",
+                            System.currentTimeMillis()
+                        )
 
-                    ChatRepository.getInstance()
-                        .sendMessage(msg, currentUser, otherUser, chatQuery, requireContext()) {
-                            Toast.makeText(
-                                requireContext(),
-                                "Error: ${it?.message.toString()}",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+                        ChatRepository.getInstance()
+                            .sendMessage(msg, currentUser, otherUser, chatQuery, requireContext()) {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Error: ${it?.message.toString()}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
 
-                    inputText.text.clear()
-                    recyclerView.smoothScrollToPosition(adapter.itemCount)
-                } else {
-                    Toast.makeText(requireContext(), "ТЫ ЗАБАНЕН ДОЛБАЕБ", Toast.LENGTH_SHORT).show()
+                        inputText.text.clear()
+                        recyclerView.smoothScrollToPosition(adapter.itemCount)
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "${otherUser.username} banned you",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
         }
@@ -260,8 +258,10 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
             isUserBanned(currentUser, otherUser) { isBanned ->
                 if (!isBanned) {
                     val iGallery = Intent(Intent.ACTION_PICK)
-                    iGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                    iGallery.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                     startActivityForResult(iGallery, RC_SELECT_IMG)
+                } else {
+                    Toast.makeText(requireContext(), "${otherUser.username} banned you", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -279,18 +279,32 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
                 val selectedImagePath = data?.data
 
                 val selectedImageBmp = MediaStore.Images.Media.getBitmap(context?.contentResolver, selectedImagePath)
-                val outputStream = ByteArrayOutputStream()
-                selectedImageBmp.compress(Bitmap.CompressFormat.JPEG, 25, outputStream)
-                val selectedImageBytes = outputStream.toByteArray()
 
-                requireActivity().runOnUiThread {
-                    StorageUtil().uploadMsgImg(selectedImageBytes) { imagePath ->
-                        val msg = ChatMessage(currentUser.uid,  img=imagePath, time = System.currentTimeMillis())
+                val compressedImg = StorageUtil.compressImg(selectedImageBmp)
 
-                        ChatRepository.getInstance().sendMessage(msg, currentUser, otherUser, chatQuery, requireContext()) {
-                            Toast.makeText(requireContext(), "Error: ${it?.message.toString()}", Toast.LENGTH_SHORT).show()
-                        }
+                if (compressedImg != null) {
+                    StorageUtil.uploadMsgImg(compressedImg) { imagePath ->
+                        val msg = ChatMessage(
+                            currentUser.uid,
+                            img = imagePath,
+                            time = System.currentTimeMillis()
+                        )
+
+                        ChatRepository.getInstance()
+                            .sendMessage(msg, currentUser, otherUser, chatQuery, requireContext()) {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Error: ${it?.message.toString()}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                     }
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Size of the image should be less than 8 mb",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -305,7 +319,6 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
     }
 
     private fun isUserBanned(currentUser: User, otherUser: User, onSuccess: (Boolean) -> Unit) {
-        // TODO доделать проверку забанен ли юзкр
         val otherUserBannedListRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/bannedUsers")
 
         otherUserBannedListRef.get().addOnSuccessListener { snapshot ->
@@ -315,6 +328,7 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
                     return@addOnSuccessListener
                 }
             }
+
             onSuccess(false)
         }
     }
