@@ -31,7 +31,7 @@ class BannedUsersAdapter (
                         .into(pfp)
                 } else {
                     Picasso.get()
-                        .load(R.drawable.dornan)
+                        .load(R.drawable.no_pfp)
                         .into(pfp)
                 }
             }

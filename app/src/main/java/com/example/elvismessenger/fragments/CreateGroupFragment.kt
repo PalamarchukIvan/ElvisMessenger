@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
@@ -83,8 +84,17 @@ class CreateGroupFragment : Fragment(R.layout.fragment_create_group) {
         }
 
         confirmBtn.setOnClickListener {
-            GroupRepository.createGroup(chosenUsers, groupNameET.text.toString(), photo, requireContext())
-            requireActivity().onBackPressed()
+            if (groupNameET.text.isNotEmpty()) {
+                GroupRepository.createGroup(
+                    chosenUsers,
+                    groupNameET.text.toString(),
+                    photo,
+                    requireContext()
+                )
+                requireActivity().onBackPressed()
+            } else {
+                Toast.makeText(requireContext(), "Name of the group can't be empty", Toast.LENGTH_SHORT).show()
+            }
         }
         initRecyclerViewContent(recyclerView)
 

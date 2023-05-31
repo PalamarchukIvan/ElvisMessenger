@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.elvismessenger.R
 import com.example.elvismessenger.db.ChatRepository
@@ -113,7 +112,7 @@ class OtherUserProfile : Fragment(R.layout.fragment_other_user_profile) {
                 .into(otherUserProfilePicture)
         } else {
             Picasso.get()
-                .load(R.drawable.dornan)
+                .load(R.drawable.no_pfp)
                 .fit()
                 .centerCrop()
                 .into(otherUserProfilePicture)

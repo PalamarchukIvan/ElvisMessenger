@@ -53,7 +53,7 @@
                     android:id="@+id/current_photo_edit_profile"
                     android:layout_width="112dp"
                     android:layout_height="112dp"
-                    android:src="@drawable/dornan" />
+                    android:src="@drawable/no_pfp" />
 
                 <ImageView
                     android:id="@+id/change_photo_btn"

@@ -61,11 +61,11 @@ class EditProfileFragment : Fragment() {
                         if (it.photo.isNotBlank()) {
                             Picasso.get()
                                 .load(it.photo.toUri())
-                                .placeholder(R.drawable.dornan)
+                                .placeholder(R.drawable.no_pfp)
                                 .into(this)
                         } else {
                             Picasso.get()
-                                .load(R.drawable.dornan)
+                                .load(R.drawable.no_pfp)
                                 .into(this)
                         }
                     }
@@ -81,11 +81,11 @@ class EditProfileFragment : Fragment() {
                         if (it.photo.isNotBlank()) {
                             Picasso.get()
                                 .load(it.photo.toUri())
-                                .placeholder(R.drawable.dornan)
+                                .placeholder(R.drawable.no_pfp)
                                 .into(this)
                         } else {
                             Picasso.get()
-                                .load(R.drawable.dornan)
+                                .load(R.drawable.no_pfp)
                                 .into(this)
                         }
                     }

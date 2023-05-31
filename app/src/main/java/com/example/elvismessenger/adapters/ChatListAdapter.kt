@@ -42,7 +42,7 @@ class ChatListAdapter(
             if (chatItem.photo != null && chatItem.photo != "") {
                 Picasso.get().load(chatItem.photo).into(pfp)
             } else {
-                Picasso.get().load(R.drawable.dornan).into(pfp)
+                Picasso.get().load(R.drawable.no_pfp).into(pfp)
             }
             name.text = chatItem.name
             status.text = chatItem.text

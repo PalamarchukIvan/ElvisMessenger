@@ -140,7 +140,7 @@ class MainActivity : AppCompatActivity() {
                                 .into(this)
                         } else {
                             Picasso.get()
-                                .load(R.drawable.dornan)
+                                .load(R.drawable.no_pfp)
                                 .into(this)
                         }
                     }
@@ -156,11 +156,11 @@ class MainActivity : AppCompatActivity() {
                         if (it.photo.isNotBlank()) {
                             Picasso.get()
                                 .load(it.photo.toUri())
-                                .placeholder(R.drawable.dornan)
+                                .placeholder(R.drawable.no_pfp)
                                 .into(this)
                         } else {
                             Picasso.get()
-                                .load(R.drawable.dornan)
+                                .load(R.drawable.no_pfp)
                                 .into(this)
                         }
                     }
@@ -225,7 +225,7 @@ class MainActivity : AppCompatActivity() {
                                             Notification.Builder(context, "MESSAGE")
                                                 .setContentTitle(extras.getString(NotificationService.TITLE_KEY))
                                                 .setContentText(extras.getString(NotificationService.BODY_KEY))
-                                                .setSmallIcon(R.drawable.dornan)
+                                                .setSmallIcon(R.drawable.no_pfp)
                                                 .setAutoCancel(true);
 
                                         if (navHostFragment.childFragmentManager.fragments.last() is ChatLogFragment) {

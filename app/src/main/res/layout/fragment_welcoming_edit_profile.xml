@@ -65,7 +65,7 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginBottom="16dp"
-                    android:src="@drawable/dornan" />
+                    android:src="@drawable/no_pfp" />
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
@@ -98,6 +98,7 @@
 
                     <EditText
                         android:id="@+id/edit_username"
+                        android:inputType="text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -127,6 +128,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="@drawable/custom_edit_text"
                         android:hint="Status"
+                        android:inputType="text"
                         android:textColor="@color/elvis_text_variant_color"
                         android:textColorHint="@color/elvis_text_color"
                         android:textSize="18sp" />

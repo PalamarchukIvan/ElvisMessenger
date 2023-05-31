@@ -2,11 +2,9 @@ package com.example.elvismessenger.fragments
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.provider.MediaStore.Audio.Media
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,17 +13,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.core.view.isVisible
 import androidx.navigation.Navigation
 import com.example.elvismessenger.R
 import com.example.elvismessenger.activities.RegLogActivity
 import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.fragments.settings.EditProfileFragment
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
 
 class WelcomingEditProfileFragment : Fragment(R.layout.fragment_welcoming_edit_profile) {
 
@@ -56,7 +49,7 @@ class WelcomingEditProfileFragment : Fragment(R.layout.fragment_welcoming_edit_p
                         .into(photo)
                 } else {
                     Picasso.get()
-                        .load(R.drawable.dornan)
+                        .load(R.drawable.no_pfp)
                         .into(photo)
                 }
             }

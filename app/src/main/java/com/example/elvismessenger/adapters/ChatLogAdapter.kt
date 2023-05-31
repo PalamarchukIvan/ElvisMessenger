@@ -35,7 +35,6 @@ import kotlinx.coroutines.launch
 class ChatLogAdapter(
     private val options: FirebaseRecyclerOptions<ChatMessage>,
     private val otherUser: User,
-    private val onItemClick: ((ChatMessage) -> Unit),
     private val onLongItemClick: (Int) -> Unit
 ) : FirebaseRecyclerAdapter<ChatMessage, ChatLogAdapter.ChatViewHolder>(options) {
 
@@ -104,10 +103,6 @@ class ChatLogAdapter(
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int, model: ChatMessage) {
         holder.bind(model)
-
-        holder.itemView.setOnClickListener {
-            onItemClick.invoke(options.snapshots[position])
-        }
 
         holder.itemView.setOnLongClickListener {
             if (position in messagesSelectedList.keys) {
