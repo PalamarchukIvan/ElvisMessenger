@@ -107,6 +107,19 @@ object GroupRepository {
         }
     }
 
+    fun deleteUserFromGroup(uid: String, groupId: String) {
+        getGroupUsers(groupId).get().addOnSuccessListener {
+            val userList = mutableListOf<String>()
+            for (i in it.children) {
+                if(i.getValue(String::class.java)!! != uid) {
+                    userList.add(i.getValue(String::class.java)!!)
+                }
+            }
+            getGroupUsers(groupId).setValue(userList)
+            UserRepository.getInstance().getUserLatestMessages(uid).child(groupId).removeValue()
+        }
+    }
+
     fun sendMessage(msg: ChatMessage, currentUser: User, group: Group, chatQuery: Query, context: Context, errorHandler: (DatabaseError?) -> Unit) {
 
         // Для записи этого же сообщения в список последних сообщений всех юзеров

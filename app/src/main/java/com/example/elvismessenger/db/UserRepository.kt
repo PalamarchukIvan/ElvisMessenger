@@ -62,6 +62,8 @@ class UserRepository private constructor() {
     fun getUserByUID(uid: String) = FirebaseDatabase.getInstance().getReference("users").child(uid)
 
 
+    fun getUserLatestMessages(uid: String) = getUserByUID(uid).child("latestMessages")
+
     fun makeActive() {
         getInstance().getUserByUID(FirebaseAuth.getInstance().currentUser!!.uid).get().addOnSuccessListener { userDB ->
             val activeUser = userDB.getValue(User::class.java)!!
