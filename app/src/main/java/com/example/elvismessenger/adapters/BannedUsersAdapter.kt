@@ -7,10 +7,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
+import com.example.elvismessenger.db.ChatRepository
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.fragments.ChatListFragment
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.squareup.picasso.Picasso
 
 class BannedUsersAdapter (
@@ -18,7 +21,7 @@ class BannedUsersAdapter (
     private val onLongItemClick: (Int) -> Unit
 ) : FirebaseRecyclerAdapter<User, BannedUsersAdapter.BannedUsersViewHolder>(options) {
 
-    private val  unbanSelectedList = HashMap<User, BannedUsersViewHolder>()
+    private val  unBanSelectedList = HashMap<User, BannedUsersViewHolder>()
 
     class BannedUsersViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val chatName: TextView = itemView.findViewById(R.id.name_text_find_user_item)
@@ -82,7 +85,7 @@ class BannedUsersAdapter (
         holder.bind(model)
 
         holder.itemView.setOnLongClickListener {
-            unbanSelectedList[options.snapshots[position]] = holder
+            unBanSelectedList[options.snapshots[position]] = holder
             holder.checkMark.visibility = View.VISIBLE
             onLongItemClick.invoke(View.VISIBLE)
 
@@ -91,10 +94,26 @@ class BannedUsersAdapter (
     }
 
     fun uncheckItems() {
-        for (i in unbanSelectedList) {
+        for (i in unBanSelectedList) {
             i.value.checkMark.visibility = View.INVISIBLE
         }
 
-        unbanSelectedList.clear()
+        unBanSelectedList.clear()
+    }
+
+    fun delete() {
+        val currentUser = FirebaseAuth.getInstance().currentUser!!
+        val unBanQuery = FirebaseDatabase.getInstance().getReference("/users/${currentUser.uid}/bannedUsers")
+
+        if (unBanSelectedList.size == options.snapshots.size) {
+            unBanQuery.removeValue()
+        } else {
+            for (i in unBanSelectedList) {
+                i.value.checkMark.visibility = View.INVISIBLE
+                unBanQuery.child(i.key.uid).removeValue()
+            }
+        }
+
+        uncheckItems()
     }
 }

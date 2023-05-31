@@ -70,6 +70,7 @@ class BanListSettingsFragment : Fragment(R.layout.fragment_ban_list_settings) {
         deleteFAB.setOnClickListener {
             showDeleteFab(View.INVISIBLE)
             cancelUnBanBtn.visibility = View.INVISIBLE
+            adapter.delete()
         }
     }
 
