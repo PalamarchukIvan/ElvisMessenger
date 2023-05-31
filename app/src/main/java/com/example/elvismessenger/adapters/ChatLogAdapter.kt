@@ -116,6 +116,7 @@ class ChatLogAdapter(
                 messagesSelectedList[position] = holder
                 onLongItemClick.invoke(View.VISIBLE)
             }
+
             true
         }
     }
@@ -153,7 +154,6 @@ class ChatLogAdapter(
             val latestMsgToRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/latestMessages/${currentUser.uid}/text")
             latestMsgToRef.setValue("[Deleted]")
         }
-
 
         uncheckItems()
     }

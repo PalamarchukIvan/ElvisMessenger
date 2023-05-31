@@ -10,6 +10,7 @@ import com.example.elvismessenger.R
 import com.example.elvismessenger.db.ChatRepository
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
+import com.example.elvismessenger.db.toBannedUser
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -54,7 +55,7 @@ class OtherUserProfile : Fragment(R.layout.fragment_other_user_profile) {
                 .setNegativeButton("no", null)
                 .setPositiveButton("yes") { _, _ ->
                     val banRef = FirebaseDatabase.getInstance().getReference("/users/${currentUser!!.uid}/bannedUsers")
-                    banRef.child(otherUser.uid).setValue(otherUser)
+                    banRef.child(otherUser.uid).setValue(toBannedUser(otherUser))
                 }
                 .show()
         }

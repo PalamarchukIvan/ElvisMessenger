@@ -8,18 +8,23 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.db.User
+import com.example.elvismessenger.fragments.ChatListFragment
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.squareup.picasso.Picasso
 
 class BannedUsersAdapter (
-    options: FirebaseRecyclerOptions<User>,
+    private val options: FirebaseRecyclerOptions<User>,
+    private val onLongItemClick: (Int) -> Unit
 ) : FirebaseRecyclerAdapter<User, BannedUsersAdapter.BannedUsersViewHolder>(options) {
+
+    private val  unbanSelectedList = HashMap<User, BannedUsersViewHolder>()
 
     class BannedUsersViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val chatName: TextView = itemView.findViewById(R.id.name_text_find_user_item)
         private val pfp: ImageView = itemView.findViewById(R.id.pfp_image_find_user_item)
         private val status: TextView = itemView.findViewById(R.id.status_text_find_user_item)
+        val checkMark: ImageView = itemView.findViewById(R.id.check_mark)
 
         fun bind(user: User) {
             chatName.text = user.username
@@ -75,5 +80,21 @@ class BannedUsersAdapter (
 
     override fun onBindViewHolder(holder: BannedUsersViewHolder, position: Int, model: User) {
         holder.bind(model)
+
+        holder.itemView.setOnLongClickListener {
+            unbanSelectedList[options.snapshots[position]] = holder
+            holder.checkMark.visibility = View.VISIBLE
+            onLongItemClick.invoke(View.VISIBLE)
+
+            true
+        }
+    }
+
+    fun uncheckItems() {
+        for (i in unbanSelectedList) {
+            i.value.checkMark.visibility = View.INVISIBLE
+        }
+
+        unbanSelectedList.clear()
     }
 }

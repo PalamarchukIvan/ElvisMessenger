@@ -78,6 +78,7 @@
             android:clickable="true"
             android:src="@drawable/baseline_delete_24"
             android:visibility="invisible"
+            app:backgroundTint="@color/elvis_primary_color"
             app:layout_constraintBottom_toTopOf="@+id/send_button_chat_log"
             app:layout_constraintEnd_toEndOf="parent"
             app:tint="@color/white" />
