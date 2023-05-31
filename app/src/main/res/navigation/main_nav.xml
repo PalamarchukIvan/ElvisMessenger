@@ -142,5 +142,13 @@
     <fragment
         android:id="@+id/groupLogFragment"
         android:name="com.example.elvismessenger.fragments.GroupLogFragment"
-        tools:layout="@layout/fragment_group_log" />
+        tools:layout="@layout/fragment_group_log" >
+        <action
+            android:id="@+id/action_groupLogFragment_to_groupProfileFragment"
+            app:destination="@id/groupProfileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/groupProfileFragment"
+        android:name="com.example.elvismessenger.fragments.GroupProfileFragment"
+        tools:layout="@layout/fragment_group_profile" />
 </navigation>

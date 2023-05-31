@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.adapters.GroupLogAdapter
@@ -88,9 +89,9 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        groupPhoto = view.findViewById(R.id.user_photo)
-        groupName = view.findViewById(R.id.username)
-        groupState = view.findViewById(R.id.current_state)
+        groupPhoto = view.findViewById(R.id.group_photo)
+        groupName = view.findViewById(R.id.group_name)
+        groupState = view.findViewById(R.id.users_count)
         returnBtn = view.findViewById(R.id.return_btn)
 
         deleteFAB = view.findViewById(R.id.delete_msg_btn)
@@ -98,6 +99,14 @@ class GroupLogFragment: Fragment(R.layout.fragment_group_log) {
         cancelDeleteBtn = view.findViewById(R.id.cancel_delete_btn)
         returnBtn.setOnClickListener {
             activity?.onBackPressed()
+        }
+
+
+        groupPhoto.setOnClickListener {
+            val args = Bundle()
+
+            args.putParcelable(GroupProfileFragment.GROUP_DATA, currentGroup)
+            Navigation.findNavController(view).navigate(R.id.action_groupLogFragment_to_groupProfileFragment, args)
         }
 
         // Отмена удаления сообщений
