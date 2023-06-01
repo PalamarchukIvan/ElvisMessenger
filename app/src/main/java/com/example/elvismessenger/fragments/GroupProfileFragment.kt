@@ -26,6 +26,7 @@ import com.example.elvismessenger.db.GroupRepository
 import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.fragments.settings.EditProfileFragment
 import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -88,6 +89,13 @@ class GroupProfileFragment : Fragment(R.layout.fragment_group_profile) {
             .build()
 
         adapter = GroupProfileAdapter(option) {
+            if(it.uid != FirebaseAuth.getInstance().currentUser!!.uid) {
+                val args = Bundle()
+                args.putParcelable("otherUser", it)
+                Navigation.findNavController(view).navigate(R.id.action_groupProfileFragment_to_otherUserProfile, args)
+                return@GroupProfileAdapter
+            }
+            Navigation.findNavController(view).navigate(R.id.action_groupProfileFragment_to_settingsFragment)
 
         }
 
