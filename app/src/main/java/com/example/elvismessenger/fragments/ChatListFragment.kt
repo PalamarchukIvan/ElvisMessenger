@@ -55,6 +55,9 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
 
     }
 
+    private var animatedIsWritingThread: HashMap<String, Thread> = hashMapOf()
+
+
     private lateinit var chatListAdapter: ChatListAdapter
     private lateinit var recyclerView: RecyclerView
 
@@ -226,13 +229,53 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         chatList.forEach {
             if (it.id == uid1) {
                 lastMessagesCache[uid1] = it.text
-                it.text = "Is writing..."
-                chatListAdapter.notifyItemChanged(i)
+                animatedIsWritingThread[uid1] = Thread {
+                    try {
+                        do{
+                            requireActivity().runOnUiThread {
+                                it.text = "Is writing."
+                                chatListAdapter.notifyItemChanged(i)
+                            }
+                            Thread.sleep(1000)
+                            requireActivity().runOnUiThread {
+                                it.text = "Is writing.."
+                                chatListAdapter.notifyItemChanged(i)
+                            }
+                            Thread.sleep(1000)
+                            requireActivity().runOnUiThread {
+                                it.text = "Is writing..."
+                                chatListAdapter.notifyItemChanged(i)
+                            }
+                            Thread.sleep(1000)
+                        } while(true)
+                    } catch (_: InterruptedException) {}
+                }
+                animatedIsWritingThread[uid1]?.start()
                 return
             } else if (it.id == uid2) {
                 lastMessagesCache[uid2] = it.text
-                it.text = "Is writing..."
-                chatListAdapter.notifyItemChanged(i)
+                animatedIsWritingThread[uid2] =  Thread {
+                    try {
+                        do{
+                            requireActivity().runOnUiThread {
+                                it.text = "Is writing."
+                                chatListAdapter.notifyItemChanged(i)
+                            }
+                            Thread.sleep(500)
+                            requireActivity().runOnUiThread {
+                                it.text = "Is writing.."
+                                chatListAdapter.notifyItemChanged(i)
+                            }
+                            Thread.sleep(500)
+                            requireActivity().runOnUiThread {
+                                it.text = "Is writing..."
+                                chatListAdapter.notifyItemChanged(i)
+                            }
+                            Thread.sleep(500)
+                        } while(true)
+                    } catch (_: InterruptedException) {}
+                }
+                animatedIsWritingThread[uid2]?.start()
                 return
             }
             i++
@@ -243,10 +286,12 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
         var i = 0
         chatList.forEach {
             if(it.id == uid1) {
+                animatedIsWritingThread[uid1]?.interrupt()
                 it.text = lastMessagesCache[uid1].toString()
                 chatListAdapter.notifyItemChanged(i)
                 return
             } else if(it.id == uid2) {
+                animatedIsWritingThread[uid2]?.interrupt()
                 it.text = lastMessagesCache[uid2].toString()
                 chatListAdapter.notifyItemChanged(i)
                 return

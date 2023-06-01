@@ -42,6 +42,8 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         const val RC_SELECT_IMG = 101
     }
 
+    private var animatedIsWritingThread = Thread()
+
     private lateinit var recyclerView: RecyclerView
 
     private lateinit var otherUser: User
@@ -332,10 +334,30 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
     }
 
     fun makeOtherUserIsWriting() {
-        anotherUserState.text = "Is writing..."
+        animatedIsWritingThread =  Thread {
+            try {
+                do{
+                    requireActivity().runOnUiThread {
+                        anotherUserState.text = "Is writing."
+                    }
+                    Thread.sleep(1000)
+                    requireActivity().runOnUiThread {
+                        anotherUserState.text = "Is writing.."
+                    }
+                    Thread.sleep(1000)
+                    requireActivity().runOnUiThread {
+                        anotherUserState.text = "Is writing..."
+                    }
+                    Thread.sleep(1000)
+                } while(true)
+            } catch (_: InterruptedException) {}
+
+        }
+        animatedIsWritingThread.start()
     }
 
     fun makeOtherUserIsNotWriting() {
+        animatedIsWritingThread.interrupt()
         anotherUserState.text = "Online"
     }
 
