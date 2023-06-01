@@ -14,6 +14,7 @@ import com.example.elvismessenger.utils.UserPersonalSettings
 
 class LanguageSettingsFragment : Fragment(R.layout.fragment_language_settings) {
     private lateinit var currentLanguage: TextView
+
     companion object {
         val LANGUAGE_LIST = arrayOf(
             "English",
@@ -42,7 +43,12 @@ class LanguageSettingsFragment : Fragment(R.layout.fragment_language_settings) {
         recyclerView.layoutManager = LinearLayoutManager(context)
 
         // Добавление линии между элементами чата
-        recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+        recyclerView.addItemDecoration(
+            DividerItemDecoration(
+                context,
+                DividerItemDecoration.VERTICAL
+            )
+        )
 
         val langAdapter = LanguageOptionsAdapter(LANGUAGE_LIST)
 
