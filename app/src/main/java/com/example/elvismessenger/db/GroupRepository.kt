@@ -73,6 +73,7 @@ object GroupRepository {
         }
     }
 
+    fun getAllGroups() = FirebaseDatabase.getInstance().getReference("groups")
     fun updateWhoIsWriting(add: Boolean, username: String, group: Group) {
         getGroupById(group.id).get().addOnSuccessListener {
             val actualGroup = it.getValue(Group::class.java)!!

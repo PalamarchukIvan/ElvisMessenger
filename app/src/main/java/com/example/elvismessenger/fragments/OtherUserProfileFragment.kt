@@ -6,8 +6,12 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.setFragmentResultListener
+import androidx.navigation.Navigation
 import com.example.elvismessenger.R
 import com.example.elvismessenger.db.ChatRepository
+import com.example.elvismessenger.db.Group
+import com.example.elvismessenger.db.GroupRepository
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.db.toBannedUser
@@ -15,9 +19,11 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.getValue
 import com.squareup.picasso.Picasso
+import java.util.ArrayList
 
-class OtherUserProfile : Fragment(R.layout.fragment_other_user_profile) {
+class OtherUserProfileFragment : Fragment(R.layout.fragment_other_user_profile) {
     private lateinit var otherUser: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,8 +90,28 @@ class OtherUserProfile : Fragment(R.layout.fragment_other_user_profile) {
                 .show()
         }
 
-        addUserToGroup.setOnClickListener {
 
+        setFragmentResultListener(ChooseWhoToAddFragment.RESULT_LIST_CODE) { key, bundle ->
+            val newGroups = bundle.getStringArrayList(ChooseWhoToAddFragment.RESULT_LIST_DATA)!!
+            val list = ArrayList<String>(1)
+            list.add(otherUser.uid)
+            for (id in newGroups) {
+                GroupRepository.getGroupById(id).get().addOnSuccessListener {
+                    GroupRepository.addNewUsers(
+                        it.getValue<Group>()!!,
+                        list
+                    )
+                }
+
+            }
+        }
+
+        addUserToGroup.setOnClickListener {
+            val args = Bundle()
+            args.putBoolean(ChooseWhoToAddFragment.IS_ADDING_USERS, false)
+            args.putParcelable(ChooseWhoToAddFragment.USER_WHO_ADD_MEMBERS, UserRepository.currentUser.value)
+            args.putParcelable(ChooseWhoToAddFragment.USER_WHO_IS_ADDED, otherUser)
+            Navigation.findNavController(view).navigate(R.id.action_otherUserProfile_to_chooseWhoToAddFragment, args)
         }
 
         UserRepository.getInstance().getUserByUID(otherUser.uid).addValueEventListener (object :

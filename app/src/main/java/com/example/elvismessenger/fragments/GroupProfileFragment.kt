@@ -64,8 +64,8 @@ class GroupProfileFragment : Fragment(R.layout.fragment_group_profile) {
         }
 
         initUiElements(view)
-        setFragmentResultListener(ChooseWhoToAddFragment.RESULT_USER_LIST_CODE) { key, bundle ->
-            val newUsers = bundle.getStringArrayList(ChooseWhoToAddFragment.RESULT_USER_LIST)!!
+        setFragmentResultListener(ChooseWhoToAddFragment.RESULT_LIST_CODE) { key, bundle ->
+            val newUsers = bundle.getStringArrayList(ChooseWhoToAddFragment.RESULT_LIST_DATA)!!
             GroupRepository.addNewUsers(groupLiveData.value!!, newUsers)
         }
 
@@ -125,6 +125,7 @@ class GroupProfileFragment : Fragment(R.layout.fragment_group_profile) {
 
         addToGroup.setOnClickListener {
             val args = Bundle()
+            args.putBoolean("12", true)
             args.putParcelable(ChooseWhoToAddFragment.USER_WHO_ADD_MEMBERS, UserRepository.currentUser.value)
             args.putParcelable(ChooseWhoToAddFragment.GROUP_TO_ADD_MEMBERS, groupLiveData.value)
             Navigation.findNavController(view).navigate(R.id.action_groupProfileFragment_to_chooseWhoToAddFragment, args)

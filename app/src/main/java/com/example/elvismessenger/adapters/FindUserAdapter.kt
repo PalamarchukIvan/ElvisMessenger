@@ -12,7 +12,7 @@ import com.example.elvismessenger.db.User
 import com.squareup.picasso.Picasso
 
 open class FindUserAdapter(
-    var userToShowList: MutableList<User>,
+    var userToShowList: MutableList<User> = mutableListOf(),
     private val onItemClick: ((User) -> Unit)?
 ) : RecyclerView.Adapter<FindUserAdapter.FindUserViewHolder>() {
 
@@ -23,9 +23,9 @@ open class FindUserAdapter(
 
     class FindUserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private val chatName: TextView = itemView.findViewById(R.id.name_text_find_user_item)
-        private val pfp: ImageView = itemView.findViewById(R.id.pfp_image_find_user_item)
-        private val status: TextView = itemView.findViewById(R.id.status_text_find_user_item)
+        val chatName: TextView = itemView.findViewById(R.id.name_text_find_user_item)
+        val pfp: ImageView = itemView.findViewById(R.id.pfp_image_find_user_item)
+        val status: TextView = itemView.findViewById(R.id.status_text_find_user_item)
 
         fun bind(user: User) {
             chatName.text = user.username
