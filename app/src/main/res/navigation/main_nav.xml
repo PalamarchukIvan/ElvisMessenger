@@ -158,6 +158,12 @@
         <action
             android:id="@+id/action_groupProfileFragment_to_chooseWhoToAddFragment"
             app:destination="@id/chooseWhoToAddFragment" />
+        <action
+            android:id="@+id/action_groupProfileFragment_to_otherUserProfile"
+            app:destination="@id/otherUserProfile" />
+        <action
+            android:id="@+id/action_groupProfileFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/chooseWhoToAddFragment"
