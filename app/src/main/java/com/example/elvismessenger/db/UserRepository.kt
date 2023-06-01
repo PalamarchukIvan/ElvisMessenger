@@ -21,13 +21,15 @@ import java.io.ByteArrayOutputStream
 class UserRepository private constructor() {
 
 
-    fun createOrUpdateUser(user: User) {
+    fun createOrUpdateUser(user: User, onSuccess: (() -> Unit)? = null) {
         val database = Firebase.database
 
         val userDBRef = database.getReference("users")
         val userNodeREf = userDBRef.child(user.uid)
 
-        userNodeREf.setValue(user)
+        userNodeREf.setValue(user).addOnSuccessListener {
+            onSuccess?.invoke()
+        }
     }
 
     fun addOrUpdateUserPhoto(photoUrl: Uri, context: Context?): Uri {
@@ -94,7 +96,6 @@ class UserRepository private constructor() {
                 getInstance().getUserByUID(it.uid).get().addOnSuccessListener { userDB ->
                     currentUser.postValue(userDB.getValue(User::class.java))
                     setUpFirebaseMessaging()
-                    getInstance().makeActive()
                 }
             }
         }
@@ -108,6 +109,7 @@ class UserRepository private constructor() {
                 Log.d("Token: ", token!!)
                 val newUser = currentUser.value
                 newUser!!.cloudToken = token
+                newUser.isActive = true
                 currentUser.postValue(newUser!!)
                 getInstance().createOrUpdateUser(newUser)
             }

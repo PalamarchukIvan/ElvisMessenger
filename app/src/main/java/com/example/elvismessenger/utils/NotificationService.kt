@@ -1,6 +1,8 @@
 package com.example.elvismessenger.utils
 
 import android.content.Intent
+import com.example.elvismessenger.db.User
+import com.example.elvismessenger.db.UserRepository
 import com.github.javafaker.Bool
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
