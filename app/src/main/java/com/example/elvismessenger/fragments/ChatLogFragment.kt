@@ -150,7 +150,10 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
                 anotherUserState.text = if (user!!.isActive) {
                     "Online"
                 } else {
-                    "Last seen ${TimeAgo.using(user.lastSeen)}"
+                    if(user.lastSeen != -1L) {
+                        "Last seen ${TimeAgo.using(user.lastSeen)}"
+                    }
+                    "Unknown"
                 }
             }
 
