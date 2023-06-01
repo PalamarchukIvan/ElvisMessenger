@@ -78,7 +78,8 @@ class WelcomingEditProfileFragment : Fragment(R.layout.fragment_welcoming_edit_p
                 ).show()
                 RegLogActivity.GOOD -> {
                     saveData()
-                    Navigation.findNavController(view).navigate(R.id.action_welcomingEditProfileFragment_to_mainActivity)
+                    Navigation.findNavController(view)
+                        .navigate(R.id.action_welcomingEditProfileFragment_to_mainActivity)
                     activity?.finish()
                 }
             }
@@ -104,13 +105,13 @@ class WelcomingEditProfileFragment : Fragment(R.layout.fragment_welcoming_edit_p
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(resultCode == Activity.RESULT_OK) {
-            if(requestCode == EditProfileFragment.NEW_PHOTO_REQ_CODE) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == EditProfileFragment.NEW_PHOTO_REQ_CODE) {
 
                 data?.data?.let {
                     val resultUri: Uri = saveImage(data.data)
                     userPfp.setImageURI(resultUri)
-                }?: {
+                } ?: {
                     Toast.makeText(
                         requireContext(),
                         "Something went wrong. Try again",
@@ -123,11 +124,11 @@ class WelcomingEditProfileFragment : Fragment(R.layout.fragment_welcoming_edit_p
 
     private fun validateData(username: String, status: String, bio: String): Int {
 
-        if (username.length < 6 ||  username.length > 20)
+        if (username.length < 6 || username.length > 20)
             return RegLogActivity.INCORRECT_USERNAME_SIZE
-        if(status.length > 10)
+        if (status.length > 10)
             return RegLogActivity.INCORRECT_STATUS_SIZE
-        if(bio.length > 128)
+        if (bio.length > 128)
             return RegLogActivity.INCORRECT_ABOUT_SIZE
 
         return RegLogActivity.GOOD

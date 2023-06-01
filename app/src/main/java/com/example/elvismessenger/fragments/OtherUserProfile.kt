@@ -48,18 +48,21 @@ class OtherUserProfile : Fragment(R.layout.fragment_other_user_profile) {
 
         val currentUser = UserRepository.currentUser.value
 
+        // Блокировка юзера
         banUserBtn.setOnClickListener {
             AlertDialog.Builder(requireContext())
                 .setTitle("Ban")
                 .setMessage("Are you sure that you want to ban user ${otherUser.username}?")
                 .setNegativeButton("no", null)
                 .setPositiveButton("yes") { _, _ ->
-                    val banRef = FirebaseDatabase.getInstance().getReference("/users/${currentUser!!.uid}/bannedUsers")
+                    val banRef = FirebaseDatabase.getInstance()
+                        .getReference("/users/${currentUser!!.uid}/bannedUsers")
                     banRef.child(otherUser.uid).setValue(toBannedUser(otherUser))
                 }
                 .show()
         }
 
+        // Удаление истории чата с юзером
         deleteChatBtn.setOnClickListener {
             AlertDialog.Builder(requireContext())
                 .setTitle("Delete")
@@ -73,10 +76,12 @@ class OtherUserProfile : Fragment(R.layout.fragment_other_user_profile) {
                         )
                     )
 
-                    val latestMsgRef = FirebaseDatabase.getInstance().getReference("/users/${currentUser.uid}/latestMessages/${otherUser.uid}/text")
+                    val latestMsgRef = FirebaseDatabase.getInstance()
+                        .getReference("/users/${currentUser.uid}/latestMessages/${otherUser.uid}/text")
                     latestMsgRef.setValue("")
 
-                    val latestMsgToRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/latestMessages/${currentUser.uid}/text")
+                    val latestMsgToRef = FirebaseDatabase.getInstance()
+                        .getReference("/users/${otherUser.uid}/latestMessages/${currentUser.uid}/text")
                     latestMsgToRef.setValue("")
 
                     chatQuery.removeValue()
@@ -88,7 +93,7 @@ class OtherUserProfile : Fragment(R.layout.fragment_other_user_profile) {
 
         }
 
-        UserRepository.getInstance().getUserByUID(otherUser.uid).addValueEventListener (object :
+        UserRepository.getInstance().getUserByUID(otherUser.uid).addValueEventListener(object :
             ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val user = snapshot.getValue(User::class.java)

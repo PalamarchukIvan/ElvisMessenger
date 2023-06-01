@@ -15,21 +15,25 @@ import com.google.firebase.database.Query
 import com.google.firebase.database.ktx.snapshots
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import kotlin.streams.toList
 
 object GroupRepository {
-    fun createGroup(userList: MutableList<User>, groupName: String?, groupPhoto: Uri?, context: Context?) {
+    fun createGroup(
+        userList: MutableList<User>,
+        groupName: String?,
+        groupPhoto: Uri?,
+        context: Context?
+    ) {
         val groupReference = FirebaseDatabase.getInstance().getReference("groups").push()
         val group = Group(groupReference.key!!, groupName, userList = userList.stream()
             .map {
                 it.uid
-            }.toList())
+            }.toList()
+        )
         groupReference.setValue(group)
-        if(groupPhoto != null) {
+        if (groupPhoto != null) {
             //Сжатие
             val bmp = MediaStore.Images.Media.getBitmap(context?.contentResolver, groupPhoto);
             val baos = ByteArrayOutputStream()
@@ -46,19 +50,23 @@ object GroupRepository {
         GlobalScope.launch {
             groupReference.snapshots.collect {
                 val savedGroup = it.getValue(Group::class.java)
-                for(user in userList) {
-                    val newLatestMessageReference = ChatRepository.getInstance().getOpenToUserChat(user.uid).child(groupReference.key!!)
+                for (user in userList) {
+                    val newLatestMessageReference =
+                        ChatRepository.getInstance().getOpenToUserChat(user.uid)
+                            .child(groupReference.key!!)
                     newLatestMessageReference.get().addOnSuccessListener {
-                        if(it.getValue(Group::class.java) == null) {
-                            newLatestMessageReference.setValue(ChatListFragment.ChatItem(
-                                text = "",
-                                time = System.currentTimeMillis(),
-                                isNew = true,
-                                isGroup = true,
-                                id = groupReference.key,
-                                photo = savedGroup?.groupPhoto,
-                                name = groupName
-                            ))
+                        if (it.getValue(Group::class.java) == null) {
+                            newLatestMessageReference.setValue(
+                                ChatListFragment.ChatItem(
+                                    text = "",
+                                    time = System.currentTimeMillis(),
+                                    isNew = true,
+                                    isGroup = true,
+                                    id = groupReference.key,
+                                    photo = savedGroup?.groupPhoto,
+                                    name = groupName
+                                )
+                            )
                         }
                     }
                 }
@@ -74,19 +82,20 @@ object GroupRepository {
     fun updateWhoIsWriting(add: Boolean, username: String, group: Group) {
         getGroupById(group.id).get().addOnSuccessListener {
             val actualGroup = it.getValue(Group::class.java)!!
-            if(add) {
+            if (add) {
                 actualGroup.whoAreWriting.add(username)
             } else {
                 actualGroup.whoAreWriting.remove(username)
             }
-            if(add) {
+            if (add) {
                 getGroupById(group.id).child("whoAreWriting").get().addOnSuccessListener {
-                    for(i in it.children) {//Второй уровень защиты
-                        if(i.getValue(String::class.java)!! == username){
+                    for (i in it.children) {//Второй уровень защиты
+                        if (i.getValue(String::class.java)!! == username) {
                             return@addOnSuccessListener
                         }
                     }
-                    getGroupById(group.id).child("whoAreWriting").setValue(actualGroup.whoAreWriting)
+                    getGroupById(group.id).child("whoAreWriting")
+                        .setValue(actualGroup.whoAreWriting)
                 }
             } else {
                 getGroupById(group.id).child("whoAreWriting").setValue(actualGroup.whoAreWriting)
@@ -107,15 +116,30 @@ object GroupRepository {
         }
     }
 
-    fun sendMessage(msg: ChatMessage, currentUser: User, group: Group, chatQuery: Query, context: Context, errorHandler: (DatabaseError?) -> Unit) {
+    fun sendMessage(
+        msg: ChatMessage,
+        currentUser: User,
+        group: Group,
+        chatQuery: Query,
+        context: Context,
+        errorHandler: (DatabaseError?) -> Unit
+    ) {
 
         // Для записи этого же сообщения в список последних сообщений всех юзеров
         for (uid in group.userList) {
-            val chatItemMsg = ChatListFragment.ChatItem(msg.text, System.currentTimeMillis(), uid != currentUser.uid, id = group.id, name = group.groupName, photo = group.groupPhoto, isGroup = true)
+            val chatItemMsg = ChatListFragment.ChatItem(
+                msg.text,
+                System.currentTimeMillis(),
+                uid != currentUser.uid,
+                id = group.id,
+                name = group.groupName,
+                photo = group.groupPhoto,
+                isGroup = true
+            )
             val latestMsgRef = ChatRepository.getInstance().getOpenToUserChat(uid, group.id)
             if (msg.img.isNotEmpty()) chatItemMsg.text = "Photo"
             latestMsgRef.setValue(chatItemMsg).addOnSuccessListener {
-                if(currentUser.uid != uid) {
+                if (currentUser.uid != uid) {
                     UserRepository.getInstance().getUserByUID(uid).get().addOnSuccessListener {
                         val otherUser = it.getValue(User::class.java)
                         FCMSender.pushNotification(
@@ -139,11 +163,16 @@ object GroupRepository {
         }
     }
 
-    fun addOrUpdatePhoto(fileInBytes: ByteArray, groupId: String, group: Group, groupReference: DatabaseReference) {
+    private fun addOrUpdatePhoto(
+        fileInBytes: ByteArray,
+        groupId: String,
+        group: Group,
+        groupReference: DatabaseReference
+    ) {
         val photoNodeRef = FirebaseStorage
-                                .getInstance()
-                                .getReference("group_photos")
-                                .child(groupId)
+            .getInstance()
+            .getReference("group_photos")
+            .child(groupId)
 
         Thread {
             photoNodeRef.putBytes(fileInBytes).addOnSuccessListener {

@@ -8,15 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.elvismessenger.R
 import com.example.elvismessenger.activities.MainActivity
 import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.fragments.settings.SettingsFragment
 import com.example.elvismessenger.utils.UserPersonalSettings
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.PhoneAuthCredential
 
 class PhoneNumberSettingsFragment : Fragment() {
 
@@ -26,22 +23,23 @@ class PhoneNumberSettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         newPhoneNumber = view.findViewById(R.id.new_phone_number)
 
-        val connectivityManager = requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
 
         UserRepository.currentUser?.observe(viewLifecycleOwner) {
-            if(networkInfo != null && networkInfo.isConnected) {
+            if (networkInfo != null && networkInfo.isConnected) {
                 newPhoneNumber.setText(it.phoneNumber)
             }
         }
         UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
-            if(networkInfo == null || !networkInfo.isConnected) {
+            if (networkInfo == null || !networkInfo.isConnected) {
                 newPhoneNumber.setText(it.phoneNumber)
             }
         }
 
         newPhoneNumber.setOnFocusChangeListener { v, hasFocus ->
-            if(!hasFocus) {
+            if (!hasFocus) {
                 saveData()
             }
         }
@@ -49,7 +47,8 @@ class PhoneNumberSettingsFragment : Fragment() {
 
     private fun saveData() {
 
-        val connectivityManager = requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
         if (networkInfo == null || !networkInfo.isConnected) {
             Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT).show()

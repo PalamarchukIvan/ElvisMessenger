@@ -1,9 +1,11 @@
 package com.example.elvismessenger.fragments.settings
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.example.elvismessenger.R
@@ -34,7 +36,11 @@ class SecuritySettingsFragment : Fragment(R.layout.fragment_security_settings) {
 
 
         // Адаптер для спинеров
-        val visibilityAdapter = ArrayAdapter.createFromResource(requireActivity(), R.array.visibility, R.layout.spinner_item)
+        val visibilityAdapter = ArrayAdapter.createFromResource(
+            requireActivity(),
+            R.array.visibility,
+            R.layout.spinner_item
+        )
         visibilityAdapter.setDropDownViewResource(android.R.layout.simple_list_item_activated_1)
 
         // Спинеры
@@ -63,14 +69,25 @@ class SecuritySettingsFragment : Fragment(R.layout.fragment_security_settings) {
 
         // Работа со спинерами
 
-        phoneNumberVisibility.setSelection(MainActivity.sp.getInt(SettingsFragment.PHONE_NUMBER_VIS.toString(), 0))
+        phoneNumberVisibility.setSelection(
+            MainActivity.sp.getInt(
+                SettingsFragment.PHONE_NUMBER_VIS.toString(),
+                0
+            )
+        )
 
-        phoneNumberVisibility.onItemSelectedListener =  object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        phoneNumberVisibility.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 val editor = MainActivity.sp.edit()
                 editor?.putInt(SettingsFragment.PHONE_NUMBER_VIS.toString(), position)
                 editor?.apply()
             }
+
             override fun onNothingSelected(p0: AdapterView<*>?) {
                 val editor = MainActivity.sp.edit()
                 editor?.putInt(SettingsFragment.PHONE_NUMBER_VIS.toString(), 0)
@@ -78,14 +95,25 @@ class SecuritySettingsFragment : Fragment(R.layout.fragment_security_settings) {
             }
         }
 
-        lastSeenVisibility.setSelection(MainActivity.sp.getInt(SettingsFragment.LAST_SEEN_VIS.toString(), 0))
+        lastSeenVisibility.setSelection(
+            MainActivity.sp.getInt(
+                SettingsFragment.LAST_SEEN_VIS.toString(),
+                0
+            )
+        )
 
-        lastSeenVisibility.onItemSelectedListener =  object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        lastSeenVisibility.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 val editor = MainActivity.sp.edit()
                 editor?.putInt(SettingsFragment.LAST_SEEN_VIS.toString(), position)
                 editor?.apply()
             }
+
             override fun onNothingSelected(p0: AdapterView<*>?) {
                 val editor = MainActivity.sp.edit()
                 editor?.putInt(SettingsFragment.LAST_SEEN_VIS.toString(), 0)
@@ -93,14 +121,25 @@ class SecuritySettingsFragment : Fragment(R.layout.fragment_security_settings) {
             }
         }
 
-        groupAddVisibility.setSelection(MainActivity.sp.getInt(SettingsFragment.GROUP_ADD_VIS.toString(), 0))
+        groupAddVisibility.setSelection(
+            MainActivity.sp.getInt(
+                SettingsFragment.GROUP_ADD_VIS.toString(),
+                0
+            )
+        )
 
-        groupAddVisibility.onItemSelectedListener =  object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        groupAddVisibility.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 val editor = MainActivity.sp.edit()
                 editor?.putInt(SettingsFragment.GROUP_ADD_VIS.toString(), position)
                 editor?.apply()
             }
+
             override fun onNothingSelected(p0: AdapterView<*>?) {
                 val editor = MainActivity.sp.edit()
                 editor?.putInt(SettingsFragment.GROUP_ADD_VIS.toString(), 0)

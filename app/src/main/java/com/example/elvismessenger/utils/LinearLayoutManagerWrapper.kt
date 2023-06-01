@@ -11,7 +11,7 @@ class LinearLayoutManagerWrapper(val context: Context?) : LinearLayoutManager(co
         try {
             super.onLayoutChildren(recycler, state)
         } catch (e: IndexOutOfBoundsException) {
-            Log.d("IndexOutOfBoundsException ", "ХА, сука!! Поймал тебя за яйца")
+            Log.d("IndexOutOfBoundsException ", e.message.toString())
         }
     }
 }

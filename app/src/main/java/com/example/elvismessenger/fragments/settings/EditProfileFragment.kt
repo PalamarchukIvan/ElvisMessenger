@@ -49,49 +49,42 @@ class EditProfileFragment : Fragment() {
         currentPhoto = view.findViewById(R.id.current_photo_edit_profile)
         newPhotoBtn = view.findViewById(R.id.change_photo_btn)
 
-        val connectivityManager = requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
 
-            UserRepository.currentUser?.observe(viewLifecycleOwner) {
-                if(networkInfo != null && networkInfo.isConnected) {
-                    newStatus.setText(it.status)
-                    newAbout.setText(it.about)
-                    newName.setText(it.username)
-                    currentPhoto.apply {
-                        if (it.photo.isNotBlank()) {
-                            Picasso.get()
-                                .load(it.photo.toUri())
-                                .placeholder(R.drawable.no_pfp)
-                                .into(this)
-                        } else {
-                            Picasso.get()
-                                .load(R.drawable.no_pfp)
-                                .into(this)
-                        }
+        UserRepository.currentUser?.observe(viewLifecycleOwner) {
+            if (networkInfo != null && networkInfo.isConnected) {
+                newStatus.setText(it.status)
+                newAbout.setText(it.about)
+                newName.setText(it.username)
+                currentPhoto.apply {
+                    if (it.photo.isNotBlank()) {
+                        Picasso.get().load(it.photo.toUri()).placeholder(R.drawable.no_pfp)
+                            .into(this)
+                    } else {
+                        Picasso.get().load(R.drawable.no_pfp).into(this)
                     }
-                    submitBtn.isVisible = false
                 }
+                submitBtn.isVisible = false
             }
-            UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
-                if(networkInfo == null || !networkInfo.isConnected) {
-                    newStatus.setText(it.status)
-                    newAbout.setText(it.about)
-                    newName.setText(it.username)
-                    currentPhoto.apply {
-                        if (it.photo.isNotBlank()) {
-                            Picasso.get()
-                                .load(it.photo.toUri())
-                                .placeholder(R.drawable.no_pfp)
-                                .into(this)
-                        } else {
-                            Picasso.get()
-                                .load(R.drawable.no_pfp)
-                                .into(this)
-                        }
+        }
+        UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
+            if (networkInfo == null || !networkInfo.isConnected) {
+                newStatus.setText(it.status)
+                newAbout.setText(it.about)
+                newName.setText(it.username)
+                currentPhoto.apply {
+                    if (it.photo.isNotBlank()) {
+                        Picasso.get().load(it.photo.toUri()).placeholder(R.drawable.no_pfp)
+                            .into(this)
+                    } else {
+                        Picasso.get().load(R.drawable.no_pfp).into(this)
                     }
-                    submitBtn.isVisible = false
                 }
+                submitBtn.isVisible = false
             }
+        }
 
         newStatus.addTextChangedListener {
             submitBtn.isVisible = true
@@ -122,8 +115,8 @@ class EditProfileFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(resultCode == RESULT_OK) {
-            if(requestCode == NEW_PHOTO_REQ_CODE) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == NEW_PHOTO_REQ_CODE) {
                 val resultPhoto = saveImage(data?.data)
                 currentPhoto.setImageURI(resultPhoto)
             }
@@ -131,20 +124,21 @@ class EditProfileFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_edit_profile, container, false)
     }
 
     private fun saveData() {
 
-        if(newName.text.toString().length < 6) {
-            Toast.makeText(requireContext(), "New username is badly formatted", Toast.LENGTH_SHORT).show()
+        if (newName.text.toString().length < 6) {
+            Toast.makeText(requireContext(), "New username is badly formatted", Toast.LENGTH_SHORT)
+                .show()
             return
         }
 
-        val connectivityManager = requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
         if (networkInfo == null || !networkInfo.isConnected) {
             Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT).show()
@@ -162,8 +156,7 @@ class EditProfileFragment : Fragment() {
             UserRepository.getInstance().createOrUpdateUser(this)
         }
 
-        val editor =
-            MainActivity.sp.edit()
+        val editor = MainActivity.sp.edit()
         editor?.putString(SettingsFragment.STATUS, newStatus.text.toString())
         editor?.putString(SettingsFragment.ABOUT, newAbout.text.toString())
         editor?.putString(SettingsFragment.USERNAME, newName.text.toString())
@@ -180,5 +173,4 @@ class EditProfileFragment : Fragment() {
         }
         return uri!!
     }
-
 }

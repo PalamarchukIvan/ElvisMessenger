@@ -21,7 +21,8 @@ class NotificationsSettingsFragment : Fragment() {
         currentNotificationVolume = view.findViewById(R.id.current_notifications_volume)
 
         UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
-            newNotificationVolume.progress = UserPersonalSettings.livaDataInstance.value!!.notificationVolume
+            newNotificationVolume.progress =
+                UserPersonalSettings.livaDataInstance.value!!.notificationVolume
             currentNotificationVolume.text = newNotificationVolume.progress.toString()
         }
 

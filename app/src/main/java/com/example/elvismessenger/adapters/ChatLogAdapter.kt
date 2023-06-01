@@ -1,24 +1,17 @@
 package com.example.elvismessenger.adapters
 
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.db.ChatMessage
 import com.example.elvismessenger.db.ChatRepository
 import com.example.elvismessenger.db.User
-import com.example.elvismessenger.db.UserRepository
-import com.example.elvismessenger.fragments.ChatListFragment
-import com.example.elvismessenger.fragments.ChatLogFragment
 import com.example.elvismessenger.utils.SelectionManager.Companion.SELECT
 import com.example.elvismessenger.utils.SelectionManager.Companion.UNSELECT_EVEN
 import com.firebase.ui.database.FirebaseRecyclerAdapter
@@ -26,18 +19,14 @@ import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ktx.snapshots
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 
 class ChatLogAdapter(
     private val options: FirebaseRecyclerOptions<ChatMessage>,
     private val otherUser: User,
     private val onLongItemClick: (Int) -> Unit
 ) : FirebaseRecyclerAdapter<ChatMessage, ChatLogAdapter.ChatViewHolder>(options) {
-
+    // Выбранные сообщения, которые юзер собирается удалить
     private val messagesSelectedList = HashMap<Int, ChatViewHolder>()
 
     class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -47,8 +36,8 @@ class ChatLogAdapter(
         }
 
         var chatMessage: ConstraintLayout = itemView.findViewById(R.id.chat_message)
-        private var  message: TextView? = null
-        private val  time: TextView = itemView.findViewById(R.id.time_message)
+        private var message: TextView? = null
+        private val time: TextView = itemView.findViewById(R.id.time_message)
         private val img: ImageView = itemView.findViewById(R.id.image_msg)
 
         fun bind(msg: ChatMessage) {
@@ -81,7 +70,7 @@ class ChatLogAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
-        val holder = when(viewType) {
+        val holder = when (viewType) {
             ChatViewHolder.ME -> ChatViewHolder(
                 LayoutInflater.from(parent.context).inflate(R.layout.chat_item, parent, false)
             )
@@ -94,6 +83,7 @@ class ChatLogAdapter(
 
         return holder!!
     }
+
     override fun getItemViewType(position: Int): Int {
         return when (options.snapshots[position].currentUserUID != FirebaseAuth.getInstance().currentUser!!.uid) {
             true -> ChatViewHolder.ME
@@ -129,8 +119,8 @@ class ChatLogAdapter(
         messagesSelectedList.clear()
     }
 
+    // Удаление сообщений
     fun delete() {
-        // TODO доделать удаление сообщений чтобы изменялось значение в лейтест месседжах
         val currentUser = FirebaseAuth.getInstance().currentUser!!
         val query = ChatRepository.getInstance()
             .getChat(ChatRepository.getChatID(currentUser.uid, otherUser.uid))
@@ -141,17 +131,22 @@ class ChatLogAdapter(
             for (i in messagesSelectedList) {
                 i.value.chatMessage.setBackgroundColor(Color.parseColor(UNSELECT_EVEN))
                 val msgId = options.snapshots.getSnapshot(i.key).key
-                ChatRepository.getInstance().deleteMsg(ChatRepository.getChatID(currentUser.uid, otherUser.uid), msgId.toString()) {
+                ChatRepository.getInstance().deleteMsg(
+                    ChatRepository.getChatID(currentUser.uid, otherUser.uid),
+                    msgId.toString()
+                ) {
                     notifyDataSetChanged()
                 }
             }
         }
 
         if (messagesSelectedList.containsKey(options.snapshots.count() - 1)) {
-            val latestMsgRef = FirebaseDatabase.getInstance().getReference("/users/${currentUser.uid}/latestMessages/${otherUser.uid}/text")
+            val latestMsgRef = FirebaseDatabase.getInstance()
+                .getReference("/users/${currentUser.uid}/latestMessages/${otherUser.uid}/text")
             latestMsgRef.setValue("[Deleted]")
 
-            val latestMsgToRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/latestMessages/${currentUser.uid}/text")
+            val latestMsgToRef = FirebaseDatabase.getInstance()
+                .getReference("/users/${otherUser.uid}/latestMessages/${currentUser.uid}/text")
             latestMsgToRef.setValue("[Deleted]")
         }
 

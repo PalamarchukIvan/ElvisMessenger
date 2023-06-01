@@ -11,7 +11,6 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.elvismessenger.R
 import com.example.elvismessenger.activities.MainActivity
@@ -29,16 +28,17 @@ class PasswordSettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         newPassword = view.findViewById(R.id.new_password)
 
-        val connectivityManager = requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
 
         UserRepository.currentUser?.observe(viewLifecycleOwner) {
-            if(networkInfo != null && networkInfo.isConnected) {
+            if (networkInfo != null && networkInfo.isConnected) {
                 newPassword.setText(it.password)
             }
         }
         UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
-            if(networkInfo == null || !networkInfo.isConnected) {
+            if (networkInfo == null || !networkInfo.isConnected) {
                 newPassword.setText(it.password)
             }
         }
@@ -54,12 +54,17 @@ class PasswordSettingsFragment : Fragment() {
 
     private fun saveData() {
 
-        if(!checkForProvider()) return
-        if(newPassword.text.toString().length < 6) {
-            Toast.makeText(requireContext(), "Password must be at least 6 characters long", Toast.LENGTH_SHORT).show()
+        if (!checkForProvider()) return
+        if (newPassword.text.toString().length < 6) {
+            Toast.makeText(
+                requireContext(),
+                "Password must be at least 6 characters long",
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
-        val connectivityManager = requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
         if (networkInfo == null || !networkInfo.isConnected) {
             Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT).show()
@@ -68,9 +73,9 @@ class PasswordSettingsFragment : Fragment() {
 
 
         val credential = EmailAuthProvider.getCredential(
-        UserRepository.currentUser?.value!!.email,
-        UserRepository.currentUser?.value!!.password
-    )
+            UserRepository.currentUser?.value!!.email,
+            UserRepository.currentUser?.value!!.password
+        )
         FirebaseAuth.getInstance().currentUser?.reauthenticate(credential) // Делается, что бы избежать "This operation is sensitive and requires recent authentication"
             ?.addOnSuccessListener {
                 FirebaseAuth.getInstance().currentUser?.updatePassword(newPassword.text.toString())
@@ -96,10 +101,14 @@ class PasswordSettingsFragment : Fragment() {
             }
     }
 
-    private fun checkForProvider(): Boolean{
-        for(provider in FirebaseAuth.getInstance().currentUser!!.providerData) {
-            if(provider.providerId != "firebase" && provider.providerId != "password") {
-                Toast.makeText(requireContext(), "Illegal operation. You've signed in with google", Toast.LENGTH_SHORT).show()
+    private fun checkForProvider(): Boolean {
+        for (provider in FirebaseAuth.getInstance().currentUser!!.providerData) {
+            if (provider.providerId != "firebase" && provider.providerId != "password") {
+                Toast.makeText(
+                    requireContext(),
+                    "Illegal operation. You've signed in with google",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return false
             }
         }

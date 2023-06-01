@@ -2,28 +2,19 @@ package com.example.elvismessenger.fragments
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.adapters.GroupLogAdapter
-import com.example.elvismessenger.db.ChatMessage
-import com.example.elvismessenger.db.Group
-import com.example.elvismessenger.db.GroupRepository
-import com.example.elvismessenger.db.User
-import com.example.elvismessenger.db.UserRepository
+import com.example.elvismessenger.db.*
 import com.example.elvismessenger.utils.LinearLayoutManagerWrapper
 import com.example.elvismessenger.utils.StorageUtil
 import com.firebase.ui.database.FirebaseRecyclerOptions
@@ -33,10 +24,9 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
-import java.io.ByteArrayOutputStream
 import kotlin.streams.toList
 
-class GroupLogFragment: Fragment(R.layout.fragment_chat_log) {
+class GroupLogFragment : Fragment(R.layout.fragment_chat_log) {
     companion object {
         const val ANOTHER_GROUP = "another_group"
     }
@@ -139,9 +129,10 @@ class GroupLogFragment: Fragment(R.layout.fragment_chat_log) {
 
         GroupRepository.getGroupUsers(currentGroup.id).get().addOnSuccessListener {
             for (i in it.children) {
-                UserRepository.getInstance().getUserByUID(i.getValue(String::class.java)!!).get().addOnSuccessListener {
-                    userList.add(it.getValue(User::class.java)!!)
-                }
+                UserRepository.getInstance().getUserByUID(i.getValue(String::class.java)!!).get()
+                    .addOnSuccessListener {
+                        userList.add(it.getValue(User::class.java)!!)
+                    }
             }
         }
 
@@ -187,8 +178,8 @@ class GroupLogFragment: Fragment(R.layout.fragment_chat_log) {
 
         // TODO: Cделать нотификация, что кто-то пишет
         inputText.addTextChangedListener {
-            if(!it.isNullOrBlank()) {
-                if(!currentGroup.whoAreWriting.contains(currentUser.username)) {
+            if (!it.isNullOrBlank()) {
+                if (!currentGroup.whoAreWriting.contains(currentUser.username)) {
                     GroupRepository.updateWhoIsWriting(true, currentUser.username, currentGroup)
                 }
                 inputText.requestFocus()
@@ -198,6 +189,7 @@ class GroupLogFragment: Fragment(R.layout.fragment_chat_log) {
             }
         }
 
+        // Нажатие на отправку сообщения
         sendButton.setOnClickListener {
             if (inputText.text.isNotEmpty()) {
                 // Для отправки сообщения
@@ -226,6 +218,7 @@ class GroupLogFragment: Fragment(R.layout.fragment_chat_log) {
             }
         }
 
+        // Нажатие на отправку картинки
         sendImageBtn.setOnClickListener {
             val iGallery = Intent(Intent.ACTION_PICK)
             iGallery.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -233,14 +226,16 @@ class GroupLogFragment: Fragment(R.layout.fragment_chat_log) {
         }
     }
 
+    // Для выполнения отправки картинки
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(resultCode == Activity.RESULT_OK) {
-            if(requestCode == ChatLogFragment.RC_SELECT_IMG) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == ChatLogFragment.RC_SELECT_IMG) {
                 val selectedImagePath = data?.data
 
-                val selectedImageBmp = MediaStore.Images.Media.getBitmap(context?.contentResolver, selectedImagePath)
+                val selectedImageBmp =
+                    MediaStore.Images.Media.getBitmap(context?.contentResolver, selectedImagePath)
                 val compressedImg = StorageUtil.compressImg(selectedImageBmp)
 
                 if (compressedImg != null) {
@@ -266,7 +261,11 @@ class GroupLogFragment: Fragment(R.layout.fragment_chat_log) {
                         }
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Size of the image should be less than 8 mb", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Size of the image should be less than 8 mb",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -302,9 +301,9 @@ class GroupLogFragment: Fragment(R.layout.fragment_chat_log) {
         val filteredList = currentGroup.whoAreWriting.stream().filter {
             it != currentUser.username
         }.toList()
-        if(filteredList.isEmpty()) {
+        if (filteredList.isEmpty()) {
             groupState.text = "${currentGroup.userList.size} users"
-        } else if(filteredList.size == 1){
+        } else if (filteredList.size == 1) {
             groupState.text = "${filteredList[0]} is writing"
         } else {
             val s: String = filteredList.reduce { s1, s2 ->

@@ -19,7 +19,7 @@ class ChatListAdapter(
     private val onItemClick: ((ChatListFragment.ChatItem, Int) -> Unit),
     private val onLongItemClick: (Int) -> Unit
 ) : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>() {
-
+    // Выбранные чаты, которые юзер собирается удалить
     private val chatsSelectedList = HashMap<ChatListFragment.ChatItem, ChatListViewHolder>()
 
     companion object {
@@ -36,7 +36,7 @@ class ChatListAdapter(
         val checkMark: ImageView = itemView.findViewById(R.id.check_mark)
 
         fun bind(chatItem: ChatListFragment.ChatItem) {
-            if(chatItem.isNew) {
+            if (chatItem.isNew) {
                 newMessageMark.isVisible = true
             }
             if (chatItem.photo != null && chatItem.photo != "") {
@@ -50,6 +50,7 @@ class ChatListAdapter(
         }
     }
 
+    // В зависимости от позиции возвращаем разный viewType
     override fun getItemViewType(position: Int): Int {
         return when (position % 2) {
             0 -> EVEN_CHAT
@@ -57,10 +58,11 @@ class ChatListAdapter(
         }
     }
 
+    // В зависимости от viewType отображаем разные лейауты
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatListViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
 
-        return when(viewType) {
+        return when (viewType) {
             EVEN_CHAT -> ChatListViewHolder(
                 layoutInflater.inflate(
                     R.layout.chats_item_even,
@@ -112,6 +114,7 @@ class ChatListAdapter(
         chatsSelectedList.clear()
     }
 
+    // Удаление чата из списка чатов
     fun delete() {
         if (chatsSelectedList.size == chatList.size) {
             val query = FirebaseDatabase

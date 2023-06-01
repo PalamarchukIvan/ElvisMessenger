@@ -1,16 +1,12 @@
 package com.example.elvismessenger.utils
 
-import android.content.Intent
 import android.graphics.Bitmap
-import android.net.Uri
 import android.util.Log
-import android.widget.Toast
-import androidx.core.net.toUri
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.ByteArrayOutputStream
-import java.util.UUID
+import java.util.*
 
 // object
 object StorageUtil {
@@ -21,10 +17,7 @@ object StorageUtil {
             .child(
                 "users_chat_images/${
                     FirebaseAuth.getInstance().currentUser?.uid ?: throw NullPointerException(
-                        "UID is null."
-                    )
-                }"
-            )
+                        "UID is null.")}")  // получение доступа к storage
 
     // onSuccess это callback функция
     fun uploadMsgImg(imageBytes: ByteArray, onSuccess: (imagePath: String) -> Unit) {
@@ -40,6 +33,7 @@ object StorageUtil {
         }
     }
 
+    // компрессия фоток при отпровлении (до 8 мб)
     fun compressImg(selectedImageBmp: Bitmap): ByteArray? {
         return if (selectedImageBmp.byteCount >= 8_000_000) {
             null
@@ -52,5 +46,4 @@ object StorageUtil {
             outputStream.toByteArray()
         }
     }
-
 }

@@ -2,7 +2,7 @@ package com.example.elvismessenger.utils
 
 import androidx.lifecycle.MutableLiveData
 
-
+// Для работы с настройками юзера
 class UserPersonalSettings private constructor() {
     var email: String = "test email"
     var password: String = "test pwd"

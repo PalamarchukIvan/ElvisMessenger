@@ -1,12 +1,11 @@
 package com.example.elvismessenger.utils
 
 import android.content.Intent
-import com.github.javafaker.Bool
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
+// Для работы с нотификациями
 class NotificationService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)

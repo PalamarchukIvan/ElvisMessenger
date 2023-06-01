@@ -1,19 +1,17 @@
 package com.example.elvismessenger.activities
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.example.elvismessenger.R
 import com.example.elvismessenger.databinding.ActivityRegLogBinding
-import com.example.elvismessenger.db.User
-import com.example.elvismessenger.db.UserRepository
-import com.example.elvismessenger.fragments.settings.SettingsFragment
 
 class RegLogActivity : AppCompatActivity() {
     private lateinit var navController: NavController
 
+    // Константы для проверки правильности введеных значений
     companion object {
         const val GOOD = 1
 

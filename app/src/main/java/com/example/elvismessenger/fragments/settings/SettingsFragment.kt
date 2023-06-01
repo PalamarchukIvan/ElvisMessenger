@@ -86,31 +86,32 @@ class SettingsFragment : Fragment() {
         currentLanguage = view.findViewById(R.id.current_language)
         userPhoto = view.findViewById(R.id.settings_user_photo)
 
-        val connectivityManager = requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
 
-        if(networkInfo != null && networkInfo.isConnected) {
-                UserRepository.currentUser?.observe(viewLifecycleOwner) {
-                    theme.isChecked = userSettings.value?.ifDarkTheme ?: false
-                    currentLanguage.text = userSettings.value?.language
+        if (networkInfo != null && networkInfo.isConnected) {
+            UserRepository.currentUser?.observe(viewLifecycleOwner) {
+                theme.isChecked = userSettings.value?.ifDarkTheme ?: false
+                currentLanguage.text = userSettings.value?.language
 
-                    view.findViewById<TextView>(R.id.settings_username).text = it.username
-                    view.findViewById<TextView>(R.id.settings_status).text = it.status
-                    if (it.photo.isNotBlank()) {
-                        userPhoto.let { photo ->
-                            Picasso.get()
-                                .load(it.photo)
-                                .into(photo)
-                        }
-                    } else {
-                        userPhoto.let { photo ->
-                            Picasso.get()
-                                .load(R.drawable.no_pfp)
-                                .into(photo)
-                        }
+                view.findViewById<TextView>(R.id.settings_username).text = it.username
+                view.findViewById<TextView>(R.id.settings_status).text = it.status
+                if (it.photo.isNotBlank()) {
+                    userPhoto.let { photo ->
+                        Picasso.get()
+                            .load(it.photo)
+                            .into(photo)
+                    }
+                } else {
+                    userPhoto.let { photo ->
+                        Picasso.get()
+                            .load(R.drawable.no_pfp)
+                            .into(photo)
                     }
                 }
-            } else {
+            }
+        } else {
             userSettings.observe(viewLifecycleOwner) {
                 theme.isChecked = userSettings.value?.ifDarkTheme ?: false
                 currentLanguage.text = userSettings.value?.language

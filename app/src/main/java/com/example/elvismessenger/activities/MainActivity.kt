@@ -57,7 +57,6 @@ class MainActivity : AppCompatActivity() {
         lateinit var sp: SharedPreferences
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -65,7 +64,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         //Поиск главного фрагмента (чата)
-        navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
+        navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
 
         //доступ к дереву навигации
         navController = navHostFragment.findNavController()
@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity() {
 
         //Устонавливаем слушатель на кнопку выхода
         navigationView.setNavigationItemSelectedListener {
-            when(it.itemId) {
+            when (it.itemId) {
                 R.id.regLogActivity -> {
                     AlertDialog.Builder(this)
                         .setTitle("Logout")
@@ -125,13 +125,16 @@ class MainActivity : AppCompatActivity() {
             Log.d("User settings local ", userSettings.value.toString())
         }
 
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
         UserRepository.currentUser?.observe(this) {
-            if(networkInfo != null && networkInfo.isConnected) {
+            if (networkInfo != null && networkInfo.isConnected) {
                 UserRepository.updateSharedPreferences(it)
-                navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = it.username
-                navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = it.status
+                navigationView.getHeaderView(0)
+                    .findViewById<TextView>(R.id.user_name_text_nav_header).text = it.username
+                navigationView.getHeaderView(0)
+                    .findViewById<TextView>(R.id.status_text_nav_header).text = it.status
                 navigationView.getHeaderView(0).findViewById<ImageView>(R.id.pfp_image_nav_header)
                     .apply {
                         if (it.photo.isNotBlank()) {
@@ -146,11 +149,14 @@ class MainActivity : AppCompatActivity() {
                     }
             }
         }
+
         SettingsFragment.loadData()
         userSettings.observe(this) {
-            if(networkInfo == null || !networkInfo.isConnected) {
-                navigationView.getHeaderView(0).findViewById<TextView>(R.id.user_name_text_nav_header).text = it.username
-                navigationView.getHeaderView(0).findViewById<TextView>(R.id.status_text_nav_header).text = it.status
+            if (networkInfo == null || !networkInfo.isConnected) {
+                navigationView.getHeaderView(0)
+                    .findViewById<TextView>(R.id.user_name_text_nav_header).text = it.username
+                navigationView.getHeaderView(0)
+                    .findViewById<TextView>(R.id.status_text_nav_header).text = it.status
                 navigationView.getHeaderView(0).findViewById<ImageView>(R.id.pfp_image_nav_header)
                     .apply {
                         if (it.photo.isNotBlank()) {
@@ -170,14 +176,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        if(FirebaseAuth.getInstance().currentUser != null) {
+        if (FirebaseAuth.getInstance().currentUser != null) {
             UserRepository.getInstance().makeNotActive()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        if(FirebaseAuth.getInstance().currentUser != null) {
+        if (FirebaseAuth.getInstance().currentUser != null) {
             UserRepository.getInstance().makeNotActive()
         }
         pushNotificationsBroadcastReceiver?.let {
@@ -187,13 +193,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if(FirebaseAuth.getInstance().currentUser != null) {
+        if (FirebaseAuth.getInstance().currentUser != null) {
             UserRepository.getInstance().makeActive()
         }
     }
 
     private fun authoriseUser() {
-        if(FirebaseAuth.getInstance().currentUser == null) {
+        if (FirebaseAuth.getInstance().currentUser == null) {
             navController.navigate(R.id.action_chatListFragment_to_regLogActivity)
             finish()
         } else {
@@ -212,64 +218,98 @@ class MainActivity : AppCompatActivity() {
                     extras.keySet().firstOrNull { it == NotificationService.ACTION_KEY }
                         ?.let { key ->
                             when (extras.getString(key)) {
-                                NotificationService.ACTION_NOTIFICATION -> extras.getString(NotificationService.MESSAGE_KEY)?.let { message ->
+                                NotificationService.ACTION_NOTIFICATION -> extras.getString(
+                                    NotificationService.MESSAGE_KEY
+                                )?.let { message ->
 
                                     val to = message.split("_&&&_")[0]
                                     val from = message.split("_&&&_")[1]
-                                    if(NotificationService.ifToShowNotification(from, to)) {
+                                    if (NotificationService.ifToShowNotification(from, to)) {
 
-                                        val channel = NotificationChannel("MESSAGE", "Message Notification", NotificationManager.IMPORTANCE_HIGH)
+                                        val channel = NotificationChannel(
+                                            "MESSAGE",
+                                            "Message Notification",
+                                            NotificationManager.IMPORTANCE_HIGH
+                                        )
 
-                                        getSystemService(NotificationManager::class.java).createNotificationChannel(channel);
+                                        getSystemService(NotificationManager::class.java).createNotificationChannel(
+                                            channel
+                                        );
                                         val notification: Notification.Builder =
                                             Notification.Builder(context, "MESSAGE")
-                                                .setContentTitle(extras.getString(NotificationService.TITLE_KEY))
+                                                .setContentTitle(
+                                                    extras.getString(
+                                                        NotificationService.TITLE_KEY
+                                                    )
+                                                )
                                                 .setContentText(extras.getString(NotificationService.BODY_KEY))
                                                 .setSmallIcon(R.drawable.no_pfp)
                                                 .setAutoCancel(true);
 
                                         if (navHostFragment.childFragmentManager.fragments.last() is ChatLogFragment) {
-                                            val chatLogFragment = navHostFragment.childFragmentManager.fragments.last() as ChatLogFragment
-                                            if (!chatLogFragment.isMessagingTo(to = to, from = from)) {
-                                                NotificationManagerCompat.from(context!!).notify(1, notification.build())
+                                            val chatLogFragment =
+                                                navHostFragment.childFragmentManager.fragments.last() as ChatLogFragment
+                                            if (!chatLogFragment.isMessagingTo(
+                                                    to = to,
+                                                    from = from
+                                                )
+                                            ) {
+                                                NotificationManagerCompat.from(context!!)
+                                                    .notify(1, notification.build())
                                             }
-                                        } else if(navHostFragment.childFragmentManager.fragments.last() is GroupLogFragment) {
-                                            val groupLogFragment = navHostFragment.childFragmentManager.fragments.last() as GroupLogFragment
-                                            if(!groupLogFragment.isMessagingTo(to, from)) {
-                                                NotificationManagerCompat.from(context!!).notify(1, notification.build())
+                                        } else if (navHostFragment.childFragmentManager.fragments.last() is GroupLogFragment) {
+                                            val groupLogFragment =
+                                                navHostFragment.childFragmentManager.fragments.last() as GroupLogFragment
+                                            if (!groupLogFragment.isMessagingTo(to, from)) {
+                                                NotificationManagerCompat.from(context!!)
+                                                    .notify(1, notification.build())
                                             }
-                                        }
-                                        else {
-                                            NotificationManagerCompat.from(context!!).notify(1, notification.build())
+                                        } else {
+                                            NotificationManagerCompat.from(context!!)
+                                                .notify(1, notification.build())
                                         }
 
                                     }
 
                                 }
 
-                                NotificationService.ACTION_IS_WRITING -> extras.getString(NotificationService.MESSAGE_KEY)?. let {message ->
+                                NotificationService.ACTION_IS_WRITING -> extras.getString(
+                                    NotificationService.MESSAGE_KEY
+                                )?.let { message ->
 
                                     val to = message.split("_&&&_")[0]
                                     val from = message.split("_&&&_")[1]
-                                    if(NotificationService.ifToShowNotification(from, to)) {
-                                        val currentFragment = navHostFragment.childFragmentManager.fragments.last()
-                                        if(currentFragment is ChatLogFragment && currentFragment.isMessagingTo(to, from)) {
+                                    if (NotificationService.ifToShowNotification(from, to)) {
+                                        val currentFragment =
+                                            navHostFragment.childFragmentManager.fragments.last()
+                                        if (currentFragment is ChatLogFragment && currentFragment.isMessagingTo(
+                                                to,
+                                                from
+                                            )
+                                        ) {
                                             currentFragment.makeOtherUserIsWriting()
-                                        } else if(currentFragment is ChatListFragment) {
+                                        } else if (currentFragment is ChatListFragment) {
                                             currentFragment.makeChatUserIsWritingState(to, from)
                                         }
                                     }
 
                                 }
-                                NotificationService.ACTION_IS_NOT_WRITING -> extras.getString(NotificationService.MESSAGE_KEY)?. let {message ->
+                                NotificationService.ACTION_IS_NOT_WRITING -> extras.getString(
+                                    NotificationService.MESSAGE_KEY
+                                )?.let { message ->
 
                                     val to = message.split("_&&&_")[0]
                                     val from = message.split("_&&&_")[1]
-                                    if(NotificationService.ifToShowNotification(from, to)) {
-                                        val currentFragment = navHostFragment.childFragmentManager.fragments.last()
-                                        if(currentFragment is ChatLogFragment && currentFragment.isMessagingTo(to, from)) {
+                                    if (NotificationService.ifToShowNotification(from, to)) {
+                                        val currentFragment =
+                                            navHostFragment.childFragmentManager.fragments.last()
+                                        if (currentFragment is ChatLogFragment && currentFragment.isMessagingTo(
+                                                to,
+                                                from
+                                            )
+                                        ) {
                                             currentFragment.makeOtherUserIsNotWriting()
-                                        } else if(currentFragment is ChatListFragment) {
+                                        } else if (currentFragment is ChatListFragment) {
                                             currentFragment.makeChatUserIsNotWritingState(to, from)
                                         }
                                     }

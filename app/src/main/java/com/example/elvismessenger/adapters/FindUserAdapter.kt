@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.db.User
-
 import com.squareup.picasso.Picasso
 
 open class FindUserAdapter(
@@ -54,17 +53,35 @@ open class FindUserAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FindUserViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
 
-        return when(viewType) {
-            EVEN_USER -> FindUserViewHolder(layoutInflater.inflate(R.layout.find_user_item_even, parent, false))
-            ODD_USER -> FindUserViewHolder(layoutInflater.inflate(R.layout.find_user_item, parent, false))
-            else -> FindUserViewHolder(layoutInflater.inflate(R.layout.find_user_item_even, parent, false))
+        return when (viewType) {
+            EVEN_USER -> FindUserViewHolder(
+                layoutInflater.inflate(
+                    R.layout.find_user_item_even,
+                    parent,
+                    false
+                )
+            )
+            ODD_USER -> FindUserViewHolder(
+                layoutInflater.inflate(
+                    R.layout.find_user_item,
+                    parent,
+                    false
+                )
+            )
+            else -> FindUserViewHolder(
+                layoutInflater.inflate(
+                    R.layout.find_user_item_even,
+                    parent,
+                    false
+                )
+            )
         }
     }
 
     override fun onBindViewHolder(holder: FindUserViewHolder, position: Int) {
         holder.bind(userToShowList[position])
 
-        // Тут обработка клика
+        // Тут обработка клика (переход в чат с выбранным юзером)
         holder.itemView.setOnClickListener {
             onItemClick?.invoke(userToShowList[holder.absoluteAdapterPosition])
         }

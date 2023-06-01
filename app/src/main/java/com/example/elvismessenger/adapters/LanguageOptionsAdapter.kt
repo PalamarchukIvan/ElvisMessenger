@@ -12,7 +12,8 @@ import com.example.elvismessenger.fragments.ChatListFragment
 import com.example.elvismessenger.fragments.settings.LanguageSettingsFragment
 import org.w3c.dom.Text
 
-class LanguageOptionsAdapter(private val languages: Array<String>) :  RecyclerView.Adapter<LanguageOptionsAdapter.LangOptionViewHolder>() {
+class LanguageOptionsAdapter(private val languages: Array<String>) :
+    RecyclerView.Adapter<LanguageOptionsAdapter.LangOptionViewHolder>() {
 
     var onLangClick: ((String) -> Unit)? = null
 
@@ -39,10 +40,28 @@ class LanguageOptionsAdapter(private val languages: Array<String>) :  RecyclerVi
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LangOptionViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
 
-        return when(viewType) {
-            EVEN_LANG -> LangOptionViewHolder(layoutInflater.inflate(R.layout.lang_item_selected, parent, false))
-            ODD_LANG -> LangOptionViewHolder(layoutInflater.inflate(R.layout.lang_item, parent, false))
-            else -> LangOptionViewHolder(layoutInflater.inflate(R.layout.chats_item_even, parent, false))
+        return when (viewType) {
+            EVEN_LANG -> LangOptionViewHolder(
+                layoutInflater.inflate(
+                    R.layout.lang_item_selected,
+                    parent,
+                    false
+                )
+            )
+            ODD_LANG -> LangOptionViewHolder(
+                layoutInflater.inflate(
+                    R.layout.lang_item,
+                    parent,
+                    false
+                )
+            )
+            else -> LangOptionViewHolder(
+                layoutInflater.inflate(
+                    R.layout.chats_item_even,
+                    parent,
+                    false
+                )
+            )
         }
     }
 

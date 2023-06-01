@@ -27,7 +27,8 @@ class FindUserFragment : Fragment(R.layout.fragment_find_user) {
 
     private lateinit var adapter: FindUserAdapter
 
-    private var userList: MutableList<User> = mutableListOf()//Сюда можно будет передать список друзей, типо сначала друзья появляют
+    private var userList: MutableList<User> =
+        mutableListOf() // Сюда можно будет передать список друзей, типо сначала друзья появляются
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,12 +37,13 @@ class FindUserFragment : Fragment(R.layout.fragment_find_user) {
         adapter = FindUserAdapter(userList) { anotherUser ->
             val args = Bundle()
             args.putParcelable(ChatLogFragment.ANOTHER_USER, anotherUser)
-            Navigation.findNavController(view).navigate(R.id.action_findUserFragment_to_chatLogFragment, args)
+            Navigation.findNavController(view)
+                .navigate(R.id.action_findUserFragment_to_chatLogFragment, args)
         }
 
         progressBar = view.findViewById(R.id.progress_bar_find_user)
 
-        if(userList.size == 0) {
+        if (userList.size == 0) {
             // Заполнение списка юзеров из репозитория
             val query = userRepository.getAllUsers()
 

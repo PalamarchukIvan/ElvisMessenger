@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Color
 import android.net.ConnectivityManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,6 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.elvismessenger.R
 import com.example.elvismessenger.activities.MainActivity
@@ -30,16 +28,17 @@ class EmailSettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         newEmail = view.findViewById(R.id.new_email)
 
-        val connectivityManager = requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
 
-        UserRepository.currentUser?.observe(viewLifecycleOwner){
-            if(networkInfo != null && networkInfo.isConnected) {
+        UserRepository.currentUser?.observe(viewLifecycleOwner) {
+            if (networkInfo != null && networkInfo.isConnected) {
                 newEmail.setText(it.email)
             }
         }
         UserPersonalSettings.livaDataInstance.observe(viewLifecycleOwner) {
-            if(networkInfo == null || !networkInfo.isConnected) {
+            if (networkInfo == null || !networkInfo.isConnected) {
                 newEmail.setText(it.email)
             }
         }
@@ -63,9 +62,10 @@ class EmailSettingsFragment : Fragment() {
 
     private fun saveData() {
 
-        if(!checkForProvider()) return
+        if (!checkForProvider()) return
 
-        val connectivityManager = requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
         if (networkInfo == null || !networkInfo.isConnected) {
             Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT).show()
@@ -102,10 +102,14 @@ class EmailSettingsFragment : Fragment() {
 
     }
 
-    private fun checkForProvider(): Boolean{
-        for(provider in FirebaseAuth.getInstance().currentUser!!.providerData) {
-            if(provider.providerId != "firebase" && provider.providerId != "password") {
-                Toast.makeText(requireContext(), "Illegal operation. You've signed in with google", Toast.LENGTH_SHORT).show()
+    private fun checkForProvider(): Boolean {
+        for (provider in FirebaseAuth.getInstance().currentUser!!.providerData) {
+            if (provider.providerId != "firebase" && provider.providerId != "password") {
+                Toast.makeText(
+                    requireContext(),
+                    "Illegal operation. You've signed in with google",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return false
             }
         }

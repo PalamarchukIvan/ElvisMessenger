@@ -28,8 +28,8 @@ class GroupLogAdapter(
     private val options: FirebaseRecyclerOptions<ChatMessage>,
     private val currentGroup: Group,
     private val onLongItemClick: (Int) -> Unit
-) : FirebaseRecyclerAdapter<ChatMessage, GroupLogAdapter.GroupViewHolder>(options)  {
-
+) : FirebaseRecyclerAdapter<ChatMessage, GroupLogAdapter.GroupViewHolder>(options) {
+    // выбранные сообщения, которые юзер собирается удалить
     private val messagesSelectedList = HashMap<Int, GroupViewHolder>()
 
     class GroupViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -39,8 +39,8 @@ class GroupLogAdapter(
         }
 
         var chatMessage: ConstraintLayout = itemView.findViewById(R.id.chat_message)
-        private var  message: TextView? = null
-        private val  time: TextView = itemView.findViewById(R.id.time_message)
+        private var message: TextView? = null
+        private val time: TextView = itemView.findViewById(R.id.time_message)
         private var msgPhoto: CircleImageView? = null
         private var msgUsername: TextView? = null
         private val img: ImageView = itemView.findViewById(R.id.image_msg)
@@ -54,7 +54,7 @@ class GroupLogAdapter(
                 img.setImageDrawable(null)
             }
 
-            if(currentUser.uid == msg.currentUserUID) {
+            if (currentUser.uid == msg.currentUserUID) {
                 initForSender(msg)
             } else {
                 initForReceiver(msg)
@@ -67,24 +67,25 @@ class GroupLogAdapter(
             message?.text = msg.text
             msgPhoto = itemView.findViewById(R.id.group_other_user_photo)
             msgUsername = itemView.findViewById(R.id.group_other_username)
-            UserRepository.getInstance().getUserByUID(msg.currentUserUID).get().addOnSuccessListener {userDb ->
-                val sender: User = userDb.getValue(User::class.java)!!
-                sender.photo.let {
-                    if(it.isNotEmpty()) {
-                        Picasso
-                            .get()
-                            .load(it)
-                            .placeholder(R.drawable.no_pfp)
-                            .into(msgPhoto)
-                    } else {
-                        Picasso
-                            .get()
-                            .load(R.drawable.no_pfp)
-                            .into(msgPhoto)
+            UserRepository.getInstance().getUserByUID(msg.currentUserUID).get()
+                .addOnSuccessListener { userDb ->
+                    val sender: User = userDb.getValue(User::class.java)!!
+                    sender.photo.let {
+                        if (it.isNotEmpty()) {
+                            Picasso
+                                .get()
+                                .load(it)
+                                .placeholder(R.drawable.no_pfp)
+                                .into(msgPhoto)
+                        } else {
+                            Picasso
+                                .get()
+                                .load(R.drawable.no_pfp)
+                                .into(msgPhoto)
+                        }
                     }
+                    msgUsername!!.text = sender.username
                 }
-                msgUsername!!.text = sender.username
-            }
         }
 
         private fun initForSender(msg: ChatMessage) {
@@ -94,9 +95,10 @@ class GroupLogAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
-        val holder = when(viewType) {
+        val holder = when (viewType) {
             GroupViewHolder.ANOTHER -> GroupViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.chat_group_item, parent, false),
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.chat_group_item, parent, false),
             )
             GroupViewHolder.ME -> GroupViewHolder(
                 LayoutInflater.from(parent.context).inflate(R.layout.chat_me_item, parent, false),
@@ -109,7 +111,7 @@ class GroupLogAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return  if(snapshots[position].currentUserUID == UserRepository.currentUser.value!!.uid) {
+        return if (snapshots[position].currentUserUID == UserRepository.currentUser.value!!.uid) {
             GroupViewHolder.ME
         } else {
             GroupViewHolder.ANOTHER
@@ -119,6 +121,7 @@ class GroupLogAdapter(
     override fun onBindViewHolder(holder: GroupViewHolder, position: Int, model: ChatMessage) {
         holder.bind(model)
 
+        // на первичное зажатие выбираем сообщение на повторное удаляем сообщения из выбраных
         holder.itemView.setOnLongClickListener {
             if (position in messagesSelectedList.keys) {
                 holder.chatMessage.setBackgroundColor(Color.parseColor(SelectionManager.UNSELECT_EVEN))
@@ -135,8 +138,8 @@ class GroupLogAdapter(
         }
     }
 
+    // Удаление выбранных сообщений
     fun delete() {
-        // TODO доделать удаление сообщений чтобы изменялось значение в лейтест месседжах
         val currentUser = FirebaseAuth.getInstance().currentUser!!
         val query = ChatRepository.getInstance()
             .getChat(ChatRepository.getChatID(currentUser.uid, currentGroup.id))
@@ -155,7 +158,8 @@ class GroupLogAdapter(
 
         if (messagesSelectedList.containsKey(options.snapshots.count() - 1)) {
             for (uid in currentGroup.userList) {
-                val latestMsgRef = FirebaseDatabase.getInstance().getReference("/users/$uid/latestMessages/${currentGroup.id}/text")
+                val latestMsgRef = FirebaseDatabase.getInstance()
+                    .getReference("/users/$uid/latestMessages/${currentGroup.id}/text")
                 latestMsgRef.setValue("[Deleted]")
             }
         }

@@ -2,18 +2,12 @@ package com.example.elvismessenger.fragments
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -21,7 +15,10 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.adapters.ChatLogAdapter
-import com.example.elvismessenger.db.*
+import com.example.elvismessenger.db.ChatMessage
+import com.example.elvismessenger.db.ChatRepository
+import com.example.elvismessenger.db.User
+import com.example.elvismessenger.db.UserRepository
 import com.example.elvismessenger.utils.FCMSender
 import com.example.elvismessenger.utils.LinearLayoutManagerWrapper
 import com.example.elvismessenger.utils.NotificationService
@@ -29,13 +26,8 @@ import com.example.elvismessenger.utils.StorageUtil
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
-import java.io.ByteArrayOutputStream
 
 class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
 
@@ -103,7 +95,8 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         otherUserProfile.setOnClickListener {
             val args = Bundle()
             args.putParcelable("otherUser", otherUser)
-            Navigation.findNavController(view).navigate(R.id.action_chatLogFragment_to_otherUserProfile, args)
+            Navigation.findNavController(view)
+                .navigate(R.id.action_chatLogFragment_to_otherUserProfile, args)
         }
 
         // Отмена удаления сообщений
@@ -143,23 +136,25 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
             }
         }
 
-        UserRepository.getInstance().getUserByUID(otherUser.uid).addValueEventListener (object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val user = snapshot.getValue(User::class.java)
+        UserRepository.getInstance().getUserByUID(otherUser.uid)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val user = snapshot.getValue(User::class.java)
 
-                anotherUserState.text = if (user!!.isActive) {
-                    "Online"
-                } else {
-                    "Last seen ${TimeAgo.using(user.lastSeen)}"
+                    anotherUserState.text = if (user!!.isActive) {
+                        "Online"
+                    } else {
+                        "Last seen ${TimeAgo.using(user.lastSeen)}"
+                    }
                 }
-            }
 
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-        })
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
 
-        chatQuery = ChatRepository.getInstance().getChat(ChatRepository.getChatID(currentUser.uid, otherUser.uid))
+        chatQuery = ChatRepository.getInstance()
+            .getChat(ChatRepository.getChatID(currentUser.uid, otherUser.uid))
 
         // Часть кода для работы списка чатов
         recyclerView = view.findViewById(R.id.list_recycler_view_chat_log)
@@ -197,29 +192,34 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         val inputText: EditText = view.findViewById(R.id.input_edit_text_chat_log)
 
         inputText.setOnFocusChangeListener { _, hasFocus ->
-            if(hasFocus) {
-                FCMSender.pushNotification(requireContext(),
+            if (hasFocus) {
+                FCMSender.pushNotification(
+                    requireContext(),
                     otherUser.cloudToken,
                     from = currentUser.uid,
                     to = otherUser.uid,
-                    action = NotificationService.ACTION_IS_WRITING)
+                    action = NotificationService.ACTION_IS_WRITING
+                )
             } else {
-                FCMSender.pushNotification(requireContext(),
+                FCMSender.pushNotification(
+                    requireContext(),
                     otherUser.cloudToken,
                     from = currentUser.uid,
                     to = otherUser.uid,
-                    action = NotificationService.ACTION_IS_NOT_WRITING)
+                    action = NotificationService.ACTION_IS_NOT_WRITING
+                )
             }
         }
 
         inputText.addTextChangedListener {
-            if(!it.isNullOrBlank()) {
+            if (!it.isNullOrBlank()) {
                 inputText.requestFocus()
             } else {
                 inputText.clearFocus()
             }
         }
 
+        // Нажатие на отправку сообщения
         sendButton.setOnClickListener {
             isUserBanned(currentUser, otherUser) { isBanned ->
                 if (inputText.text.isNotEmpty()) {
@@ -254,6 +254,7 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
             }
         }
 
+        // Нажатие на отправку картинки
         sendImageBtn.setOnClickListener {
             isUserBanned(currentUser, otherUser) { isBanned ->
                 if (!isBanned) {
@@ -261,7 +262,11 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
                     iGallery.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                     startActivityForResult(iGallery, RC_SELECT_IMG)
                 } else {
-                    Toast.makeText(requireContext(), "${otherUser.username} banned you", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "${otherUser.username} banned you",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -271,14 +276,16 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
         return (to == currentUser.uid && from == otherUser.uid) || (to == otherUser.uid && from == currentUser.uid)
     }
 
+    // Для выполнения отправки картинки
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(resultCode == Activity.RESULT_OK) {
-            if(requestCode == RC_SELECT_IMG) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == RC_SELECT_IMG) {
                 val selectedImagePath = data?.data
 
-                val selectedImageBmp = MediaStore.Images.Media.getBitmap(context?.contentResolver, selectedImagePath)
+                val selectedImageBmp =
+                    MediaStore.Images.Media.getBitmap(context?.contentResolver, selectedImagePath)
 
                 val compressedImg = StorageUtil.compressImg(selectedImageBmp)
 
@@ -319,7 +326,8 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
     }
 
     private fun isUserBanned(currentUser: User, otherUser: User, onSuccess: (Boolean) -> Unit) {
-        val otherUserBannedListRef = FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/bannedUsers")
+        val otherUserBannedListRef =
+            FirebaseDatabase.getInstance().getReference("/users/${otherUser.uid}/bannedUsers")
 
         otherUserBannedListRef.get().addOnSuccessListener { snapshot ->
             for (i in snapshot.children) {

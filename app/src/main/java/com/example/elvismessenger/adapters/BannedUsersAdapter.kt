@@ -7,21 +7,19 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
-import com.example.elvismessenger.db.ChatRepository
 import com.example.elvismessenger.db.User
-import com.example.elvismessenger.fragments.ChatListFragment
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.squareup.picasso.Picasso
 
-class BannedUsersAdapter (
+class BannedUsersAdapter(
     private val options: FirebaseRecyclerOptions<User>,
     private val onLongItemClick: (Int) -> Unit
 ) : FirebaseRecyclerAdapter<User, BannedUsersAdapter.BannedUsersViewHolder>(options) {
-
-    private val  unBanSelectedList = HashMap<User, BannedUsersViewHolder>()
+    // Выбранные юзеры, которые юзер собирается разбанить
+    private val unBanSelectedList = HashMap<User, BannedUsersViewHolder>()
 
     class BannedUsersViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val chatName: TextView = itemView.findViewById(R.id.name_text_find_user_item)
@@ -46,6 +44,7 @@ class BannedUsersAdapter (
         }
     }
 
+    // В зависимости от позиции возвращаем разный viewType
     override fun getItemViewType(position: Int): Int {
         return when (position % 2) {
             0 -> FindUserAdapter.EVEN_USER
@@ -53,10 +52,11 @@ class BannedUsersAdapter (
         }
     }
 
+    // В зависимости от viewType отображаем разные лейауты
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BannedUsersViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
 
-        return when(viewType) {
+        return when (viewType) {
             FindUserAdapter.EVEN_USER -> BannedUsersViewHolder(
                 layoutInflater.inflate(
                     R.layout.find_user_item_even,
@@ -84,6 +84,7 @@ class BannedUsersAdapter (
     override fun onBindViewHolder(holder: BannedUsersViewHolder, position: Int, model: User) {
         holder.bind(model)
 
+        // После долго клика на элемент добавляем его в выбранные юзеры
         holder.itemView.setOnLongClickListener {
             unBanSelectedList[options.snapshots[position]] = holder
             holder.checkMark.visibility = View.VISIBLE
@@ -101,9 +102,11 @@ class BannedUsersAdapter (
         unBanSelectedList.clear()
     }
 
+    // Разбан юзеров
     fun delete() {
         val currentUser = FirebaseAuth.getInstance().currentUser!!
-        val unBanQuery = FirebaseDatabase.getInstance().getReference("/users/${currentUser.uid}/bannedUsers")
+        val unBanQuery =
+            FirebaseDatabase.getInstance().getReference("/users/${currentUser.uid}/bannedUsers")
 
         if (unBanSelectedList.size == options.snapshots.size) {
             unBanQuery.removeValue()

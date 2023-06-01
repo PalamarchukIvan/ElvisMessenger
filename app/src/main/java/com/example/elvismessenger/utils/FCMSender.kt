@@ -10,6 +10,7 @@ import com.android.volley.toolbox.Volley
 import org.json.JSONException
 import org.json.JSONObject
 
+// Для работы с нотификациями
 object FCMSender {
     private const val BASE_URL = "https://fcm.googleapis.com/fcm/send"
     private const val SERVER_KEY =
@@ -36,13 +37,13 @@ object FCMSender {
             notification.put("body", message)
             val data = JSONObject()
             data.put(NotificationService.ACTION_KEY, action)
-            val dataMessage = if(data_ == "") {
+            val dataMessage = if (data_ == "") {
                 from + "_&&&_" + to
             } else {
                 data_
             }
             data.put(NotificationService.MESSAGE_KEY, dataMessage)
-            if(title != "" && message != ""){
+            if (title != "" && message != "") {
                 json.put("notification", notification)
             }
             json.put("data", data)

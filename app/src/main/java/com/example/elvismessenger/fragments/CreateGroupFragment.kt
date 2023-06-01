@@ -5,23 +5,17 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.Navigation
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.elvismessenger.R
 import com.example.elvismessenger.adapters.CreateGroupAdapter
-import com.example.elvismessenger.adapters.FindUserAdapter
-import com.example.elvismessenger.db.ChatRepository
 import com.example.elvismessenger.db.GroupRepository
 import com.example.elvismessenger.db.User
 import com.example.elvismessenger.db.UserRepository
@@ -58,7 +52,7 @@ class CreateGroupFragment : Fragment(R.layout.fragment_create_group) {
         recyclerView.layoutManager = LinearLayoutManagerWrapper(requireContext())
 
         adapter = CreateGroupAdapter(userList) {
-            return@CreateGroupAdapter if(!chosenUsers.contains(it)) {
+            return@CreateGroupAdapter if (!chosenUsers.contains(it)) {
                 chosenUsers.add(it)
                 true
             } else {
@@ -93,7 +87,11 @@ class CreateGroupFragment : Fragment(R.layout.fragment_create_group) {
                 )
                 requireActivity().onBackPressed()
             } else {
-                Toast.makeText(requireContext(), "Name of the group can't be empty", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Name of the group can't be empty",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
         initRecyclerViewContent(recyclerView)
@@ -103,8 +101,8 @@ class CreateGroupFragment : Fragment(R.layout.fragment_create_group) {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(resultCode == Activity.RESULT_OK) {
-            if(requestCode == EditProfileFragment.NEW_PHOTO_REQ_CODE) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == EditProfileFragment.NEW_PHOTO_REQ_CODE) {
                 groupImage.setImageURI(data?.data)
                 photo = data?.data
             }

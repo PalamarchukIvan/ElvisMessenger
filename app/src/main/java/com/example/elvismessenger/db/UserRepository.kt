@@ -61,13 +61,14 @@ class UserRepository private constructor() {
 
     fun getUserByUID(uid: String) = FirebaseDatabase.getInstance().getReference("users").child(uid)
 
-
+    // Методы для работы системы онлайн юзер или офлайн
     fun makeActive() {
-        getInstance().getUserByUID(FirebaseAuth.getInstance().currentUser!!.uid).get().addOnSuccessListener { userDB ->
-            val activeUser = userDB.getValue(User::class.java)!!
-            activeUser.isActive = true
-            getInstance().createOrUpdateUser(activeUser)
-        }
+        getInstance().getUserByUID(FirebaseAuth.getInstance().currentUser!!.uid).get()
+            .addOnSuccessListener { userDB ->
+                val activeUser = userDB.getValue(User::class.java)!!
+                activeUser.isActive = true
+                getInstance().createOrUpdateUser(activeUser)
+            }
     }
 
     fun makeNotActive() {
@@ -87,6 +88,8 @@ class UserRepository private constructor() {
             private set
         private var instance = UserRepository()
 
+        fun getInstance() = instance
+
         fun initCurrentUser() {
             FirebaseAuth.getInstance().currentUser?.also {
                 getInstance().getUserByUID(it.uid).get().addOnSuccessListener { userDB ->
@@ -99,7 +102,7 @@ class UserRepository private constructor() {
 
         private fun setUpFirebaseMessaging() {
             FirebaseMessaging.getInstance().token.addOnCompleteListener {
-                if(!it.isSuccessful)
+                if (!it.isSuccessful)
                     return@addOnCompleteListener
 
                 val token = it.result
@@ -111,9 +114,12 @@ class UserRepository private constructor() {
             }
         }
 
-        fun getInstance() = instance
-
-        fun toUserDB(user: FirebaseUser, uPassword: String = "", username: String = "", token: String = "") =
+        fun toUserDB(
+            user: FirebaseUser,
+            uPassword: String = "",
+            username: String = "",
+            token: String = ""
+        ) =
             User(
                 uid = user.uid,
                 username = user.displayName ?: username,
@@ -124,6 +130,7 @@ class UserRepository private constructor() {
                 cloudToken = token
             )
 
+        // Сохранение значений настроек
         fun updateSharedPreferences(user: User) {
             val editor = MainActivity.sp.edit()
             editor?.putString(SettingsFragment.EMAIL, user.email)

@@ -1,11 +1,13 @@
 package com.example.elvismessenger.fragments
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
@@ -49,8 +51,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         val googleSignInButton: SignInButton = view.findViewById(R.id.google_sign_in_button)
 
-//        setUpLayout()
-
         // Sign in через гугл
         auth = Firebase.auth
         googleSignInClient = GoogleSignIn.getClient(requireContext(), getGSO())
@@ -66,22 +66,33 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
             val validation = validateLogData(email, password)
 
-            when(validation) {
+            when (validation) {
                 RegLogActivity.GOOD -> {
                     FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener {
                             if (it.isSuccessful) {
-                                UserRepository.updateSharedPreferences(UserRepository.toUserDB(FirebaseAuth.getInstance().currentUser!!, uPassword = password))
-                                Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_mainActivity)
+                                UserRepository.updateSharedPreferences(
+                                    UserRepository.toUserDB(
+                                        FirebaseAuth.getInstance().currentUser!!,
+                                        uPassword = password
+                                    )
+                                )
+                                Navigation.findNavController(view)
+                                    .navigate(R.id.action_loginFragment_to_mainActivity)
                                 activity?.finish()
                             } else {
-                                Toast.makeText(context, "user with such credits does not exist", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "user with such credits does not exist",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
                 }
 
                 RegLogActivity.INCORRECT_LOGIN_CREDITS ->
-                    Toast.makeText(context, "Make sure you filled the form", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Make sure you filled the form", Toast.LENGTH_SHORT)
+                        .show()
             }
         }
 
@@ -137,7 +148,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                                 }
                             }
                     }
-
                     Toast.makeText(requireContext(), "Success", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(
@@ -155,30 +165,16 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
     private fun getGSO(): GoogleSignInOptions {
-        return  GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        return GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
     }
 
-    private fun validateLogData(email: String, password: String) : Int{
-        if(email == "" || password == ""){
+    private fun validateLogData(email: String, password: String): Int {
+        if (email == "" || password == "") {
             return RegLogActivity.INCORRECT_LOGIN_CREDITS
         }
         return RegLogActivity.GOOD
     }
-
-//    private fun setUpLayout() {
-//        val displayWidth = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-//            requireContext().display!!.width
-//        } else {
-//            1500
-//        }
-//
-//        logo.layoutParams.width = displayWidth - 80
-//        logo.layoutParams.height = displayWidth * 6 / 14 - 30
-//        Log.d("height1: ", logo.layoutParams.height.toString())
-//        Log.d("width: : ", logo.layoutParams.width.toString())
-//    }
-
 }
