@@ -86,7 +86,7 @@ class SecuritySettingsFragment : Fragment(R.layout.fragment_security_settings) {
                 val editor = MainActivity.sp.edit()
                 editor?.putInt(SettingsFragment.LAST_SEEN_VIS.toString(), position)
                 editor?.apply()
-                if(position == 2 || position == 1) {
+                if(position == 1) {
                     val newUser = UserRepository.currentUser.value!!
                     newUser.lastSeen = -1L
                     UserRepository.getInstance().createOrUpdateUser(newUser)

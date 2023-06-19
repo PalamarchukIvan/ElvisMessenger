@@ -2,7 +2,6 @@
 <resources>
     <string-array name="visibility">
         <item>Everyone</item>
-        <item>Friends</item>
         <item>No one</item>
     </string-array>
 </resources>

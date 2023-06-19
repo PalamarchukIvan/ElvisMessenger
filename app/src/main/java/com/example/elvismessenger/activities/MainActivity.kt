@@ -187,6 +187,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        sp = getSharedPreferences(SettingsFragment.SHARED_PREFERENCES, MODE_PRIVATE)
         if(FirebaseAuth.getInstance().currentUser != null) {
             UserRepository.getInstance().makeActive()
         }
