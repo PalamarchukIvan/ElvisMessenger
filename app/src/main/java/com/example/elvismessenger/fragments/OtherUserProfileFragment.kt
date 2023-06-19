@@ -119,11 +119,16 @@ class OtherUserProfileFragment : Fragment(R.layout.fragment_other_user_profile) 
             override fun onDataChange(snapshot: DataSnapshot) {
                 val user = snapshot.getValue(User::class.java)
 
-                otherUserState.text = if (user!!.isActive) {
-                    "Online"
-                } else {
-                    "Offline"
-                }
+                otherUserState.text =
+                    if (user!!.isActive) {
+                        "Online"
+                    } else {
+                        if (user!!.lastSeen == -1L) {
+                            "Unknown"
+                        } else {
+                            "Offline"
+                        }
+                    }
             }
 
             override fun onCancelled(error: DatabaseError) {

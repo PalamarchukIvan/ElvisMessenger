@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.example.elvismessenger.R
 import com.example.elvismessenger.activities.MainActivity
+import com.example.elvismessenger.db.UserRepository
 
 class SecuritySettingsFragment : Fragment(R.layout.fragment_security_settings) {
 
@@ -85,6 +86,15 @@ class SecuritySettingsFragment : Fragment(R.layout.fragment_security_settings) {
                 val editor = MainActivity.sp.edit()
                 editor?.putInt(SettingsFragment.LAST_SEEN_VIS.toString(), position)
                 editor?.apply()
+                if(position == 2 || position == 1) {
+                    val newUser = UserRepository.currentUser.value!!
+                    newUser.lastSeen = -1L
+                    UserRepository.getInstance().createOrUpdateUser(newUser)
+                } else {
+                    val newUser = UserRepository.currentUser.value!!
+                    newUser.lastSeen = System.currentTimeMillis()
+                    UserRepository.getInstance().createOrUpdateUser(newUser)
+                }
             }
             override fun onNothingSelected(p0: AdapterView<*>?) {
                 val editor = MainActivity.sp.edit()

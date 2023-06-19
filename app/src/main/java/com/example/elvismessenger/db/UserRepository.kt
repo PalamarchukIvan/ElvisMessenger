@@ -80,7 +80,9 @@ class UserRepository private constructor() {
                 .addOnSuccessListener { userDB ->
                     val activeUser = userDB.getValue(User::class.java)!!
                     activeUser.isActive = false
-                    activeUser.lastSeen = System.currentTimeMillis()
+                    if(activeUser.lastSeen != -1L) {
+                        activeUser.lastSeen = System.currentTimeMillis()
+                    }
                     getInstance().createOrUpdateUser(activeUser)
                 }
         }
