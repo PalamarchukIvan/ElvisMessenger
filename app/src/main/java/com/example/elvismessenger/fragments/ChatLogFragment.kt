@@ -152,8 +152,9 @@ class ChatLogFragment : Fragment(R.layout.fragment_chat_log) {
                 } else {
                     if(user.lastSeen != -1L) {
                         "Last seen ${TimeAgo.using(user.lastSeen)}"
+                    } else {
+                        "Unknown"
                     }
-                    "Unknown"
                 }
             }
 
